@@ -1,35 +1,37 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useEffect, useState } from "react";
+import reactLogo from "./assets/react.svg";
+import viteLogo from "/vite.svg";
+import "./App.css";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [count, setCount] = useState(0);
+
+  const postData = () => {
+    fetch("http://localhost:3000/api/addUser", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json", // Set the correct content type
+      },
+      body: JSON.stringify({ username: "John Doe" }), // Stringify the object
+    });
+  };
+  const deleteAll = () => {
+    fetch("http://localhost:3000/api/deleteAll");
+  };
+  const getData = async () => {
+    const fetchFn = await fetch("http://localhost:3000/api/getAll");
+    const response = await fetchFn.json();
+    const data = response;
+    console.log(data);
+  };
 
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <button onClick={postData}>Post</button>
+      <button onClick={getData}>Get</button>
+      <button onClick={deleteAll}>Clear</button>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
