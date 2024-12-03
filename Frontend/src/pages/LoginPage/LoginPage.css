@@ -1,0 +1,42 @@
+.remember-forget-div {
+  display: flex;
+  justify-content: space-between;
+}
+.form-login {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.welcome-text h1 {
+  font-size: 3.2rem;
+  margin: 0;
+}
+.welcome-text h2 {
+  font-size: 2.4rem;
+  color: #878a99;
+  margin-top: 0;
+}
+.label {
+  font-family: "Poppins";
+  font-weight: 400;
+  font-size: 1.4rem;
+  display: flex;
+  align-items: center;
+}
+.link {
+  text-decoration: none;
+  color: #7539ff;
+  font-size: 1.6rem;
+}
+.remember-btn {
+  font-size: 1.6rem;
+}
+.login-btn {
+  font-family: "Roboto";
+  font-weight: 600;
+  font-size: 1.6rem !important;
+}
+.signup-line {
+  font-size: 1.6rem;
+  margin: auto;
+}
