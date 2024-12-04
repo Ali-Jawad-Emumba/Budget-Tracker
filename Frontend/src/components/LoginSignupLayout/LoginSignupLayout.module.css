@@ -1,31 +1,35 @@
 .layout {
   display: grid;
   grid-template-columns: 50% 50%;
-  grid-template-rows: 20% 1fr;
-  padding: 0;
+  grid-template-rows: 20% 80%;
+  padding-bottom: 5%;
   width: 100%;
-  margin: auto;
+  height: 100vh;
+  margin: 0;
   box-sizing: border-box;
-  margin-bottom:5%
 }
-.form-login-layout {
+.formLoginLayout {
   width: 100%;
   box-sizing: border-box;
   padding: 0 100px;
   border-right: 1px solid #dde4f0;
   grid-column: 1;
   grid-row: 2;
+  height: 80vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 .logo {
   display: flex;
   gap: 10px;
-  padding: 0 100px 50px 100px;
+  padding: 0 100px 0 100px;
   align-items: center;
   grid-column: 1;
   grid-row: 1;
   border-right: 1px solid #dde4f0;
 }
-.app-name {
+.appName {
   font-size: 2.5rem;
 }
 .logo img {

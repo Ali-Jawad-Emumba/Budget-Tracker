@@ -1,5 +1,5 @@
-import { LoginSignupLayoutProp } from "../../types";
-import "./LoginSignupLayout.css";
+import { LoginSignupLayoutProp } from "../../utils/types";
+import styles from "./LoginSignupLayout.module.css";
 import logo from "../../assets/images/logo.png";
 
 const LoginSignupLayout: React.FC<LoginSignupLayoutProp> = ({
@@ -8,16 +8,15 @@ const LoginSignupLayout: React.FC<LoginSignupLayoutProp> = ({
 }: LoginSignupLayoutProp) => {
   return (
     <>
-    
-      <div className="layout">
-      <div className="logo">
-        <img src={logo} />
-        <h3 className="app-name poppins-semibold">Budget Tracker</h3>
-      </div>
-        <div className="form-login-layout">
-          {children}
+      <div className={styles.layout}>
+        <div className={styles.logo}>
+          <img src={logo} />
+          <h3 className={`${styles.appName} poppins-semibold`}>
+            Budget Tracker
+          </h3>
         </div>
-        <div className="illustration">
+        <div className={styles.formLoginLayout}>{children}</div>
+        <div className={styles.illustration}>
           <img src={image} />
         </div>
       </div>

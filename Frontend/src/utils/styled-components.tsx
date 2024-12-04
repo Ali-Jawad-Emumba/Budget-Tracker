@@ -4,8 +4,8 @@ import { styled } from "@mui/material/styles";
 export const InputBootstrapStyled = styled(FilledInput)(({ theme }) => ({
   width: "100%",
   boxSizing: "border-box",
+  borderRadius: 4,
   "& .MuiInputBase-input": {
-    borderRadius: 4,
     position: "relative",
     fontSize: 16,
     padding: "10px 12px",

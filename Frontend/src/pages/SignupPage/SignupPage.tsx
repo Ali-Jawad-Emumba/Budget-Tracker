@@ -2,30 +2,31 @@ import LoginSignupLayout from "../../components/LoginSignupLayout/LoginSignupLay
 import illustration from "../../assets/images/illustration-signup-page.png";
 import { Link } from "react-router-dom";
 import { Button, FormControl, FormGroup, InputAdornment } from "@mui/material";
-import { InputBootstrapStyled } from "../../styled-components";
+import { InputBootstrapStyled } from "../../utils/styled-components";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
-import './SignupPage.css'
+import styles from "../../utils/form-styles.module.css";
+import PasswordField from "../../components/LoginSignupLayout/PasswordField";
 
 const SignupPage: React.FC = () => {
   return (
     <LoginSignupLayout image={illustration}>
-      <div className="welcome-text">
+      <div className={styles.welcomeText}>
         <h1 className="poppins-semibold">Sign Up</h1>
         <h2 className="poppins-regular">Welcome to our community</h2>
       </div>
-      <FormGroup className="form-signup">
-        <div style={{display:"flex", gap:"15px"}}>
-        <FormControl sx={{ width: "50%" }}>
-          <p className="label">First Name</p>
-          <InputBootstrapStyled fullWidth placeholder="test@exmaple.com" />
-        </FormControl>
-        <FormControl sx={{ width: "50%" }}>
-          <p className="label">Last Name</p>
-          <InputBootstrapStyled fullWidth placeholder="test@exmaple.com" />
-        </FormControl>
+      <FormGroup className={`${styles.form} ${styles.gapTen}`}>
+        <div style={{ display: "flex", gap: "15px" }}>
+          <FormControl sx={{ width: "50%" }}>
+            <p className={styles.label}>First Name</p>
+            <InputBootstrapStyled fullWidth placeholder="test@exmaple.com" />
+          </FormControl>
+          <FormControl sx={{ width: "50%" }}>
+            <p className={styles.label}>Last Name</p>
+            <InputBootstrapStyled fullWidth placeholder="test@exmaple.com" />
+          </FormControl>
         </div>
         <FormControl>
-          <p className="label">Email</p>
+          <p className={styles.label}>Email</p>
           <InputBootstrapStyled
             fullWidth
             placeholder="test@exmaple.com"
@@ -37,43 +38,24 @@ const SignupPage: React.FC = () => {
           />
         </FormControl>
         <FormControl>
-          <p className="label">Password</p>
-          <InputBootstrapStyled
-            fullWidth
-            placeholder="Enter your password"
-            endAdornment={
-              <InputAdornment position="end">
-                <EmailOutlinedIcon />
-              </InputAdornment>
-            }
-          />
+          <p className={styles.label}>Password</p>
+          <PasswordField/>
         </FormControl>
         <FormControl>
-          <p className="label">Confirm Password</p>
-          <InputBootstrapStyled
-            fullWidth
-            placeholder="Enter your password"
-            endAdornment={
-              <InputAdornment position="end">
-                <EmailOutlinedIcon />
-              </InputAdornment>
-            }
-          />
+          <p className={styles.label}>Confirm Password</p>
+          <PasswordField/>
         </FormControl>
         <FormControl>
-          <p className="label">Budget Limit</p>
-          <InputBootstrapStyled
-            fullWidth
-            placeholder="Enter Amount"
-          />
+          <p className={styles.label}>Budget Limit</p>
+          <InputBootstrapStyled fullWidth placeholder="Enter Amount" />
         </FormControl>
-    
-        <Button className="login-btn" variant="contained">
+
+        <Button className={styles.loginBtn} variant="contained">
           Sign Up
         </Button>
-        <p className="signup-line poppins-regular">
+        <p className={`${styles.signupLine} poppins-regular`}>
           Already have an account?{" "}
-          <Link className="link poppins-semibold" to="/">
+          <Link className={`${styles.link} poppins-semibold`} to="/">
             Log In
           </Link>
         </p>

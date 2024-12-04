@@ -5,6 +5,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import LoginPage from "./pages/LoginPage/LoginPage.tsx";
 import SignupPage from "./pages/SignupPage/SignupPage.tsx";
 import { createTheme, ThemeProvider } from "@mui/material";
+import ResetPswdPage from "./pages/ResetPswdPage/ResetPswdPage.tsx";
 
 const router = createBrowserRouter([
   {
@@ -14,6 +15,10 @@ const router = createBrowserRouter([
   {
     path: "/signup",
     element: <SignupPage />,
+  },
+  {
+    path: "/reset-password",
+    element: <ResetPswdPage />,
   },
 ]);
 const theme = createTheme({
