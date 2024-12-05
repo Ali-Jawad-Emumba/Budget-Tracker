@@ -7,8 +7,8 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
+import "./date-picker.css";
 import {
-  FormControl,
   InputAdornment,
   MenuItem,
   Pagination,
@@ -41,77 +41,72 @@ const DashboardContent = ({ dataFor }: { dataFor: string }) => {
         </DashboardButton>
       </div>
       <div className={styles.dataTable}>
-        <TableContainer component={Paper}>
+        <div className={styles.tableHeader}>
+          <h1 className="poppins-semibold" style={{ fontSize: "1.6rem" }}>
+            {dataFor}
+          </h1>
+          <div className={styles.filters}>
+            <div className={styles.filterDiv}>
+              <div className={styles.filter}>
+                <p
+                  style={{ color: "#667085", fontSize: "1.2rem" }}
+                  className="poppins-regular"
+                >
+                  Sort By
+                </p>
+              </div>
+
+              <Select
+                fullWidth
+                value="All"
+                sx={{ height: "40px", width: "150px" }}
+                onChange={() => {}}
+              >
+                <MenuItem value={10}>Ten</MenuItem>
+                <MenuItem value={20}>Twenty</MenuItem>
+                <MenuItem value={30}>Thirty</MenuItem>
+              </Select>
+            </div>
+            <div>
+              <div className={styles.filterDiv}>
+                <div className={styles.filter}>
+                  <p
+                    style={{ color: "#667085", fontSize: "1.2rem" }}
+                    className="poppins-regular"
+                  >
+                    By Date
+                  </p>
+                </div>
+                <input
+                  type="date"
+                  placeholder="Select date"
+                  className={styles.dateFilter}
+                />
+              </div>
+            </div>
+            <div>
+              <TextField
+                fullWidth
+                id="outlined-start-adornment"
+                sx={{ m: 1, width: "300px" }}
+                className={styles.searchBox}
+                placeholder="Search"
+                slotProps={{
+                  input: {
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <SearchOutlinedIcon />
+                      </InputAdornment>
+                    ),
+                  },
+                }}
+              />
+            </div>
+          </div>
+        </div>
+        <TableContainer sx={{ borderRadius: "0 0 7px 7px" }} component={Paper}>
           <Table sx={{ minWidth: 650 }} aria-label="caption table">
             <TableHead>
-              <TableRow sx={{ backgroundColor: "#F7F7F7" }}>
-                <TableCell>{dataFor}</TableCell>
-                <TableCell></TableCell>
-
-                <TableCell>
-                  <div style={{ display: "flex" }}>
-                    <div
-                      style={{
-                        backgroundColor: "#E1E8F2",
-
-                        height: "40px",
-                        width: "90px",
-                        display: "flex",
-                        justifyContent: "center",
-                        borderRadius: "4px 0 0 4px",
-                      }}
-                    >
-                      <p style={{ color: "#667085" }}>Sort By</p>
-                    </div>
-                    <FormControl>
-                      <Select
-                        fullWidth
-                        value="All"
-                        sx={{ height: "40px" }}
-                        onChange={() => {}}
-                      >
-                        <MenuItem value={10}>Ten</MenuItem>
-                        <MenuItem value={20}>Twenty</MenuItem>
-                        <MenuItem value={30}>Thirty</MenuItem>
-                      </Select>
-                    </FormControl>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div style={{ display: "flex" }}>
-                    <div
-                      style={{
-                        backgroundColor: "#E1E8F2",
-                        height: "40px",
-                        width: "90px",
-                        display: "flex",
-                        justifyContent: "center",
-                        borderRadius: "4px 0 0 4px",
-                      }}
-                    >
-                      <p style={{ color: "#667085" }}>By Date</p>
-                    </div>
-                    <input type="date" />
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <TextField
-                    fullWidth
-                    id="outlined-start-adornment"
-                    sx={{ m: 1, width: "25ch" }}
-                    placeholder="Search"
-                    slotProps={{
-                      input: {
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <SearchOutlinedIcon />
-                          </InputAdornment>
-                        ),
-                      },
-                    }}
-                  />
-                </TableCell>
-              </TableRow>
               <TableRow>
                 <TableCell>Dessert (100g serving)</TableCell>
                 <TableCell align="right">Calories</TableCell>

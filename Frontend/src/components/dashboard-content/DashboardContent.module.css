@@ -19,7 +19,48 @@
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  padding: 10px;
+  padding: 10px 15px;
   box-sizing: border-box;
   font-size: 1rem;
+}
+.searchBox div {
+  height: 40px;
+}
+.dateFilter {
+  background-color: transparent;
+  border: 1px solid lightgray;
+  border-radius: 0 4px 4px 0;
+  height: 38px;
+  width: 100px;
+  background-color: transparent;
+  border: 1px solid lightgray;
+  border-radius: 0 3px 3px 0;
+}
+.tableHeader {
+  background-color: #f7f7f7;
+  display: grid;
+  grid-template-columns: 30% 1fr;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 15px;
+  border: 1px solid #dde4f0;
+  border-radius: 7px 7px 0 0;
+}
+.filters {
+  display: flex;
+  align-items: center;
+  justify-self: flex-end;
+  gap: 10px;
+}
+.filter {
+  background-color: #e1e8f2;
+  align-items: center;
+  height: 40px;
+  width: 90px;
+  display: flex;
+  justify-content: center;
+  border-radius: 4px 0 0 4px;
+}
+.filterDiv {
+  display: flex;
 }
