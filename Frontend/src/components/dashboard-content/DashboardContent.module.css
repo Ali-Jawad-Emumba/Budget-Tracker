@@ -1,0 +1,25 @@
+.dataTableHeader {
+  margin-top: 80px;
+  width: 100%;
+  padding: 10px 0;
+  border-bottom: 1px solid lightgray;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+.dataTableHeader h1 {
+  font-size: 3.2rem;
+  margin: 0;
+}
+.dashboardContent {
+  padding: 0 30px;
+}
+.paginationDiv {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+  font-size: 1rem;
+}

@@ -4,8 +4,10 @@ import "./index.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import LoginPage from "./pages/LoginPage/LoginPage.tsx";
 import SignupPage from "./pages/SignupPage/SignupPage.tsx";
-import { createTheme, ThemeProvider } from "@mui/material";
 import ResetPswdPage from "./pages/ResetPswdPage/ResetPswdPage.tsx";
+import Dashboard from "./pages/Dashboard/Dashboard.tsx";
+import { ThemeProvider } from "@emotion/react";
+import { createTheme } from "@mui/material";
 
 const router = createBrowserRouter([
   {
@@ -20,19 +22,24 @@ const router = createBrowserRouter([
     path: "/reset-password",
     element: <ResetPswdPage />,
   },
+  {
+    path: "/dashboard",
+    element: <Dashboard />,
+  },
 ]);
+
 const theme = createTheme({
   components: {
-    MuiButton: {
+    MuiTableCell: {
       styleOverrides: {
         root: {
-          backgroundColor: "#7539FF",
-          padding: "12px 8px",
+          fontSize: "1.4rem", // Set the font size for all TableCells
         },
       },
     },
   },
 });
+
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <ThemeProvider theme={theme}>

@@ -1,13 +1,17 @@
 import LoginSignupLayout from "../../components/LoginSignupLayout/LoginSignupLayout";
 import illustration from "../../assets/images/Illustration-login-page.png";
-import { Link } from "react-router-dom";
-import { InputBootstrapStyled } from "../../utils/styled-components";
-import { Button, FormControl, FormGroup, InputAdornment } from "@mui/material";
+import { Link, useNavigate } from "react-router-dom";
+import {
+  InputBootstrapStyled,
+  SignupLoginBtn,
+} from "../../utils/styled-components";
+import { FormControl, FormGroup, InputAdornment } from "@mui/material";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import styles from "../../utils/form-styles.module.css";
-import PasswordField from "../../components/LoginSignupLayout/PasswordField";
+import PasswordField from "../../components/PasswordField";
 
 const LoginPage: React.FC = () => {
+  const navigate = useNavigate();
   return (
     <LoginSignupLayout image={illustration}>
       <div className={styles.welcomeText}>
@@ -31,7 +35,7 @@ const LoginPage: React.FC = () => {
         </FormControl>
         <FormControl>
           <p className={styles.label}>Password</p>
-         <PasswordField/>
+          <PasswordField />
         </FormControl>
         <div className={styles.rememberForgetDiv}>
           <label className={`${styles.rememberBtn} poppins-regular`}>
@@ -42,9 +46,13 @@ const LoginPage: React.FC = () => {
           </Link>
         </div>
 
-        <Button className={styles.loginBtn} variant="contained">
+        <SignupLoginBtn
+          className={styles.loginBtn}
+          variant="contained"
+          onClick={() => navigate("/dashboard")}
+        >
           Log In
-        </Button>
+        </SignupLoginBtn>
         <p className={`${styles.signupLine} poppins-regular`}>
           Dont have an account?{" "}
           <Link className={`${styles.link} poppins-semibold`} to="/signup">

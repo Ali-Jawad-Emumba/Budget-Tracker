@@ -1,5 +1,5 @@
 import { IconButton, InputAdornment } from "@mui/material";
-import { InputBootstrapStyled } from "../../utils/styled-components";
+import { InputBootstrapStyled } from "../utils/styled-components";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { Visibility } from "@mui/icons-material";
 import { useState } from "react";

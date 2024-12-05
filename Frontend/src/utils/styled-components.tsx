@@ -35,6 +35,17 @@ export const InputBootstrapStyled = styled(FilledInput)(({ theme }) => ({
   },
 }));
 
-export const PurpleButton = styled(Button)(() => ({
-  backgroundColor: "rgba(117, 57, 255, 1)",
+export const SignupLoginBtn = styled(Button)(() => ({
+  backgroundColor: "#7539FF",
+  padding: "12px 8px",
+  color: "white",
+}));
+
+export const DashboardButton = styled(Button)(() => ({
+  backgroundColor: "#7539FF",
+  width: "150px",
+  height: "fit-content",
+  color: "white",
+  textTransform: "none",
+  fontSize: "1.4rem",
 }));

@@ -1,0 +1,20 @@
+.drawerItem:not(:nth-of-type(2)):hover .drawerItemIcon svg path {
+  fill: #ffffff;
+}
+.drawerItem:nth-of-type(2):hover .drawerItemIcon svg path {
+  stroke: #ffffff;
+}
+.drawerItem:hover .drawerItemText {
+  color: white;
+}
+.drawerItem:hover {
+  background-color: #7539ff;
+}
+.drawerItemsList {
+  padding-left: 10px !important;
+  padding-right: 10px !important;
+}
+.drawerItem {
+  border-radius: 10px;
+  height: 32%;
+}
