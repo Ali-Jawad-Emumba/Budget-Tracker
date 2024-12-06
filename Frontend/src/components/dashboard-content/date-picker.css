@@ -1,6 +1,31 @@
+/* hides mm/dd/yyyy */
 input[type="date"]:in-range::-webkit-datetime-edit-year-field,
 input[type="date"]:in-range::-webkit-datetime-edit-month-field,
 input[type="date"]:in-range::-webkit-datetime-edit-day-field,
 input[type="date"]:in-range::-webkit-datetime-edit-text {
   display: none;
+}
+
+/* change styling of value  */
+input[type="date"]::-webkit-datetime-edit-text,
+input[type="date"]::-webkit-datetime-edit-month-field,
+input[type="date"]::-webkit-datetime-edit-day-field,
+input[type="date"]::-webkit-datetime-edit-year-field {
+  font-family: "Poppins", sans-serif;
+  font-size: 1.2rem;
+  color: #bcc0c9;
+  font-weight: 400;
+}
+
+/* changes the calender icon */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  background: url(src/assets/images/calender-icon.png) no-repeat;
+  width: 15px;
+  height: 15px;
+}
+
+/* add padding to date field; */
+input[type="date"] {
+  padding: 0 10px;
+  box-sizing: border-box;
 }
