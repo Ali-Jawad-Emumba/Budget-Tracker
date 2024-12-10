@@ -11,6 +11,7 @@ import {
   PhoneIcon,
 } from "./ProfilePageIcons";
 import ProfileDetails from "../../components/profile-details/ProfileDetails";
+import MyAccount from "../../components/my-account/MyAccount";
 
 const ProfilePage = () => {
   return (
@@ -82,7 +83,8 @@ const ProfilePage = () => {
             </li>
           </ul>
         </Paper>
-        <ProfileDetails />
+        {/* <ProfileDetails /> */}
+        <MyAccount />
       </div>
     </div>
   );

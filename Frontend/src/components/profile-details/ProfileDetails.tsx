@@ -1,21 +1,11 @@
 import { Paper } from "@mui/material";
 import styles from "./ProfileDetails.module.css";
+import ProfileCard from "./ProfileCard";
 
 const ProfileDetails = () => {
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-      <Paper
-        sx={{
-          width: "100%",
-          height: "150px",
-          display: "grid",
-          gridTemplateRows: "25% 1fr",
-          borderRadius: "5px",
-        }}
-      >
-        <div className="profile-card-heading">
-          <h1>About Me</h1>
-        </div>
+    <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+      <ProfileCard heading="About Me">
         <div className={styles.aboutMeDetail}>
           <p className="poppins-regular">
             Passionate UI/UX designer with over 5 years of experience in
@@ -25,19 +15,8 @@ const ProfileDetails = () => {
             innovative and effective design solutions.
           </p>
         </div>
-      </Paper>
-      <Paper
-        sx={{
-          width: "100%",
-          display: "grid",
-          height: "100%",
-
-          borderRadius: "5px",
-        }}
-      >
-        <div className="profile-card-heading">
-          <h1>Personal Details</h1>
-        </div>
+      </ProfileCard>
+      <ProfileCard heading="Personal Details">
         <div className={styles.personalDetails}>
           <div>
             <h2>Full Name</h2>
@@ -80,7 +59,7 @@ const ProfileDetails = () => {
             <h2>30000 PKR</h2>
           </div>
         </div>
-      </Paper>
+      </ProfileCard>
     </div>
   );
 };
