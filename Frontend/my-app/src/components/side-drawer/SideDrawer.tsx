@@ -1,5 +1,5 @@
-import { styled, Theme, CSSObject } from "@mui/material/styles";
-import styles from "./SlideDrawer.module.css";
+import { styled, Theme, CSSObject } from '@mui/material/styles';
+import styles from './SlideDrawer.module.css';
 import {
   Drawer as MuiDrawer,
   List,
@@ -9,84 +9,35 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
-} from "@mui/material";
+} from '@mui/material';
 
-import Logo from "../Logo/Logo";
-import logo from "../../assets/images/logo.png";
-import { AnalysisIcon, ExpensesIcon, LogoutIcon } from "./DrawerIcons";
-import { useNavigate } from "react-router-dom";
-
-const drawerWidth = 240;
-
-const openedMixin = (theme: Theme): CSSObject => ({
-  width: drawerWidth,
-  transition: theme.transitions.create("width", {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.enteringScreen,
-  }),
-  overflowX: "hidden",
-});
-
-const closedMixin = (theme: Theme): CSSObject => ({
-  transition: theme.transitions.create("width", {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen,
-  }),
-  overflowX: "hidden",
-  width: `calc(${theme.spacing(7)} + 1px)`,
-  [theme.breakpoints.up("sm")]: {
-    width: `calc(${theme.spacing(8)} + 1px)`,
-  },
-});
-
-const DrawerHeader = styled("div")(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "flex-end",
-  padding: theme.spacing(0, 1),
-  // necessary for content to be below app bar
-  ...theme.mixins.toolbar,
-}));
-
-const Drawer = styled(MuiDrawer, {
-  shouldForwardProp: (prop) => prop !== "open",
-})(({ theme }) => ({
-  width: drawerWidth,
-  flexShrink: 0,
-  whiteSpace: "nowrap",
-  boxSizing: "border-box",
-  variants: [
-    {
-      props: ({ open }) => open,
-      style: {
-        ...openedMixin(theme),
-        "& .MuiDrawer-paper": openedMixin(theme),
-      },
-    },
-    {
-      props: ({ open }) => !open,
-      style: {
-        ...closedMixin(theme),
-        "& .MuiDrawer-paper": closedMixin(theme),
-      },
-    },
-  ],
-}));
+import Logo from '../Logo/Logo';
+import logo from '../../assets/images/logo.png';
+import { AnalysisIcon, ExpensesIcon, LogoutIcon } from './DrawerIcons';
+import { useNavigate } from 'react-router-dom';
+import { Drawer, DrawerHeader } from '../../utils/styled-components';
+import { useDispatch, useSelector } from 'react-redux';
+import { updateSelectedDashboardTab } from '../../app/store';
+import { useState } from 'react';
 
 export default function SideDrawer({ open }: { open: boolean }) {
   const navigate = useNavigate();
+  // const dispatch = useDispatch();
+  // const selectedDashboardTab=useSelector((state:any)=>state.selectedDashboardTab)
+  const [selectedDashboardTab, setSelectedDashbpardTab] =
+    useState<string>('Expenses');
   const drawerItems = [
     {
-      text: "Analysis",
+      text: 'Analysis',
       icon: <AnalysisIcon />,
-      action: () => console.log("Analysis clicked"),
+      action: () => setSelectedDashbpardTab('Analysis'),
     },
     {
-      text: "Expenses",
+      text: 'Expenses',
       icon: <ExpensesIcon />,
-      action: () => console.log("Expenses clicked"),
+      action: () => setSelectedDashbpardTab('Expenses'),
     },
-    { text: "Logout", icon: <LogoutIcon />, action: () => navigate("/") },
+    { text: 'Logout', icon: <LogoutIcon />, action: () => navigate('/') },
   ];
 
   return (
@@ -96,7 +47,7 @@ export default function SideDrawer({ open }: { open: boolean }) {
           {open ? (
             <Logo useFor="dashboard" />
           ) : (
-            <img src={logo} style={{ marginLeft: "auto", width: "60%" }} />
+            <img src={logo} style={{ marginLeft: 'auto', width: '60%' }} />
           )}
         </IconButton>
       </DrawerHeader>
@@ -106,9 +57,13 @@ export default function SideDrawer({ open }: { open: boolean }) {
           <ListItem
             key={item.text}
             disablePadding
-            sx={{ display: "block" }}
+            sx={{ display: 'block' }}
             onClick={item.action}
-            className={styles.drawerItem}
+            className={
+              selectedDashboardTab === item.text
+                ? styles.selectedDrawerItem
+                : styles.drawerItem
+            }
           >
             <ListItemButton
               sx={[
@@ -118,10 +73,10 @@ export default function SideDrawer({ open }: { open: boolean }) {
                 },
                 open
                   ? {
-                      justifyContent: "initial",
+                      justifyContent: 'initial',
                     }
                   : {
-                      justifyContent: "center",
+                      justifyContent: 'center',
                     },
               ]}
             >
@@ -129,14 +84,14 @@ export default function SideDrawer({ open }: { open: boolean }) {
                 sx={[
                   {
                     minWidth: 0,
-                    justifyContent: "center",
+                    justifyContent: 'center',
                   },
                   open
                     ? {
                         mr: 3,
                       }
                     : {
-                        mr: "auto",
+                        mr: 'auto',
                       },
                 ]}
                 className={styles.drawerItemIcon}

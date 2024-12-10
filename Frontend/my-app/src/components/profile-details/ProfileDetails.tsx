@@ -1,10 +1,10 @@
-import { Paper } from "@mui/material";
-import styles from "./ProfileDetails.module.css";
-import ProfileCard from "./ProfileCard";
+import { Paper } from '@mui/material';
+import styles from './ProfileDetails.module.css';
+import ProfileCard from './ProfileCard';
 
 const ProfileDetails = () => {
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
       <ProfileCard heading="About Me">
         <div className={styles.aboutMeDetail}>
           <p className="poppins-regular">

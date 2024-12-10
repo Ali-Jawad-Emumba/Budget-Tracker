@@ -21,3 +21,6 @@
 .appBarBtn:hover {
   cursor: pointer;
 }
+.bellIconAndProfile img:hover {
+  cursor: pointer;
+}

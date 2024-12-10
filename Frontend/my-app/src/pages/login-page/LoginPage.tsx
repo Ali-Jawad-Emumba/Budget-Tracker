@@ -9,9 +9,24 @@ import { FormControl, FormGroup, InputAdornment } from '@mui/material';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import styles from '../../utils/form-styles.module.css';
 import PasswordField from '../../components/PasswordField';
+import { useForm } from 'react-hook-form';
+import { ReactJSX } from '@emotion/react/dist/declarations/src/jsx-namespace';
+import { checkAndThrowError } from '../../utils/shared';
+import { emailRegex } from '../../utils/shared';
 
 const LoginPage: React.FC = () => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
   const navigate = useNavigate();
+
+  const onSubmit = (data: any) => {
+    console.log(data);
+    navigate('/dashboard');
+  };
+
   return (
     <LoginSignupLayout image={illustration}>
       <div className={styles.welcomeText}>
@@ -20,10 +35,23 @@ const LoginPage: React.FC = () => {
           Sign in to continue to Budget Tracker
         </h2>
       </div>
-      <FormGroup className={`${styles.form} ${styles.gapTwenty}`}>
-        <FormControl>
-          <p className={styles.label}>Email</p>
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className={`${styles.form} ${styles.gapTwenty}`}
+      >
+        <FormControl className={styles.formField}>
+          <label htmlFor="email" className={styles.label}>
+            Email
+          </label>
           <InputBootstrapStyled
+            id="email"
+            {...register('email', {
+              required: 'Email is required',
+              pattern: {
+                value: emailRegex,
+                message: 'Email is not valid',
+              },
+            })}
             fullWidth
             placeholder="test@exmaple.com"
             endAdornment={
@@ -32,24 +60,31 @@ const LoginPage: React.FC = () => {
               </InputAdornment>
             }
           />
+          {checkAndThrowError(errors, 'email')}
         </FormControl>
-        <FormControl>
-          <p className={styles.label}>Password</p>
-          <PasswordField />
-        </FormControl>
-        <div className={styles.rememberForgetDiv}>
-          <label className={`${styles.rememberBtn} poppins-regular`}>
-            <input type="checkbox" /> Remember me{' '}
-          </label>
-          <Link className={`${styles.link} poppins-medium`} to={''}>
-            Forget Password
-          </Link>
-        </div>
+        <FormControl className={styles.formField}>
+          <label className={styles.label}>Password</label>
+          <PasswordField
+            formRegister={{
+              ...register('password', { required: 'Password is required' }),
+            }}
+            checkAndThrowError={() => checkAndThrowError(errors, 'password')}
+          />
 
+          <div className={styles.rememberForgetDiv}>
+            <label className={`${styles.rememberBtn} poppins-regular`}>
+              <input type="checkbox" /> Remember me{' '}
+            </label>
+            <Link className={`${styles.link} poppins-medium`} to={''}>
+              Forget Password
+            </Link>
+          </div>
+        </FormControl>
         <SignupLoginBtn
           className={styles.loginBtn}
           variant="contained"
-          onClick={() => navigate('/dashboard')}
+          type="submit"
+          // onClick={() => navigate('/dashboard')}
         >
           Log In
         </SignupLoginBtn>
@@ -59,7 +94,7 @@ const LoginPage: React.FC = () => {
             Signup
           </Link>
         </p>
-      </FormGroup>
+      </form>
     </LoginSignupLayout>
   );
 };

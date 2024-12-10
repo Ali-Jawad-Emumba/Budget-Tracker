@@ -1,12 +1,13 @@
-import styles from "./Logo.module.css";
-import logo from "../../assets/images/logo.png";
-import { LogoProps } from "../../utils/types";
+import styles from './Logo.module.css';
+import logo from '../../assets/images/logo.png';
+import { LogoProps } from '../../utils/types';
+import { useNavigate } from 'react-router-dom';
 
 const Logo = ({ useFor }: LogoProps) => {
   return (
     <div
       className={
-        useFor === "dashboard" ? styles.logoDashboard : styles.logoLoginSignup
+        useFor === 'dashboard' ? styles.logoDashboard : styles.logoLoginSignup
       }
     >
       <img src={logo} />
