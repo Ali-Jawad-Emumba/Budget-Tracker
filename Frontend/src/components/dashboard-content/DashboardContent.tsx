@@ -49,8 +49,7 @@ const DashboardContent = ({ dataFor }: { dataFor: string }) => {
             <div className={styles.filterDiv}>
               <div className={styles.filter}>
                 <p
-                  style={{ color: "#667085", fontSize: "1.2rem" }}
-                  className="poppins-regular"
+                  className={`${styles.filterLabel} poppins-regular`}
                 >
                   Sort By
                 </p>
@@ -71,8 +70,7 @@ const DashboardContent = ({ dataFor }: { dataFor: string }) => {
               <div className={styles.filterDiv}>
                 <div className={styles.filter}>
                   <p
-                    style={{ color: "#667085", fontSize: "1.2rem" }}
-                    className="poppins-regular"
+                    className={`${styles.filterLabel} poppins-regular`}
                   >
                     By Date
                   </p>

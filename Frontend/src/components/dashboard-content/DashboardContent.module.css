@@ -64,3 +64,7 @@
 .filterDiv {
   display: flex;
 }
+.filterLabel{
+  color: #667085;
+  font-size: 1.2rem
+}

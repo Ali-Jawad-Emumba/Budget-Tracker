@@ -8,6 +8,7 @@ import ResetPswdPage from "./pages/ResetPswdPage/ResetPswdPage.tsx";
 import Dashboard from "./pages/Dashboard/Dashboard.tsx";
 import { ThemeProvider } from "@emotion/react";
 import { createTheme } from "@mui/material";
+import ProfilePage from "./pages/profile-page/ProfilePage.tsx";
 
 const router = createBrowserRouter([
   {
@@ -25,6 +26,10 @@ const router = createBrowserRouter([
   {
     path: "/dashboard",
     element: <Dashboard />,
+  },
+  {
+    path: "/profile",
+    element: <ProfilePage />,
   },
 ]);
 
