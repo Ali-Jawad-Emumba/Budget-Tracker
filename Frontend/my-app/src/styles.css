@@ -1,0 +1,13 @@
+body {
+  height: 100%;
+  width: 100%;
+  overflow-x: hidden;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+html {
+  scrollbar-width: thin;
+  scrollbar-color: #7539ff white;
+  font-size: 10px;
+}
