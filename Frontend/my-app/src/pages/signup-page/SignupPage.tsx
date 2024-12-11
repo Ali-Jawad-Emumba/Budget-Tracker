@@ -1,5 +1,5 @@
 import illustration from '../../assets/images/illustration-signup-page.png';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { FormControl, FormGroup, InputAdornment } from '@mui/material';
 import {
   InputBootstrapStyled,
@@ -11,15 +11,51 @@ import LoginSignupLayout from '../../components/login-signup-layout/LoginSignupL
 import PasswordField from '../../components/PasswordField';
 import { useForm } from 'react-hook-form';
 import { checkAndThrowError, emailRegex } from '../../utils/shared';
+import { boolean } from 'yup';
+import { useState } from 'react';
 
 const SignupPage: React.FC = () => {
+  const [showUserExisitsError, setShowUserExistsError] =
+    useState<boolean>(false);
   const {
     register,
     handleSubmit,
     watch,
     formState: { errors },
   } = useForm();
-  const onSubmit = (data: any) => console.log(data);
+  const navigate = useNavigate();
+  const getSignupDataBody = (data: any) => {
+    const result = { ...data };
+    delete result.confirmedpassword;
+    return JSON.stringify(result);
+  };
+
+  const onSubmit = async (data: any) => {
+    const fetchFn = await fetch('http://localhost:3000/getUserByEmail', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email: data.email }),
+    });
+    const { userExists } = await fetchFn.json();
+    if (userExists) {
+      setShowUserExistsError(true);
+    } else {
+      const response = await fetch('http://localhost:3000/addUser', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: getSignupDataBody(data),
+      });
+
+      if (response.ok) {
+        navigate('/');
+      }
+    }
+  };
+
   return (
     <LoginSignupLayout image={illustration}>
       <div className={styles.welcomeText}>
@@ -35,19 +71,19 @@ const SignupPage: React.FC = () => {
             <p className={styles.label}>First Name</p>
             <InputBootstrapStyled
               fullWidth
-              {...register('first name', { required: 'Name is required' })}
+              {...register('firstname', { required: 'Name is required' })}
               placeholder="test@exmaple.com"
             />
-            {checkAndThrowError(errors, 'first name')}
+            {checkAndThrowError(errors, 'firstname')}
           </FormControl>
           <FormControl sx={{ width: '50%' }}>
             <p className={styles.label}>Last Name</p>
             <InputBootstrapStyled
               fullWidth
-              {...register('last name', { required: 'Name is required' })}
+              {...register('lastname', { required: 'Name is required' })}
               placeholder="test@exmaple.com"
             />
-            {checkAndThrowError(errors, 'last mame')}
+            {checkAndThrowError(errors, 'lastname')}
           </FormControl>
         </div>
         <FormControl>
@@ -61,6 +97,9 @@ const SignupPage: React.FC = () => {
                 message: 'Email is invalid',
               },
             })}
+            onChange={() =>
+              showUserExisitsError ? setShowUserExistsError(false) : null
+            }
             placeholder="test@exmaple.com"
             endAdornment={
               <InputAdornment position="end">
@@ -83,14 +122,14 @@ const SignupPage: React.FC = () => {
           <p className={styles.label}>Confirm Password</p>
           <PasswordField
             formRegister={{
-              ...register('confirmed password', {
+              ...register('confirmedpassword', {
                 required: 'Password is required',
                 validate: (value) =>
                   value === watch('password') || 'Passwords do not match',
               }),
             }}
             checkAndThrowError={() =>
-              checkAndThrowError(errors, 'confirmed password')
+              checkAndThrowError(errors, 'confirmedpassword')
             }
           />
         </FormControl>
@@ -98,11 +137,15 @@ const SignupPage: React.FC = () => {
           <p className={styles.label}>Budget Limit</p>
           <InputBootstrapStyled
             fullWidth
-            {...register('amount')}
+            {...register('budgetlimit')}
             placeholder="Enter Amount"
           />
         </FormControl>
-
+        {showUserExisitsError && (
+          <p className="errors poppins-regular">
+            This email is already registered
+          </p>
+        )}
         <SignupLoginBtn
           className={styles.loginBtn}
           type="submit"

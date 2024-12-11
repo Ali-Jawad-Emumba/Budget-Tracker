@@ -29,6 +29,7 @@ import {
 } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { useForm } from 'react-hook-form';
 
 function createData(
   name: string,
@@ -47,7 +48,28 @@ const rows = [
 ];
 const DashboardContent = ({ dataFor }: { dataFor: string }) => {
   const [isExpenseModalOpen, setIsExpenseModalOpen] = useState<boolean>(false);
-
+  const [expenseDate, setExpenseDate] = useState<string>();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+  const onSubmit = async (data: any) => {
+    const userId = localStorage.getItem('UserId');
+    const response = await fetch('http://localhost:3000/addExpense', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        userId: userId,
+        title: data.title,
+        price: data.price,
+        date: data.date || new Date().toLocaleDateString(),
+      }),
+    });
+    if (response.ok) setIsExpenseModalOpen(false);
+  };
   return (
     <>
       <div className={styles.dashboardContent}>
@@ -92,7 +114,11 @@ const DashboardContent = ({ dataFor }: { dataFor: string }) => {
                     </p>
                   </div>
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DatePicker className="datePicker" sx={{height:"40px"}} defaultValue={dayjs('2022-04-17')} />
+                    <DatePicker
+                      className="datePicker"
+                      sx={{ height: '40px' }}
+                      defaultValue={dayjs('2022-04-17')}
+                    />
                   </LocalizationProvider>
                 </div>
               </div>
@@ -157,26 +183,45 @@ const DashboardContent = ({ dataFor }: { dataFor: string }) => {
         setOpen={setIsExpenseModalOpen}
         title="Add Expense"
       >
-        <FormControl fullWidth>
-          <label>Title</label>
-          <InputBootstrapStyled fullWidth sx={{height:"40px"}}/>
-        </FormControl>
-        <div style={{display:"flex", gap:"10px"}}>
-          <FormControl>
-            <label>Price</label>
-            <InputBootstrapStyled sx={{height:"40px"}} />
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <FormControl fullWidth>
+            <label>Title</label>
+            <InputBootstrapStyled
+              {...register('title', { required: true })}
+              fullWidth
+              sx={{ height: '40px' }}
+            />
           </FormControl>
-          <FormControl>
-            <label>Date</label>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DatePicker className='datePicker' defaultValue={dayjs('2022-04-17')} />
-            </LocalizationProvider>
-          </FormControl>
-        </div>
-        <div style={{display:"flex", gap:"10px"}}>
-          <Button variant="outlined" onClick={()=>setIsExpenseModalOpen(false)}>Cancel</Button>
-          <Button variant="contained">Add</Button>
-        </div>
+          <div style={{ display: 'flex', gap: '10px' }}>
+            <FormControl>
+              <label>Price</label>
+              <InputBootstrapStyled
+                {...register('price', { required: true })}
+                sx={{ height: '40px' }}
+              />
+            </FormControl>
+            <FormControl>
+              <label>Date</label>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker
+                  className="datePicker"
+                  defaultValue={dayjs('2022-04-17')}
+                />
+              </LocalizationProvider>
+            </FormControl>
+          </div>
+          <div style={{ display: 'flex', gap: '10px' }}>
+            <Button
+              variant="outlined"
+              onClick={() => setIsExpenseModalOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button type="submit" variant="contained">
+              Add
+            </Button>
+          </div>
+        </form>
       </Modal>
     </>
   );

@@ -1,10 +1,11 @@
 import { Router } from "express";
 import User from "../models/User.js";
+import Expense from "../models/Expenses.js";
 const router = Router();
 
 export default router;
 
-router.get("/getAll", async (req, res) => {
+router.get("/getAll", async (res) => {
   try {
     const users = await User.find(); // This should return all users from the database
     if (!users) {
@@ -15,26 +16,48 @@ router.get("/getAll", async (req, res) => {
     res.status(500).json({ message: "Server Error", error: error.message });
   }
 });
-router.post("/addUser", async (req, res) => {
+router.post("/getUserByEmail", async (req, res) => {
   try {
-    // Ensure req.body has a username field
-    const { username } = req.body;
-
-    console.log(req.body);
-    if (!username) {
-      return res.status(400).json({ message: "Username is required" });
+    const { email } = req.body;
+    const user = await User.findOne({ email: email.toLowerCase().trim() });
+    if (!user) {
+      return res.json({ userExists: false });
     }
 
-    const newUser = new User({
-      username: username, // Correctly setting the username
-    });
+    res.json({ userExists: true, userData: user });
+  } catch (error) {
+    res.status(500).json({ message: "Server Error", error: error.message });
+  }
+});
+
+router.post("/addUser", async (req, res) => {
+  try {
+    if (!Object.keys(req.body).every((key) => req.body[key])) {
+      return res.status(400).json({ message: "Username is required" });
+    }
+    const newUser = new User({ ...req.body });
 
     await newUser.save();
-    res.json({ message: `User saved: ${username}` });
+    res.json({ message: "User saved" });
   } catch (error) {
     res
       .status(500)
       .json({ message: "Error saving user", error: error.message });
+  }
+});
+router.post("/addExpense", async (req, res) => {
+  try {
+    if (!Object.keys(req.body).every((key) => req.body[key])) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+    const newExpense = new Expense({ ...req.body });
+
+    await newExpense.save();
+    res.json({ message: "Expense saved" });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Error saving expense", error: error.message });
   }
 });
 

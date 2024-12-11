@@ -13,8 +13,12 @@ import { useForm } from 'react-hook-form';
 import { ReactJSX } from '@emotion/react/dist/declarations/src/jsx-namespace';
 import { checkAndThrowError } from '../../utils/shared';
 import { emailRegex } from '../../utils/shared';
+import { boolean } from 'yup';
+import { useState } from 'react';
 
 const LoginPage: React.FC = () => {
+  const [showUserNotFoundErr, setShowUserExistsError] =
+    useState<boolean>(false);
   const {
     register,
     handleSubmit,
@@ -22,9 +26,23 @@ const LoginPage: React.FC = () => {
   } = useForm();
   const navigate = useNavigate();
 
-  const onSubmit = (data: any) => {
-    console.log(data);
-    navigate('/dashboard');
+  const onSubmit = async (data: any) => {
+    const fetchFn = await fetch('http://localhost:3000/getUserByEmail', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email: data.email }),
+    });
+    if (fetchFn.ok) {
+      const { userExists, userData } = await fetchFn.json();
+      if (!userExists) {
+        setShowUserExistsError(true);
+      } else {
+        localStorage.setItem('UserId', userData._id);
+        navigate('/dashboard');
+      }
+    }
   };
 
   return (
@@ -80,6 +98,9 @@ const LoginPage: React.FC = () => {
             </Link>
           </div>
         </FormControl>
+        {showUserNotFoundErr && (
+          <p className="errors poppins-regular">User not found</p>
+        )}
         <SignupLoginBtn
           className={styles.loginBtn}
           variant="contained"

@@ -2,8 +2,11 @@ import mongoose from "mongoose";
 
 // User Schema
 const userSchema = new mongoose.Schema({
-  username: { type: String, required: true },
-  // other fields as necessary...
+  firstname: { type: String, required: true },
+  lastname: { type: String, required: true },
+  email: { type: String, required: true },
+  password: { type: String, required: true },
+  budgetlimit: { type: Number, required: true },
 });
 
 const User = mongoose.model("User", userSchema);

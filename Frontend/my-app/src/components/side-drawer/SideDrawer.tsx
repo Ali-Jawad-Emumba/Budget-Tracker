@@ -37,7 +37,14 @@ export default function SideDrawer({ open }: { open: boolean }) {
       icon: <ExpensesIcon />,
       action: () => setSelectedDashbpardTab('Expenses'),
     },
-    { text: 'Logout', icon: <LogoutIcon />, action: () => navigate('/') },
+    {
+      text: 'Logout',
+      icon: <LogoutIcon />,
+      action: () => {
+        localStorage.removeItem('UserId');
+        navigate('/');
+      },
+    },
   ];
 
   return (
