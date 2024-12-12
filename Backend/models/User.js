@@ -20,6 +20,7 @@ const userSchema = new mongoose.Schema({
   state: { type: String },
   url: { type: String },
   aboutme: { type: String },
+  profilepic: { type: String },
 });
 
 const User = mongoose.model("User", userSchema);

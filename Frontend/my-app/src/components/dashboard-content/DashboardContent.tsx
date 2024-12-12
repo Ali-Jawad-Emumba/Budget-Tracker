@@ -21,7 +21,7 @@ import {
 } from '@mui/material';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import { useState } from 'react';
-import Modal from '../modal/modal';
+import Modal from '../modal/Modal';
 import {
   DatePicker,
   DesktopDatePicker,

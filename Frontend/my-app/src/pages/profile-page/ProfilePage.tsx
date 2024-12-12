@@ -1,4 +1,11 @@
-import { Backdrop, Button, CircularProgress, Paper } from '@mui/material';
+import {
+  Avatar,
+  Backdrop,
+  Button,
+  CircularProgress,
+  Input,
+  Paper,
+} from '@mui/material';
 import ProfileAppBar from '../../components/profile-app-bar/ProfileAppBar';
 
 import ProfilePic from '../../assets/images/person profile.png';
@@ -17,6 +24,8 @@ import { storeUserData } from '../../app/store';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { fetchUserData, startUserIdCheckInterval } from '../../utils/shared';
+import Modal from '../../components/modal/Modal';
+import { profile } from 'console';
 
 const ProfilePage = () => {
   // const seletedProfileTab = useSelector(
@@ -26,9 +35,13 @@ const ProfilePage = () => {
     useState<string>('Profile');
   // const dispatch = useDispatch();
   const navigate = useNavigate();
-  const userData = useSelector((state: any) => state.userData);
+  let userData = useSelector((state: any) => state.userData);
   const [isLoading, setIsLoading] = useState<boolean>(!userData);
   const dispatch = useDispatch();
+  const [isProfilePicModalOpen, setIsProfilePicModalOpen] =
+    useState<boolean>(false);
+  const [base64ProfilePic, setBase64ProfilePic] = useState<any>();
+  const userId = localStorage.getItem('UserId');
 
   useEffect(() => {
     if (!userData) {
@@ -55,80 +68,144 @@ const ProfilePage = () => {
       </Backdrop>
     );
 
+  const convertProfilePicToBase64 = (file: any) => {
+    let base64Image;
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setBase64ProfilePic(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const saveProfilePic = async () => {
+    const updateDataFn = await fetch(`http://localHost:3000/users/${userId}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        profilepic: base64ProfilePic,
+      }),
+    });
+    const updatedUserData = await updateDataFn.json();
+    dispatch(storeUserData(updatedUserData));
+    setBase64ProfilePic(null);
+    setIsProfilePicModalOpen(false);
+  };
+
   return (
-    <div className={styles.pageLayout}>
-      <div className={styles.appBar}>
-        <ProfileAppBar />
-      </div>
-
-      <div className={styles.profileBar}>
-        <div className={styles.profileDiv}>
-          <div onClick={() => navigate('/dashboard')}>
-            <ArrowBackIcon />
-          </div>
-          <h1>Profile</h1>
+    <>
+      <div className={styles.pageLayout}>
+        <div className={styles.appBar}>
+          <ProfileAppBar />
         </div>
-        <p
-          onClick={() => setSelectedProfileTab('Profile')}
-          className={`${styles.profileTab} ${
-            selectedProfileTab === 'Profile' ? styles.selectedProfileTab : ''
-          }`}
-        >
-          Profile
-        </p>
-        <p
-          onClick={() => setSelectedProfileTab('My Account')}
-          className={`${styles.profileTab} ${
-            selectedProfileTab === 'My Account' ? styles.selectedProfileTab : ''
-          }`}
-        >
-          My Account
-        </p>
-      </div>
 
-      <div className={styles.pageBody}>
-        <Paper
-          sx={{
-            display: 'grid',
-            gridTemplateRows: '40% 60%',
-            backgroundColor: 'white',
-            borderRadius: '5px',
-            padding: '20px',
-            maxHeight: '350px',
-          }}
-        >
-          <div className={styles.userDetailsCard}>
-            <img className={styles.profilePic} src={ProfilePic} />
-            <h2>
-              {userData.firstname} {userData.lastname}
-            </h2>
-            {userData.jobtitle && <h3>{userData.jobtitle}</h3>}
+        <div className={styles.profileBar}>
+          <div className={styles.profileDiv}>
+            <div onClick={() => navigate('/dashboard')}>
+              <ArrowBackIcon />
+            </div>
+            <h1>Profile</h1>
           </div>
+          <p
+            onClick={() => setSelectedProfileTab('Profile')}
+            className={`${styles.profileTab} ${
+              selectedProfileTab === 'Profile' ? styles.selectedProfileTab : ''
+            }`}
+          >
+            Profile
+          </p>
+          <p
+            onClick={() => setSelectedProfileTab('My Account')}
+            className={`${styles.profileTab} ${
+              selectedProfileTab === 'My Account'
+                ? styles.selectedProfileTab
+                : ''
+            }`}
+          >
+            My Account
+          </p>
+        </div>
 
-          <ul className={styles.contactDetails}>
-            {userData.phone && (
+        <div className={styles.pageBody}>
+          <Paper
+            sx={{
+              display: 'grid',
+              gridTemplateRows: '40% 60%',
+              backgroundColor: 'white',
+              borderRadius: '5px',
+              padding: '20px',
+              maxHeight: '350px',
+            }}
+          >
+            <div className={styles.userDetailsCard}>
+              <img
+                onClick={() => setIsProfilePicModalOpen(true)}
+                className={styles.profilePic}
+                src={userData.profilepic || ProfilePic}
+              />
+              <h2>
+                {userData.firstname} {userData.lastname}
+              </h2>
+              {userData.jobtitle && <h3>{userData.jobtitle}</h3>}
+            </div>
+
+            <ul className={styles.contactDetails}>
+              {userData.phone && (
+                <li className={styles.contactDetailItem}>
+                  <PhoneIcon /> {userData.phone}
+                </li>
+              )}
               <li className={styles.contactDetailItem}>
-                <PhoneIcon /> {userData.phone}
+                <MailIcon /> {userData.email}
               </li>
-            )}
-            <li className={styles.contactDetailItem}>
-              <MailIcon /> {userData.email}
-            </li>
-            {userData.city && (
-              <li className={styles.contactDetailItem}>
-                <LocationIcon /> {userData.city}
-              </li>
-            )}
-            {userData.url && (
-              <li className={styles.contactDetailItem}>
-                <LinkIcon /> {userData.url}
-              </li>
-            )}
-          </ul>
-        </Paper>
-        {selectedProfileTab === 'Profile' ? <ProfileDetails /> : <MyAccount />}
+              {userData.city && (
+                <li className={styles.contactDetailItem}>
+                  <LocationIcon /> {userData.city}
+                </li>
+              )}
+              {userData.url && (
+                <li className={styles.contactDetailItem}>
+                  <LinkIcon /> {userData.url}
+                </li>
+              )}
+            </ul>
+          </Paper>
+          {selectedProfileTab === 'Profile' ? (
+            <ProfileDetails />
+          ) : (
+            <MyAccount />
+          )}
+        </div>
       </div>
-    </div>
+      <Modal
+        open={isProfilePicModalOpen}
+        setOpen={setIsProfilePicModalOpen}
+        title="Change Profile Pic"
+      >
+        <label>Select Profile Pic</label>
+        {
+          <Avatar
+            alt="Remy Sharp"
+            src={base64ProfilePic || userData.profilepic}
+          />
+        }
+        <input
+          type="file"
+          accept="image/*"
+          onChange={(e: any) => convertProfilePicToBase64(e.target.files[0])}
+        />
+        <Button
+          type="submit"
+          variant="contained"
+          color="primary"
+          onClick={saveProfilePic}
+          style={{ marginTop: '10px' }}
+        >
+          Save
+        </Button>
+      </Modal>
+    </>
   );
 };
 

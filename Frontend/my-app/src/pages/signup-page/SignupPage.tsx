@@ -40,6 +40,7 @@ const SignupPage: React.FC = () => {
       state: '',
       url: '',
       aboutme: '',
+      profilepic: '',
     };
     delete result.confirmedpassword;
     return JSON.stringify(result);

@@ -126,3 +126,9 @@
 .datePicker .css-193any7-MuiInputBase-root-MuiOutlinedInput-root {
   height: 40px;
 }
+.app-bar-profile-pic {
+  width: 40px;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: 100%;
+}
