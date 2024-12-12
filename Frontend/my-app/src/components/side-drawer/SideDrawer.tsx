@@ -17,8 +17,8 @@ import { AnalysisIcon, ExpensesIcon, LogoutIcon } from './DrawerIcons';
 import { useNavigate } from 'react-router-dom';
 import { Drawer, DrawerHeader } from '../../utils/styled-components';
 import { useDispatch, useSelector } from 'react-redux';
-import { updateSelectedDashboardTab } from '../../app/store';
 import { useState } from 'react';
+import { storeUserData } from '../../app/store';
 
 export default function SideDrawer({ open }: { open: boolean }) {
   const navigate = useNavigate();
@@ -26,6 +26,7 @@ export default function SideDrawer({ open }: { open: boolean }) {
   // const selectedDashboardTab=useSelector((state:any)=>state.selectedDashboardTab)
   const [selectedDashboardTab, setSelectedDashbpardTab] =
     useState<string>('Expenses');
+  const dispatch = useDispatch();
   const drawerItems = [
     {
       text: 'Analysis',
@@ -42,6 +43,7 @@ export default function SideDrawer({ open }: { open: boolean }) {
       icon: <LogoutIcon />,
       action: () => {
         localStorage.removeItem('UserId');
+        dispatch(storeUserData(null));
         navigate('/');
       },
     },

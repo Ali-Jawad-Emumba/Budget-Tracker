@@ -25,7 +25,22 @@ const SignupPage: React.FC = () => {
   } = useForm();
   const navigate = useNavigate();
   const getSignupDataBody = (data: any) => {
-    const result = { ...data };
+    let result = {
+      ...data,
+      fathername: '',
+      gender: '',
+      phone: '',
+      zipcode: '',
+      education: '',
+      dob: '',
+      address: '',
+      jobtitle: '',
+      street: '',
+      city: '',
+      state: '',
+      url: '',
+      aboutme: '',
+    };
     delete result.confirmedpassword;
     return JSON.stringify(result);
   };

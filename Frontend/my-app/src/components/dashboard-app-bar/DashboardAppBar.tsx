@@ -1,7 +1,7 @@
-import { BellIcon, SubjectIcon } from "../../pages/Dashboard/DashboardIcons";
-import styles from "./DashboardAppBar.module.css";
-import profilePic from "../../assets/images/person profile.png";
-import { useNavigate } from "react-router-dom";
+import { BellIcon, SubjectIcon } from '../../pages/dashboard/DashboardIcons';
+import styles from './DashboardAppBar.module.css';
+import profilePic from '../../assets/images/person profile.png';
+import { useNavigate } from 'react-router-dom';
 
 const DashboardAppBar = ({ toggleDrawer }: { toggleDrawer: any }) => {
   const navigate = useNavigate();
@@ -15,7 +15,7 @@ const DashboardAppBar = ({ toggleDrawer }: { toggleDrawer: any }) => {
         <img
           width="40px"
           src={profilePic}
-          onClick={() => navigate("/profile")}
+          onClick={() => navigate('/profile')}
         />
       </div>
     </div>

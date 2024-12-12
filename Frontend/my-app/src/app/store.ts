@@ -6,24 +6,20 @@ import {
 } from '@reduxjs/toolkit';
 
 const initialState = {
-  selectedDashboardTab: 'Expenses',
-  seletedProfileTab: 'Profile',
+  userData: null,
 };
 const slice = createSlice({
   name: 'Slice',
   initialState,
   reducers: {
-    updateSelectedDashboardTab(state, action) {
-      state.selectedDashboardTab = action.payload;
-    },
-    updateSelectedProfileTab(state, action) {
-      state.seletedProfileTab = action.payload;
+    storeUserData(state, action) {
+      console.log(state.userData);
+      state.userData = action.payload;
     },
   },
 });
 
-export const { updateSelectedDashboardTab, updateSelectedProfileTab } =
-  slice.actions;
+export const { storeUserData } = slice.actions;
 
 export const store = configureStore({
   reducer: slice.reducer,

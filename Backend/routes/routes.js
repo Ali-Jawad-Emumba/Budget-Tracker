@@ -29,12 +29,21 @@ router.post("/getUserByEmail", async (req, res) => {
     res.status(500).json({ message: "Server Error", error: error.message });
   }
 });
+router.post("/getUserById", async (req, res) => {
+  try {
+    const { id } = req.body;
+    const user = await User.findOne({ _id: id.trim() });
+    if (!user) {
+      return res.status(404).json({ mssage: "User not found" });
+    }
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ message: "Server Error", error: error.message });
+  }
+});
 
 router.post("/addUser", async (req, res) => {
   try {
-    if (!Object.keys(req.body).every((key) => req.body[key])) {
-      return res.status(400).json({ message: "Username is required" });
-    }
     const newUser = new User({ ...req.body });
 
     await newUser.save();
@@ -58,6 +67,24 @@ router.post("/addExpense", async (req, res) => {
     res
       .status(500)
       .json({ message: "Error saving expense", error: error.message });
+  }
+});
+router.patch("/users/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updatedData = req.body;
+
+    const updatedItem = await User.findByIdAndUpdate(id, updatedData, {
+      new: true,
+    });
+
+    if (!updatedItem) {
+      return res.status(404).send({ message: "Item not found" });
+    }
+
+    res.json(updatedItem);
+  } catch (error) {
+    res.status(500).send({ message: "Error updating item", error });
   }
 });
 
