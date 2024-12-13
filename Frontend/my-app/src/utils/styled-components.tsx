@@ -53,7 +53,7 @@ export const DashboardButton = styled(Button)(() => ({
   height: 'fit-content',
   color: 'white',
   textTransform: 'none',
-  fontSize: '1.4rem',
+  fontSize: '0.875rem',
 }));
 
 export const openedMixin = (theme: Theme): CSSObject => ({

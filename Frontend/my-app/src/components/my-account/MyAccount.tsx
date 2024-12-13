@@ -139,7 +139,7 @@ const MyAccount = () => {
             <DashboardButton type="submit">Update</DashboardButton>
             <Button
               variant="text"
-              sx={{ width: '100px', fontSize: '1.2rem', color: 'black' }}
+              sx={{ width: '100px', fontSize: '0.75rem', color: 'black' }}
             >
               Cancel
             </Button>

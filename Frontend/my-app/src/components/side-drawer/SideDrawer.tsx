@@ -118,7 +118,7 @@ export default function SideDrawer({ open }: { open: boolean }) {
                         opacity: 0,
                       },
                 ]}
-                className={styles.drawerItemText}
+                className={`${styles.drawerItemText} dashboard-drawer-item-text`}
               />
             </ListItemButton>
           </ListItem>

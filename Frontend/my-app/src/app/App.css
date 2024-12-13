@@ -1,5 +1,5 @@
 .errors {
-  font-size: 1.2rem;
+  font-size: 0.75rem;
   color: red;
 }
 
@@ -36,6 +36,7 @@
 .poppins-semibold {
   font-family: 'Poppins', sans-serif;
   font-weight: 600;
+  font-size: 1rem;
   font-style: normal;
 }
 
@@ -121,7 +122,7 @@
 .profile-card-heading h1 {
   font-family: 'Poppins';
   font-weight: 600;
-  font-size: 1.6rem;
+  font-size: 1rem;
 }
 .datePicker .css-193any7-MuiInputBase-root-MuiOutlinedInput-root {
   height: 40px;
@@ -131,4 +132,7 @@
   aspect-ratio: 1;
   object-fit: cover;
   border-radius: 100%;
+}
+.dashboard-drawer-item-text .css-rizt0-MuiTypography-root {
+  font-size: 0.875rem !important;
 }

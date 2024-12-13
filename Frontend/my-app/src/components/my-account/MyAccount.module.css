@@ -17,12 +17,12 @@
 }
 .accountDetailDiv h2 {
   font-family: Roboto;
-  font-size: 1.6rem;
   font-weight: 600;
+  font-size: 0.875rem;
 }
 .accountDetailDiv label {
   font-family: Poppins;
-  font-size: 1.4rem;
+  font-size: 0.875rem;
   font-weight: 400;
   color: #616161;
 }

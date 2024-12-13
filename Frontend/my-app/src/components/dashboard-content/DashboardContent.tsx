@@ -84,9 +84,7 @@ const DashboardContent = ({ dataFor }: { dataFor: string }) => {
         </div>
         <div className={styles.dataTable}>
           <div className={styles.tableHeader}>
-            <h1 className="poppins-semibold" style={{ fontSize: '1.6rem' }}>
-              {dataFor}
-            </h1>
+            <h1 className="poppins-semibold">{dataFor}</h1>
             <div className={styles.filters}>
               <div className={styles.filterDiv}>
                 <div className={styles.filter}>

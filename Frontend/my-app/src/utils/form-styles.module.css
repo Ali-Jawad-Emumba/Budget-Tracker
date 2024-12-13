@@ -3,36 +3,31 @@
   justify-content: space-between;
 }
 .welcomeText h1 {
-  font-size: 3.2rem;
+  font-size: 2rem;
   margin: 0;
 }
 .welcomeText h2 {
-  font-size: 2.4rem;
+  font-size: 1.5rem;
   color: #878a99;
   margin-top: 0;
 }
 .label {
   font-family: 'Poppins';
   font-weight: 400;
-  font-size: 1.4rem;
+  font-size: 0.875rem;
   display: flex;
   align-items: center;
 }
 .link {
   text-decoration: none;
   color: #7539ff;
-  font-size: 1.6rem;
 }
-.rememberBtn {
-  font-size: 1.6rem;
-}
+
 .loginBtn {
   font-family: 'Roboto';
   font-weight: 600;
-  font-size: 1.6rem !important;
 }
 .signupLine {
-  font-size: 1.6rem;
   margin: auto;
 }
 .gapTen {
