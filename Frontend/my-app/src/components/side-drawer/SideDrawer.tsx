@@ -11,7 +11,7 @@ import {
   ListItemText,
 } from '@mui/material';
 
-import Logo from '../Logo/Logo';
+import Logo from '../logo/Logo';
 import logo from '../../assets/images/logo.png';
 import { AnalysisIcon, ExpensesIcon, LogoutIcon } from './DrawerIcons';
 import { useNavigate } from 'react-router-dom';

@@ -27,7 +27,9 @@ const LoginPage: React.FC = () => {
   const navigate = useNavigate();
 
   const onSubmit = async (data: any) => {
-    const fetchFn = await fetch(`http://localhost:3000/users/${data.email}`);
+    const fetchFn = await fetch(
+      `http://localhost:3000/users/email/${data.email}`
+    );
     if (fetchFn.ok) {
       const { userExists, userData } = await fetchFn.json();
       if (!userExists) {
@@ -35,6 +37,7 @@ const LoginPage: React.FC = () => {
       } else {
         if (userData.password === data.password.trim()) {
           localStorage.setItem('UserId', userData._id);
+          localStorage.setItem('Budget', userData.budgetlimit);
           navigate('/dashboard');
         }
       }

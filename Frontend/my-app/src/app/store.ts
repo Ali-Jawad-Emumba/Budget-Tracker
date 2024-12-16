@@ -8,12 +8,12 @@ import {
 const initialState = {
   userData: null,
 };
+
 const slice = createSlice({
   name: 'Slice',
   initialState,
   reducers: {
     storeUserData(state, action) {
-      console.log(state.userData);
       state.userData = action.payload;
     },
   },

@@ -16,7 +16,7 @@ router.get("/users", async (res) => {
     res.status(500).json({ message: "Server Error", error: error.message });
   }
 });
-router.get("/users/:email", async (req, res) => {
+router.get("/users/email/:email", async (req, res) => {
   try {
     const email = req.params.email;
     const user = await User.findOne({ email: email.toLowerCase().trim() });
@@ -32,7 +32,7 @@ router.get("/users/:email", async (req, res) => {
 router.get("/users/:id", async (req, res) => {
   try {
     const id = req.params.id;
-    const user = await User.findOne({ _id: id.trim() });
+    const user = await User.findOne({ _id: id });
     if (!user) {
       return res.status(404).json({ mssage: "User not found" });
     }
@@ -54,7 +54,7 @@ router.post("/users", async (req, res) => {
       .json({ message: "Error saving user", error: error.message });
   }
 });
-router.post("/expenses/:id", async (req, res) => {
+router.post("/users/:id/expenses", async (req, res) => {
   try {
     if (!Object.keys(req.body).every((key) => req.body[key])) {
       return res.status(400).json({ message: "All fields are required" });
@@ -70,8 +70,70 @@ router.post("/expenses/:id", async (req, res) => {
       .json({ message: "Error saving expense", error: error.message });
   }
 });
-router.get("/expenses/:id", async (req, res) => {});
+router.get("/users/:id/expenses", async (req, res) => {
+  try {
+    const id = req.params.id;
+    const { page = 1, limit = 10 } = req.query; // Default values
 
+    // Parse `page` and `limit` to integers
+    const pageNumber = parseInt(page, 10);
+    const limitNumber = parseInt(limit, 10);
+
+    const expenses = await Expense.find({ userId: id })
+      .skip((pageNumber - 1) * limitNumber) // Skip records for previous pages
+      .limit(limitNumber) // Limit the number of records
+      .exec();
+    const totalDocuments = await Expense.countDocuments();
+    if (!expenses) {
+      return res.status(404).json({ mssage: "Expenses not found" });
+    }
+    res.json({
+      totalPages: Math.ceil(totalDocuments / limitNumber),
+      currentPage: pageNumber,
+      totalRecords: totalDocuments,
+      data: expenses,
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Server Error", error: error.message });
+  }
+});
+router.patch("/expenses/:id", async (req, res) => {
+  try {
+    const id = req.params.id;
+    const updatedData = req.body;
+    const updatedItem = await Expense.findByIdAndUpdate(id, updatedData, {
+      new: true, //returns the updated document if this is false it will return original doc
+    });
+
+    if (!updatedItem) {
+      return res.status(404).send({ message: "Item not found" });
+    }
+    res.json(updatedItem);
+  } catch (error) {
+    res.status(500).send({ message: "Error updating item", error: error });
+  }
+});
+router.delete("/expenses/:id", async (req, res) => {
+  try {
+    const id = req.params.id;
+
+    // Check if the expense exists before trying to delete it
+    const expense = await Expense.findById(id);
+
+    if (!expense) {
+      return res.status(404).json({ message: "Expense not found" });
+    }
+
+    // If the expense exists, proceed to delete it
+    await Expense.findByIdAndDelete(id);
+
+    res.status(200).json({ message: "Expense deleted successfully" });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Error deleting expense", error: error.message });
+  }
+});
 router.patch("/users/:id", async (req, res) => {
   try {
     const { id } = req.params;

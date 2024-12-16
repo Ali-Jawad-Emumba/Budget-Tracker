@@ -3,6 +3,9 @@ import {
   Backdrop,
   Button,
   CircularProgress,
+  Dialog,
+  DialogContent,
+  DialogTitle,
   Input,
   Paper,
 } from '@mui/material';
@@ -24,8 +27,6 @@ import { storeUserData } from '../../app/store';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { fetchUserData, startUserIdCheckInterval } from '../../utils/shared';
-import Modal from '../../components/modal/Modal';
-import { profile } from 'console';
 
 const ProfilePage = () => {
   // const seletedProfileTab = useSelector(
@@ -47,6 +48,7 @@ const ProfilePage = () => {
     if (!userData) {
       (async () => {
         const data = await fetchUserData();
+        console.log(data);
         dispatch(storeUserData({ ...data }));
         setIsLoading(false);
       })();
@@ -178,33 +180,35 @@ const ProfilePage = () => {
           )}
         </div>
       </div>
-      <Modal
+      <Dialog
+        onClose={() => setIsProfilePicModalOpen(false)}
         open={isProfilePicModalOpen}
-        setOpen={setIsProfilePicModalOpen}
-        title="Change Profile Pic"
       >
-        <label>Select Profile Pic</label>
-        {
-          <Avatar
-            alt="Remy Sharp"
-            src={base64ProfilePic || userData.profilepic}
+        <DialogTitle>Change Profile Pic</DialogTitle>
+        <DialogContent>
+          <label>Select Profile Pic</label>
+          {
+            <Avatar
+              alt="Remy Sharp"
+              src={base64ProfilePic || userData.profilepic}
+            />
+          }
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(e: any) => convertProfilePicToBase64(e.target.files[0])}
           />
-        }
-        <input
-          type="file"
-          accept="image/*"
-          onChange={(e: any) => convertProfilePicToBase64(e.target.files[0])}
-        />
-        <Button
-          type="submit"
-          variant="contained"
-          color="primary"
-          onClick={saveProfilePic}
-          style={{ marginTop: '10px' }}
-        >
-          Save
-        </Button>
-      </Modal>
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            onClick={saveProfilePic}
+            style={{ marginTop: '10px' }}
+          >
+            Save
+          </Button>
+        </DialogContent>
+      </Dialog>
     </>
   );
 };

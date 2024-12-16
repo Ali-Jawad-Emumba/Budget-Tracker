@@ -11,16 +11,19 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import {
+  Box,
   Button,
   FormControl,
   InputAdornment,
+  LinearProgress,
   MenuItem,
   Pagination,
   Select,
   TextField,
+  Typography,
 } from '@mui/material';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   DatePicker,
   DesktopDatePicker,
@@ -32,36 +35,112 @@ import { useForm } from 'react-hook-form';
 import { DeleteIcon, EditIcon } from '../../pages/dashboard/DashboardIcons';
 import ExpenseModal from '../ExpenseModal';
 
-function createData(
-  name: string,
-  calories: number,
-  fat: number,
-  carbs: number,
-  protein: number
-) {
-  return { name, calories, fat, carbs, protein };
-}
-
-const rows = [
-  createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-  createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-  createData('Eclair', 262, 16.0, 24, 6.0),
-];
 const DashboardContent = ({ dataFor }: { dataFor: string }) => {
   const [isAddExpenseModalOpen, setIsAddExpenseModalOpen] =
     useState<boolean>(false);
   const [isEditExpenseModalOpen, setIsEditExpenseModalOpen] =
     useState<boolean>(false);
   const [expenseDate, setExpenseDate] = useState<string>();
+  const [originalExpensesData, setOriginalExpensesData] = useState<any>();
+  const [filteredExpensesData, setFilteredExpensesData] = useState<any>();
+  const [expenseBeingEdit, setExpenseBeingEdit] = useState<any>();
+  const [sortFilterValue, setSortFilterValue] = useState<string>('');
+  const [dateFilter, setDateFilter] = useState<any>();
+  const [search, setSearch] = useState<string>();
+  const [expenseMetaData, setExpenseMetaData] = useState<any>();
+  const [selectedPage, setSelectedPage] = useState<number>(1);
+  const userId = localStorage.getItem('UserId');
+  const filterData = ({
+    sortValue,
+    dateValue,
+    search,
+  }: {
+    sortValue?: string;
+    dateValue?: any | null;
+    search?: string;
+  }) => {
+    let result = [...originalExpensesData];
 
-  const actionButtons = (
-    <div style={{ display: 'flex', gap: '10px' }}>
-      <DeleteIcon />
-      <div onClick={() => setIsEditExpenseModalOpen(true)}>
-        <EditIcon />
-      </div>
-    </div>
-  );
+    // Apply sort filter
+    if (sortValue) {
+      switch (sortValue) {
+        case 'low to high':
+          result = result.sort((a: any, b: any) =>
+            a.price === b.price ? 0 : a.price < b.price ? -1 : 1
+          );
+          break;
+        case 'high to low':
+          result = result.sort((a: any, b: any) =>
+            a.price === b.price ? 0 : a.price < b.price ? 1 : -1
+          );
+          break;
+      }
+    }
+
+    // Apply date filter
+    if (dateValue) {
+      result = result.filter(
+        (expense: any) =>
+          new Date(expense.date).toLocaleDateString() ===
+          new Date(dateValue).toLocaleDateString()
+      );
+    }
+
+    // Apply search filter
+    if (search) {
+      const searchLower = search.toLowerCase();
+      result = result.filter((expense: any) =>
+        expense.title.toLowerCase().includes(searchLower)
+      );
+    }
+
+    setFilteredExpensesData(result);
+  };
+  const getExpenses = async () => {
+    const fetchFn = await fetch(
+      `http://localhost:3000/users/${userId}/expenses?page=${selectedPage}`
+    );
+    const response = await fetchFn.json();
+    setExpenseMetaData(response);
+    const data = response.data;
+    setOriginalExpensesData(data);
+    setFilteredExpensesData(data);
+  };
+
+  useEffect(() => {
+    (async () => await getExpenses())();
+  }, []);
+
+  const deleteExpense = async (expenseId: number) => {
+    const response = await fetch(
+      `http://localHost:3000/expenses/${expenseId}`,
+      {
+        method: 'DELETE',
+      }
+    );
+    if (response.ok) {
+      await getExpenses();
+    }
+  };
+
+  const budgetLimit: any = localStorage.getItem('Budget');
+  const ProgressBar = ({ price }: { price: number }) => {
+    const value = price > budgetLimit ? 100 : (price / budgetLimit) * 100;
+
+    return (
+      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+        <Box sx={{ width: '100%', mr: 1 }}>
+          <LinearProgress variant="determinate" value={value} />
+        </Box>
+        <Box sx={{ minWidth: 35 }}>
+          <Typography
+            variant="body2"
+            sx={{ color: 'text.secondary' }}
+          >{`${Math.round(value)}%`}</Typography>
+        </Box>
+      </Box>
+    );
+  };
   return (
     <>
       <div className={styles.dashboardContent}>
@@ -87,13 +166,20 @@ const DashboardContent = ({ dataFor }: { dataFor: string }) => {
 
                 <Select
                   fullWidth
-                  value="All"
+                  value={sortFilterValue}
                   sx={{ height: '40px', width: '150px' }}
-                  onChange={() => {}}
+                  onChange={(e) => {
+                    setSortFilterValue(e.target.value);
+                    filterData({
+                      sortValue: e.target.value,
+                      dateValue: dateFilter,
+                      search: search,
+                    });
+                  }}
                 >
-                  <MenuItem value={10}>Ten</MenuItem>
-                  <MenuItem value={20}>Twenty</MenuItem>
-                  <MenuItem value={30}>Thirty</MenuItem>
+                  <MenuItem value="">None</MenuItem>
+                  <MenuItem value="low to high">Price: Low to High</MenuItem>
+                  <MenuItem value="high to low">Price: High to Low</MenuItem>
                 </Select>
               </div>
               <div>
@@ -107,7 +193,15 @@ const DashboardContent = ({ dataFor }: { dataFor: string }) => {
                     <DatePicker
                       className="datePicker"
                       sx={{ height: '40px' }}
-                      defaultValue={dayjs('2022-04-17')}
+                      onChange={(e) => {
+                        setDateFilter(e);
+                        filterData({
+                          sortValue: sortFilterValue,
+                          dateValue: e,
+                          search: search,
+                        });
+                      }}
+                      defaultValue={dayjs(new Date())}
                     />
                   </LocalizationProvider>
                 </div>
@@ -119,6 +213,14 @@ const DashboardContent = ({ dataFor }: { dataFor: string }) => {
                   sx={{ m: 1, width: '300px' }}
                   className={styles.searchBox}
                   placeholder="Search"
+                  onInput={(e: any) => {
+                    setSearch(e.target.value);
+                    filterData({
+                      sortValue: sortFilterValue,
+                      dateValue: dateFilter,
+                      search: e.target.value,
+                    });
+                  }}
                   slotProps={{
                     input: {
                       startAdornment: (
@@ -147,23 +249,52 @@ const DashboardContent = ({ dataFor }: { dataFor: string }) => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {rows.map((row) => (
-                  <TableRow key={row.name}>
+                {filteredExpensesData?.map((row: any) => (
+                  <TableRow key={row._id}>
                     <TableCell component="th" scope="row">
-                      {row.name}
+                      {row.title}
                     </TableCell>
-                    <TableCell>{row.calories}</TableCell>
-                    <TableCell>{row.fat}</TableCell>
-                    <TableCell>{row.carbs}</TableCell>
-                    <TableCell>{actionButtons}</TableCell>
+                    <TableCell>
+                      <ProgressBar price={row.price} />
+                    </TableCell>
+                    <TableCell>{row.price}</TableCell>
+                    <TableCell>{row.date}</TableCell>
+                    <TableCell>
+                      {
+                        <div style={{ display: 'flex', gap: '10px' }}>
+                          <div onClick={() => deleteExpense(row._id)}>
+                            <DeleteIcon />
+                          </div>
+                          <div
+                            onClick={() => {
+                              setExpenseBeingEdit(row),
+                                setIsEditExpenseModalOpen(true);
+                            }}
+                          >
+                            <EditIcon />
+                          </div>
+                        </div>
+                      }
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
 
             <div className={styles.paginationDiv}>
-              <caption className="poppins-regular">Showing 3/25</caption>
-              <Pagination count={10} variant="outlined" shape="rounded" />
+              <caption className="poppins-regular">
+                Showing {filteredExpensesData?.length}/
+                {expenseMetaData?.totalRecords}
+              </caption>
+              <Pagination
+                count={expenseMetaData?.totalPages}
+                variant="outlined"
+                shape="rounded"
+                onChange={(_, page) => {
+                  setSelectedPage(page);
+                  getExpenses();
+                }}
+              />
             </div>
           </TableContainer>
         </div>
@@ -172,11 +303,14 @@ const DashboardContent = ({ dataFor }: { dataFor: string }) => {
         useFor="Add"
         isOpen={isAddExpenseModalOpen}
         setIsOpen={setIsAddExpenseModalOpen}
+        reloadData={getExpenses}
       />
       <ExpenseModal
         useFor="Edit"
         isOpen={isEditExpenseModalOpen}
         setIsOpen={setIsEditExpenseModalOpen}
+        expenseBeingEdit={expenseBeingEdit}
+        reloadData={getExpenses}
       />
     </>
   );
