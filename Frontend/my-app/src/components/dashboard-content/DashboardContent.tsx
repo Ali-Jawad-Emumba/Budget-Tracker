@@ -21,7 +21,6 @@ import {
 } from '@mui/material';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import { useState } from 'react';
-import Modal from '../modal/Modal';
 import {
   DatePicker,
   DesktopDatePicker,
@@ -30,6 +29,8 @@ import {
 import dayjs from 'dayjs';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { useForm } from 'react-hook-form';
+import { DeleteIcon, EditIcon } from '../../pages/dashboard/DashboardIcons';
+import ExpenseModal from '../ExpenseModal';
 
 function createData(
   name: string,
@@ -47,36 +48,27 @@ const rows = [
   createData('Eclair', 262, 16.0, 24, 6.0),
 ];
 const DashboardContent = ({ dataFor }: { dataFor: string }) => {
-  const [isExpenseModalOpen, setIsExpenseModalOpen] = useState<boolean>(false);
+  const [isAddExpenseModalOpen, setIsAddExpenseModalOpen] =
+    useState<boolean>(false);
+  const [isEditExpenseModalOpen, setIsEditExpenseModalOpen] =
+    useState<boolean>(false);
   const [expenseDate, setExpenseDate] = useState<string>();
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm();
-  const onSubmit = async (data: any) => {
-    const userId = localStorage.getItem('UserId');
-    const response = await fetch('http://localhost:3000/addExpense', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        userId: userId,
-        title: data.title,
-        price: data.price,
-        date: data.date || new Date().toLocaleDateString(),
-      }),
-    });
-    if (response.ok) setIsExpenseModalOpen(false);
-  };
+
+  const actionButtons = (
+    <div style={{ display: 'flex', gap: '10px' }}>
+      <DeleteIcon />
+      <div onClick={() => setIsEditExpenseModalOpen(true)}>
+        <EditIcon />
+      </div>
+    </div>
+  );
   return (
     <>
       <div className={styles.dashboardContent}>
         <div className={styles.dataTableHeader}>
           <h1 className="poppins-semibold">{dataFor}</h1>
           <DashboardButton
-            onClick={() => setIsExpenseModalOpen(true)}
+            onClick={() => setIsAddExpenseModalOpen(true)}
             sx={{ margin: 'auto 0' }}
           >
             Add {dataFor}
@@ -147,11 +139,11 @@ const DashboardContent = ({ dataFor }: { dataFor: string }) => {
             <Table sx={{ minWidth: 650 }} aria-label="caption table">
               <TableHead>
                 <TableRow>
-                  <TableCell>Dessert (100g serving)</TableCell>
-                  <TableCell align="right">Calories</TableCell>
-                  <TableCell align="right">Fat&nbsp;(g)</TableCell>
-                  <TableCell align="right">Carbs&nbsp;(g)</TableCell>
-                  <TableCell align="right">Protein&nbsp;(g)</TableCell>
+                  <TableCell>Expense</TableCell>
+                  <TableCell>Total Expenditure</TableCell>
+                  <TableCell>Price(PKR)</TableCell>
+                  <TableCell>Date</TableCell>
+                  <TableCell>Actions</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -160,10 +152,10 @@ const DashboardContent = ({ dataFor }: { dataFor: string }) => {
                     <TableCell component="th" scope="row">
                       {row.name}
                     </TableCell>
-                    <TableCell align="right">{row.calories}</TableCell>
-                    <TableCell align="right">{row.fat}</TableCell>
-                    <TableCell align="right">{row.carbs}</TableCell>
-                    <TableCell align="right">{row.protein}</TableCell>
+                    <TableCell>{row.calories}</TableCell>
+                    <TableCell>{row.fat}</TableCell>
+                    <TableCell>{row.carbs}</TableCell>
+                    <TableCell>{actionButtons}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -176,51 +168,16 @@ const DashboardContent = ({ dataFor }: { dataFor: string }) => {
           </TableContainer>
         </div>
       </div>
-      <Modal
-        open={isExpenseModalOpen}
-        setOpen={setIsExpenseModalOpen}
-        title="Add Expense"
-      >
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <FormControl fullWidth>
-            <label>Title</label>
-            <InputBootstrapStyled
-              {...register('title', { required: true })}
-              fullWidth
-              sx={{ height: '40px' }}
-            />
-          </FormControl>
-          <div style={{ display: 'flex', gap: '10px' }}>
-            <FormControl>
-              <label>Price</label>
-              <InputBootstrapStyled
-                {...register('price', { required: true })}
-                sx={{ height: '40px' }}
-              />
-            </FormControl>
-            <FormControl>
-              <label>Date</label>
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DatePicker
-                  className="datePicker"
-                  defaultValue={dayjs('2022-04-17')}
-                />
-              </LocalizationProvider>
-            </FormControl>
-          </div>
-          <div style={{ display: 'flex', gap: '10px' }}>
-            <Button
-              variant="outlined"
-              onClick={() => setIsExpenseModalOpen(false)}
-            >
-              Cancel
-            </Button>
-            <Button type="submit" variant="contained">
-              Add
-            </Button>
-          </div>
-        </form>
-      </Modal>
+      <ExpenseModal
+        useFor="Add"
+        isOpen={isAddExpenseModalOpen}
+        setIsOpen={setIsAddExpenseModalOpen}
+      />
+      <ExpenseModal
+        useFor="Edit"
+        isOpen={isEditExpenseModalOpen}
+        setIsOpen={setIsEditExpenseModalOpen}
+      />
     </>
   );
 };

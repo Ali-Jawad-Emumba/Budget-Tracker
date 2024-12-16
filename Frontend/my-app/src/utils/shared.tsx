@@ -21,14 +21,7 @@ export const startUserIdCheckInterval = (navigate: any) => {
 
 export const fetchUserData = async () => {
   const userId = localStorage.getItem('UserId');
-  const fetchFn = await fetch('http://localHost:3000/getUserById', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ id: userId }),
-  });
-
+  const fetchFn = await fetch(`http://localHost:3000/users/${userId}`);
   const response = await fetchFn.json();
   const data = response;
   return data;

@@ -27,20 +27,16 @@ const LoginPage: React.FC = () => {
   const navigate = useNavigate();
 
   const onSubmit = async (data: any) => {
-    const fetchFn = await fetch('http://localhost:3000/getUserByEmail', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email: data.email }),
-    });
+    const fetchFn = await fetch(`http://localhost:3000/users/${data.email}`);
     if (fetchFn.ok) {
       const { userExists, userData } = await fetchFn.json();
       if (!userExists) {
         setShowUserExistsError(true);
       } else {
-        localStorage.setItem('UserId', userData._id);
-        navigate('/dashboard');
+        if (userData.password === data.password.trim()) {
+          localStorage.setItem('UserId', userData._id);
+          navigate('/dashboard');
+        }
       }
     }
   };

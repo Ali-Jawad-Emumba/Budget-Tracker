@@ -47,18 +47,12 @@ const SignupPage: React.FC = () => {
   };
 
   const onSubmit = async (data: any) => {
-    const fetchFn = await fetch('http://localhost:3000/getUserByEmail', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email: data.email }),
-    });
+    const fetchFn = await fetch(`http://localhost:3000/users/${data.email}`);
     const { userExists } = await fetchFn.json();
     if (userExists) {
       setShowUserExistsError(true);
     } else {
-      const response = await fetch('http://localhost:3000/addUser', {
+      const response = await fetch('http://localhost:3000/users', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

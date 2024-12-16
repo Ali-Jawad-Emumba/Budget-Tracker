@@ -127,6 +127,9 @@
 .datePicker .css-193any7-MuiInputBase-root-MuiOutlinedInput-root {
   height: 40px;
 }
+.datePicker .css-1dune0f-MuiInputBase-input-MuiOutlinedInput-input {
+  font-size: 0.875rem !important;
+}
 .app-bar-profile-pic {
   width: 40px;
   aspect-ratio: 1;
