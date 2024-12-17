@@ -13,41 +13,73 @@ import {
 
 import Logo from '../logo/Logo';
 import logo from '../../assets/images/logo.png';
-import { AnalysisIcon, ExpensesIcon, LogoutIcon } from './DrawerIcons';
+import {
+  AnalysisIcon,
+  ExpensesIcon,
+  LogoutIcon,
+  UsersIcon,
+} from './DrawerIcons';
 import { useNavigate } from 'react-router-dom';
 import { Drawer, DrawerHeader } from '../../utils/styled-components';
 import { useDispatch, useSelector } from 'react-redux';
-import { useState } from 'react';
-import { storeUserData } from '../../app/store';
+import { useEffect, useState } from 'react';
+import {
+  storeSelectedDashboardTab,
+  storeUserData,
+  updateIsAdmin,
+} from '../../app/store';
 
 export default function SideDrawer({ open }: { open: boolean }) {
   const navigate = useNavigate();
-  // const dispatch = useDispatch();
-  // const selectedDashboardTab=useSelector((state:any)=>state.selectedDashboardTab)
-  const [selectedDashboardTab, setSelectedDashbpardTab] =
-    useState<string>('Expenses');
   const dispatch = useDispatch();
-  const drawerItems = [
+  const [selectedDashboardTab, setSelectedDashboardTab] =
+    useState<string>('Expenses');
+  const isAdmin = useSelector((state: any) => state.isAdmin);
+  const [drawerItems, setDrawerItems] = useState<any>([
     {
       text: 'Analysis',
       icon: <AnalysisIcon />,
-      action: () => setSelectedDashbpardTab('Analysis'),
+      action: () => {
+        dispatch(storeSelectedDashboardTab('Analysis'));
+        setSelectedDashboardTab('Analysis');
+      },
     },
     {
       text: 'Expenses',
       icon: <ExpensesIcon />,
-      action: () => setSelectedDashbpardTab('Expenses'),
+      action: () => {
+        dispatch(storeSelectedDashboardTab('Expenses'));
+        setSelectedDashboardTab('Expenses');
+      },
     },
     {
       text: 'Logout',
       icon: <LogoutIcon />,
       action: () => {
         localStorage.removeItem('UserId');
+        localStorage.removeItem('isAdmin');
+        dispatch(updateIsAdmin(false));
+        dispatch(storeSelectedDashboardTab('Expenses'));
         dispatch(storeUserData(null));
         navigate('/');
       },
     },
-  ];
+  ]);
+
+  useEffect(() => {
+    if (isAdmin && drawerItems.every((item: any) => item.text !== 'Users')) {
+      const adminDrawer = [...drawerItems];
+      adminDrawer.splice(2, 0, {
+        text: 'Users',
+        icon: <UsersIcon />,
+        action: () => {
+          dispatch(storeSelectedDashboardTab('Users'));
+          setSelectedDashboardTab('Users');
+        },
+      });
+      setDrawerItems(adminDrawer);
+    }
+  }, []);
 
   return (
     <Drawer variant="permanent" open={open}>
@@ -62,7 +94,7 @@ export default function SideDrawer({ open }: { open: boolean }) {
       </DrawerHeader>
       <Divider />
       <List className={styles.drawerItemsList}>
-        {drawerItems.map((item) => (
+        {drawerItems.map((item: any) => (
           <ListItem
             key={item.text}
             disablePadding

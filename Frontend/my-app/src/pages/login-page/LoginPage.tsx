@@ -15,6 +15,8 @@ import { checkAndThrowError } from '../../utils/shared';
 import { emailRegex } from '../../utils/shared';
 import { boolean } from 'yup';
 import { useState } from 'react';
+import { updateIsAdmin } from '../../app/store';
+import { useDispatch } from 'react-redux';
 
 const LoginPage: React.FC = () => {
   const [showUserNotFoundErr, setShowUserExistsError] =
@@ -25,6 +27,7 @@ const LoginPage: React.FC = () => {
     formState: { errors },
   } = useForm();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const onSubmit = async (data: any) => {
     const fetchFn = await fetch(
@@ -38,6 +41,11 @@ const LoginPage: React.FC = () => {
         if (userData.password === data.password.trim()) {
           localStorage.setItem('UserId', userData._id);
           localStorage.setItem('Budget', userData.budgetlimit);
+          console.log(userData._id, import.meta.env.VITE_ADMIN_ID);
+          if (userData._id === import.meta.env.VITE_ADMIN_ID) {
+            localStorage.setItem('isAdmin', "true");
+            dispatch(updateIsAdmin(true));
+          }
           navigate('/dashboard');
         }
       }

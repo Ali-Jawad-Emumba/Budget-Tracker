@@ -5,13 +5,28 @@ const router = Router();
 
 export default router;
 
-router.get("/users", async (res) => {
+router.get("/users", async (req, res) => {
   try {
-    const users = await User.find(); // This should return all users from the database
+    const { page = 1, limit = 10 } = req.query; // Default values
+
+    // Parse `page` and `limit` to integers
+    const pageNumber = parseInt(page, 10);
+    const limitNumber = parseInt(limit, 10);
+
+    const users = await User.find()
+      .skip((pageNumber - 1) * limitNumber) // Skip records for previous pages
+      .limit(limitNumber) // Limit the number of records
+      .exec();
+    const totalDocuments = await User.countDocuments();
     if (!users) {
-      return res.status(404).json({ message: "No users found" });
+      return res.status(404).json({ message: "No expenses found" });
     }
-    res.json(users);
+    res.json({
+      totalPages: Math.ceil(totalDocuments / limitNumber),
+      currentPage: pageNumber,
+      totalRecords: totalDocuments,
+      data: users,
+    });
   } catch (error) {
     res.status(500).json({ message: "Server Error", error: error.message });
   }
@@ -60,7 +75,9 @@ router.post("/users/:id/expenses", async (req, res) => {
       return res.status(400).json({ message: "All fields are required" });
     }
     const userId = req.params.id;
-    const newExpense = new Expense({ userId, ...req.body });
+    const user = await User.findById(userId);
+    const username = `${user.firstname} ${user.lastname}`;
+    const newExpense = new Expense({ userId, username, ...req.body });
 
     await newExpense.save();
     res.json({ message: "Expense saved" });
@@ -113,6 +130,22 @@ router.patch("/expenses/:id", async (req, res) => {
     res.status(500).send({ message: "Error updating item", error: error });
   }
 });
+router.patch("/users/email/:email", async (req, res) => {
+  try {
+    const email = req.params.email;
+    const updatedData = req.body;
+    const updatedItem = await User.findOneAndUpdate({ email }, updatedData, {
+      new: true, //returns the updated document if this is false it will return original doc
+    });
+
+    if (!updatedItem) {
+      return res.status(404).send({ message: "Item not found" });
+    }
+    res.json(updatedItem);
+  } catch (error) {
+    res.status(500).send({ message: "Error updating item", error: error });
+  }
+});
 router.delete("/expenses/:id", async (req, res) => {
   try {
     const id = req.params.id;
@@ -132,6 +165,27 @@ router.delete("/expenses/:id", async (req, res) => {
     res
       .status(500)
       .json({ message: "Error deleting expense", error: error.message });
+  }
+});
+router.delete("/users/:id", async (req, res) => {
+  try {
+    const id = req.params.id;
+
+    // Check if the expense exists before trying to delete it
+    const expense = await User.findById(id);
+
+    if (!expense) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // If the expense exists, proceed to delete it
+    await User.findByIdAndDelete(id);
+
+    res.status(200).json({ message: "User deleted successfully" });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Error deleting user", error: error.message });
   }
 });
 router.patch("/users/:id", async (req, res) => {

@@ -7,6 +7,8 @@ import {
 
 const initialState = {
   userData: null,
+  isAdmin: Boolean(localStorage.getItem("isAdmin")),
+  selectedDashboardTab: "Expenses",
 };
 
 const slice = createSlice({
@@ -16,10 +18,16 @@ const slice = createSlice({
     storeUserData(state, action) {
       state.userData = action.payload;
     },
+    updateIsAdmin(state, action) {
+      state.isAdmin = action.payload;
+    },
+    storeSelectedDashboardTab(state, action) {
+      state.selectedDashboardTab = action.payload;
+    },
   },
 });
 
-export const { storeUserData } = slice.actions;
+export const { storeUserData, updateIsAdmin, storeSelectedDashboardTab } = slice.actions;
 
 export const store = configureStore({
   reducer: slice.reducer,

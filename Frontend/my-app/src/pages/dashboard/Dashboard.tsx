@@ -2,11 +2,12 @@ import { useEffect, useState } from 'react';
 import SideDrawer from '../../components/side-drawer/SideDrawer';
 import styles from './Dashboard.module.css';
 import DashboardAppBar from '../../components/dashboard-app-bar/DashboardAppBar';
-import DashboardContent from '../../components/dashboard-content/DashboardContent';
+import ExpenseDashboardContent from '../../components/dashboard-content/ExpenseDashboardContent';
 import { useNavigate } from 'react-router-dom';
 import { fetchUserData, startUserIdCheckInterval } from '../../utils/shared';
 import { useDispatch, useSelector } from 'react-redux';
 import { storeUserData } from '../../app/store';
+import UsersDashboardContent from '../../components/dashboard-content/UsersDashboardContent';
 
 const Dashboard = () => {
   const [open, setOpen] = useState<boolean>(false);
@@ -16,6 +17,7 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const userData = useSelector((state: any) => state.userData);
   const dispatch = useDispatch();
+  const selectedDashboardTab=useSelector((state:any)=>state.selectedDashboardTab)
   useEffect(() => {
     if (!userData) {
       (async () => {
@@ -32,7 +34,8 @@ const Dashboard = () => {
       <SideDrawer open={open} />
       <div className={styles.appBarAndContent}>
         <DashboardAppBar toggleDrawer={toggleDrawer} />
-        <DashboardContent dataFor="Expenses" />
+        {selectedDashboardTab==="Users" && <UsersDashboardContent/>}
+        {selectedDashboardTab==="Expenses" && <ExpenseDashboardContent />}
       </div>
     </div>
   );

@@ -34,15 +34,16 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { useForm } from 'react-hook-form';
 import { DeleteIcon, EditIcon } from '../../pages/dashboard/DashboardIcons';
 import ExpenseModal from '../ExpenseModal';
+import { useSelector } from 'react-redux';
 
-const DashboardContent = ({ dataFor }: { dataFor: string }) => {
+const UsersDashboardContent = () => {
   const [isAddExpenseModalOpen, setIsAddExpenseModalOpen] =
     useState<boolean>(false);
   const [isEditExpenseModalOpen, setIsEditExpenseModalOpen] =
     useState<boolean>(false);
   const [expenseDate, setExpenseDate] = useState<string>();
-  const [originalExpensesData, setOriginalExpensesData] = useState<any>();
-  const [filteredExpensesData, setFilteredExpensesData] = useState<any>();
+  const [originalUsersData, setOriginalUsersData] = useState<any>();
+  const [filteredUsersData, setFilteredUsersData] = useState<any>();
   const [expenseBeingEdit, setExpenseBeingEdit] = useState<any>();
   const [sortFilterValue, setSortFilterValue] = useState<string>('');
   const [dateFilter, setDateFilter] = useState<any>();
@@ -50,76 +51,66 @@ const DashboardContent = ({ dataFor }: { dataFor: string }) => {
   const [expenseMetaData, setExpenseMetaData] = useState<any>();
   const [selectedPage, setSelectedPage] = useState<number>(1);
   const userId = localStorage.getItem('UserId');
+  const isAdmin=useSelector((state:any)=>state.isAdmin)
   const filterData = ({
     sortValue,
-    dateValue,
     search,
   }: {
     sortValue?: string;
-    dateValue?: any | null;
     search?: string;
   }) => {
-    let result = [...originalExpensesData];
-
+    let result = [...originalUsersData];
     // Apply sort filter
     if (sortValue) {
       switch (sortValue) {
-        case 'low to high':
+        case 'name':
           result = result.sort((a: any, b: any) =>
-            a.price === b.price ? 0 : a.price < b.price ? -1 : 1
+            a.firstname === b.firstname ? 0 : a.firstname < b.firstname ? -1 : 1
           );
           break;
-        case 'high to low':
+        case 'email':
           result = result.sort((a: any, b: any) =>
-            a.price === b.price ? 0 : a.price < b.price ? 1 : -1
+            a.email === b.email ? 0 : a.email < b.email ? -1 : 1
           );
+          break;
+        case 'role':
+          result = [...result.filter(user=>user._id===import.meta.env.VITE_ADMIN_ID), ...result.filter(user=>user._id!==import.meta.env.VITE_ADMIN_ID)]
           break;
       }
-    }
-
-    // Apply date filter
-    if (dateValue) {
-      result = result.filter(
-        (expense: any) =>
-          new Date(expense.date).toLocaleDateString() ===
-          new Date(dateValue).toLocaleDateString()
-      );
     }
 
     // Apply search filter
     if (search) {
       const searchLower = search.toLowerCase();
-      result = result.filter((expense: any) =>
-        expense.title.toLowerCase().includes(searchLower)
+      result = result.filter((user: any) =>
+        [user.firstname, user.lastname, user.email].some(field=>field.toLowerCase().includes(searchLower))
       );
     }
 
-    setFilteredExpensesData(result);
+    setFilteredUsersData(result);
   };
-  const getExpenses = async () => {
-    const fetchFn = await fetch(
-      `http://localhost:3000/users/${userId}/expenses?page=${selectedPage}`
-    );
+  const getUsers = async () => {
+    const fetchFn=await fetch("http://localHost:3000/users")
     const response = await fetchFn.json();
     setExpenseMetaData(response);
     const data = response.data;
-    setOriginalExpensesData(data);
-    setFilteredExpensesData(data);
+    setOriginalUsersData(data);
+    setFilteredUsersData(data);
   };
 
   useEffect(() => {
-    (async () => await getExpenses())();
+    (async () => await getUsers())();
   }, []);
 
-  const deleteExpense = async (expenseId: number) => {
+  const deleteUser = async (userId: number) => {
     const response = await fetch(
-      `http://localHost:3000/expenses/${expenseId}`,
+      `http://localHost:3000/users/${userId}`,
       {
         method: 'DELETE',
       }
     );
     if (response.ok) {
-      await getExpenses();
+      await getUsers();
     }
   };
 
@@ -145,17 +136,17 @@ const DashboardContent = ({ dataFor }: { dataFor: string }) => {
     <>
       <div className={styles.dashboardContent}>
         <div className={styles.dataTableHeader}>
-          <h1 className="poppins-semibold">{dataFor}</h1>
+          <h1 className="poppins-semibold">Users</h1>
           <DashboardButton
             onClick={() => setIsAddExpenseModalOpen(true)}
             sx={{ margin: 'auto 0' }}
           >
-            Add {dataFor}
+            Add User
           </DashboardButton>
         </div>
         <div className={styles.dataTable}>
           <div className={styles.tableHeader}>
-            <h1 className="poppins-semibold">{dataFor}</h1>
+            <h1 className="poppins-semibold">Users</h1>
             <div className={styles.filters}>
               <div className={styles.filterDiv}>
                 <div className={styles.filter}>
@@ -172,40 +163,18 @@ const DashboardContent = ({ dataFor }: { dataFor: string }) => {
                     setSortFilterValue(e.target.value);
                     filterData({
                       sortValue: e.target.value,
-                      dateValue: dateFilter,
                       search: search,
                     });
                   }}
                 >
                   <MenuItem value="">None</MenuItem>
-                  <MenuItem value="low to high">Price: Low to High</MenuItem>
-                  <MenuItem value="high to low">Price: High to Low</MenuItem>
+                  <MenuItem value="name">Name</MenuItem>
+                  <MenuItem value="email">Email</MenuItem>
+                  <MenuItem value="role">Role</MenuItem>
+
                 </Select>
               </div>
-              <div>
-                <div className={styles.filterDiv}>
-                  <div className={styles.filter}>
-                    <p className={`${styles.filterLabel} poppins-regular`}>
-                      By Date
-                    </p>
-                  </div>
-                  <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DatePicker
-                      className="datePicker"
-                      sx={{ height: '40px' }}
-                      onChange={(e) => {
-                        setDateFilter(e);
-                        filterData({
-                          sortValue: sortFilterValue,
-                          dateValue: e,
-                          search: search,
-                        });
-                      }}
-                      defaultValue={dayjs(new Date())}
-                    />
-                  </LocalizationProvider>
-                </div>
-              </div>
+              
               <div>
                 <TextField
                   fullWidth
@@ -217,7 +186,6 @@ const DashboardContent = ({ dataFor }: { dataFor: string }) => {
                     setSearch(e.target.value);
                     filterData({
                       sortValue: sortFilterValue,
-                      dateValue: dateFilter,
                       search: e.target.value,
                     });
                   }}
@@ -241,28 +209,30 @@ const DashboardContent = ({ dataFor }: { dataFor: string }) => {
             <Table sx={{ minWidth: 650 }} aria-label="caption table">
               <TableHead>
                 <TableRow>
-                  <TableCell>Expense</TableCell>
-                  <TableCell>Total Expenditure</TableCell>
-                  <TableCell>Price(PKR)</TableCell>
-                  <TableCell>Date</TableCell>
+                  <TableCell>First Name</TableCell>
+                  <TableCell>Last Name</TableCell>
+                  <TableCell>Email</TableCell>
+                  <TableCell>Number</TableCell>
+                  <TableCell>Role</TableCell>
                   <TableCell>Actions</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {filteredExpensesData?.map((row: any) => (
+                {filteredUsersData?.map((row: any) => (
                   <TableRow key={row._id}>
                     <TableCell component="th" scope="row">
-                      {row.title}
+                      {row.firstname}
                     </TableCell>
                     <TableCell>
-                      <ProgressBar price={row.price} />
+                      {row.lastname}
                     </TableCell>
-                    <TableCell>{row.price}</TableCell>
-                    <TableCell>{row.date}</TableCell>
+                    <TableCell>{row.email}</TableCell>
+                    <TableCell>{row.phone}</TableCell>
+                    <TableCell>{row._id === import.meta.env.VITE_ADMIN_ID?"Admin":"User"}</TableCell>
                     <TableCell>
                       {
                         <div style={{ display: 'flex', gap: '10px' }}>
-                          <div onClick={() => deleteExpense(row._id)}>
+                          <div onClick={() => deleteUser(row._id)}>
                             <DeleteIcon />
                           </div>
                           <div
@@ -283,7 +253,7 @@ const DashboardContent = ({ dataFor }: { dataFor: string }) => {
 
             <div className={styles.paginationDiv}>
               <caption className="poppins-regular">
-                Showing {filteredExpensesData?.length}/
+                Showing {filteredUsersData?.length}/
                 {expenseMetaData?.totalRecords}
               </caption>
               <Pagination
@@ -292,7 +262,7 @@ const DashboardContent = ({ dataFor }: { dataFor: string }) => {
                 shape="rounded"
                 onChange={(_, page) => {
                   setSelectedPage(page);
-                  getExpenses();
+                  getUsers();
                 }}
               />
             </div>
@@ -300,20 +270,22 @@ const DashboardContent = ({ dataFor }: { dataFor: string }) => {
         </div>
       </div>
       <ExpenseModal
+        role="Admin"
         useFor="Add"
         isOpen={isAddExpenseModalOpen}
         setIsOpen={setIsAddExpenseModalOpen}
-        reloadData={getExpenses}
+        reloadData={getUsers}
       />
       <ExpenseModal
+        role="Admin"
         useFor="Edit"
         isOpen={isEditExpenseModalOpen}
         setIsOpen={setIsEditExpenseModalOpen}
         expenseBeingEdit={expenseBeingEdit}
-        reloadData={getExpenses}
+        reloadData={getUsers}
       />
     </>
   );
 };
 
-export default DashboardContent;
+export default UsersDashboardContent;
