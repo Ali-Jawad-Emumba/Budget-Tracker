@@ -3,11 +3,12 @@ import { Routes, Route } from 'react-router-dom';
 import './App.css';
 import LoginPage from '../pages/login-page/LoginPage';
 import SignupPage from '../pages/signup-page/SignupPage';
-import ResetPswdPage from '../pages/reset-pswd-page/ResetPswdPage';
+import ForgotPswdPage from '../pages/reset-pswd-page/ForgotPswdPage';
 import Dashboard from '../pages/dashboard/Dashboard';
 import ProfilePage from '../pages/profile-page/ProfilePage';
 import ProtectedRoute from '../components/ProtectedRoute';
 import { checkTokenExpiration, startTokenCheckInterval } from '../utils/shared';
+import ResetPswdPage from '../pages/reset-pswd-page/ResetPswdPage';
 
 export const App = () => {
   useEffect(() => {
@@ -20,6 +21,7 @@ export const App = () => {
         <Route>
           <Route path="/" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
+          <Route path="/forgot-password" element={<ForgotPswdPage />} />
           <Route path="/reset-password" element={<ResetPswdPage />} />
           <Route
             path="/dashboard"

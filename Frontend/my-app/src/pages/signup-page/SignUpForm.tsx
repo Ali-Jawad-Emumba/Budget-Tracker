@@ -20,7 +20,7 @@ const SignUpForm = ({
   useFor: string;
   defaultValues?: any;
   setModalOpen?: any;
-  reloadData?:any
+  reloadData?: any;
 }) => {
   const [showUserExisitsError, setShowUserExistsError] =
     useState<boolean>(false);
@@ -31,8 +31,7 @@ const SignUpForm = ({
     formState: { errors },
   } = useForm({ defaultValues });
 
-  const isModal=useFor.includes("modal")
-  
+  const isModal = useFor.includes('modal');
 
   const navigate = useNavigate();
   const getSignupDataBody = (data: any) => {
@@ -56,20 +55,29 @@ const SignUpForm = ({
     delete result.confirmedpassword;
     return JSON.stringify(result);
   };
-  const conditionalSize = isModal ? { width: '50%' } : {width:"100%"};
+  const conditionalSize = isModal ? { width: '50%' } : { width: '100%' };
 
   const onSubmit = async (data: any) => {
-    const urlGetUserByEmail = `http://localhost:3000/users/email/${data.email}`;
+    const urlGetUserByEmail = `http://localhost:3000/users/email/${
+      useFor === 'edit modal' ? defaultValues.email : data.email
+    }`;
     const fetchFn = await fetch(urlGetUserByEmail);
     const { userExists } = await fetchFn.json();
     if (userExists && useFor !== 'edit modal') {
       setShowUserExistsError(true);
     } else {
       let response = await fetch(
-        useFor === 'edit modal' ? urlGetUserByEmail : 'http://localhost:3000/users/',
+        useFor === 'edit modal'
+          ? urlGetUserByEmail
+          : 'http://localhost:3000/users/',
         {
           method: useFor === 'edit modal' ? 'PATCH' : 'POST',
-          headers,
+          headers:
+            useFor === 'edit modal'
+              ? {
+                  'Cotent-Type': 'application/json',
+                }
+              : headers,
           body:
             useFor === 'modal' ? JSON.stringify(data) : getSignupDataBody(data),
         }
@@ -78,9 +86,9 @@ const SignUpForm = ({
       if (useFor === 'signup page' && response.ok) {
         navigate('/');
       }
-      if (isModal){
+      if (isModal) {
         setModalOpen(false);
-        reloadData()
+        reloadData();
       }
     }
   };
@@ -132,7 +140,7 @@ const SignUpForm = ({
         />
         {checkAndThrowError(errors, 'email')}
       </FormControl>
-      <div style={isModal?{ display: 'flex', gap: '15px' } :{}}>
+      <div style={isModal ? { display: 'flex', gap: '15px' } : {}}>
         <FormControl sx={conditionalSize}>
           <p className={styles.label}>Password</p>
           <PasswordField

@@ -11,7 +11,7 @@ import styles from '../../utils/form-styles.module.css';
 import PasswordField from '../../components/PasswordField';
 import { useForm } from 'react-hook-form';
 import { ReactJSX } from '@emotion/react/dist/declarations/src/jsx-namespace';
-import { checkAndThrowError } from '../../utils/shared';
+import { checkAndThrowError, headers } from '../../utils/shared';
 import { emailRegex } from '../../utils/shared';
 import { boolean } from 'yup';
 import { useState } from 'react';
@@ -23,6 +23,7 @@ const LoginPage: React.FC = () => {
     userNotFound: false,
     invalidCredentials: false,
   });
+  const [userEmail, setUserEmail] = useState<string>();
   const {
     register,
     handleSubmit,
@@ -82,12 +83,13 @@ const LoginPage: React.FC = () => {
                 message: 'Email is not valid',
               },
             })}
-            onChange={() =>
+            onChange={(e) => {
+              setUserEmail(e.target.value);
               setShowError({
                 userNotFound: false,
                 invalidCredentials: false,
-              })
-            }
+              });
+            }}
             fullWidth
             placeholder="test@exmaple.com"
             endAdornment={
@@ -114,7 +116,10 @@ const LoginPage: React.FC = () => {
             <label className={`${styles.rememberBtn} poppins-regular`}>
               <input type="checkbox" /> Remember me{' '}
             </label>
-            <Link className={`${styles.link} poppins-medium`} to={''}>
+            <Link
+              className={`${styles.link} poppins-medium`}
+              to="/forgot-password"
+            >
               Forget Password
             </Link>
           </div>
