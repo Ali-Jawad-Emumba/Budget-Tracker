@@ -35,6 +35,7 @@ import { useForm } from 'react-hook-form';
 import { DeleteIcon, EditIcon } from '../../pages/dashboard/DashboardIcons';
 import ExpenseModal from '../ExpenseModal';
 import { useSelector } from 'react-redux';
+import { headers } from '../../utils/shared';
 
 const UsersDashboardContent = () => {
   const [isAddExpenseModalOpen, setIsAddExpenseModalOpen] =
@@ -90,7 +91,10 @@ const UsersDashboardContent = () => {
     setFilteredUsersData(result);
   };
   const getUsers = async () => {
-    const fetchFn=await fetch("http://localHost:3000/users")
+    const fetchFn=await fetch("http://localHost:3000/users", {
+      method:"GET",
+      headers
+    })
     const response = await fetchFn.json();
     setExpenseMetaData(response);
     const data = response.data;
@@ -107,6 +111,7 @@ const UsersDashboardContent = () => {
       `http://localHost:3000/users/${userId}`,
       {
         method: 'DELETE',
+        headers
       }
     );
     if (response.ok) {

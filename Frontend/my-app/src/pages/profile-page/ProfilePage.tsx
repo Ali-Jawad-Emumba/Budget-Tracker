@@ -26,7 +26,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { storeUserData } from '../../app/store';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { fetchUserData, startUserIdCheckInterval } from '../../utils/shared';
+import { fetchUserData, headers, startTokenCheckInterval } from '../../utils/shared';
 
 const ProfilePage = () => {
   // const seletedProfileTab = useSelector(
@@ -53,8 +53,6 @@ const ProfilePage = () => {
         setIsLoading(false);
       })();
     }
-    const interval = startUserIdCheckInterval(navigate);
-    return () => clearInterval(interval);
   }, []);
 
   if (isLoading)
@@ -82,9 +80,7 @@ const ProfilePage = () => {
   const saveProfilePic = async () => {
     const updateDataFn = await fetch(`http://localHost:3000/users/${userId}`, {
       method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers,
       body: JSON.stringify({
         profilepic: base64ProfilePic,
       }),

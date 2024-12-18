@@ -27,6 +27,7 @@ import {
   storeSelectedDashboardTab,
   storeUserData,
   updateIsAdmin,
+  updateIsUserLoggedIn,
 } from '../../app/store';
 
 export default function SideDrawer({ open }: { open: boolean }) {
@@ -57,10 +58,11 @@ export default function SideDrawer({ open }: { open: boolean }) {
       icon: <LogoutIcon />,
       action: () => {
         localStorage.removeItem('UserId');
-        localStorage.removeItem('isAdmin');
+        localStorage.removeItem('token')
         dispatch(updateIsAdmin(false));
         dispatch(storeSelectedDashboardTab('Expenses'));
         dispatch(storeUserData(null));
+        dispatch(updateIsUserLoggedIn(false))
         navigate('/');
       },
     },

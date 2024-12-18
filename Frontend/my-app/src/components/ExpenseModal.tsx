@@ -13,6 +13,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 import SignUpForm from '../pages/signup-page/SignUpForm';
+import { headers } from '../utils/shared';
 
 const ExpenseModal = ({
   isOpen,
@@ -43,9 +44,7 @@ const ExpenseModal = ({
       price: data.price,
       date: data.date || new Date().toLocaleDateString(),
     });
-  const headers = {
-    'Content-Type': 'application/json',
-  };
+
   const editExpense = async (data: any) => {
     setIsLoading(true);
     const response = await fetch(

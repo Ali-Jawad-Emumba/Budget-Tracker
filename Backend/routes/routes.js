@@ -1,11 +1,15 @@
 import { Router } from "express";
 import User from "../models/User.js";
 import Expense from "../models/Expenses.js";
+import jwt from "jsonwebtoken";
+import authMiddleware from "../middlewares/authmiddleware.js";
+import dotenv from "dotenv";
+dotenv.config();
 const router = Router();
 
 export default router;
 
-router.get("/users", async (req, res) => {
+router.get("/users", authMiddleware, async (req, res) => {
   try {
     const { page = 1, limit = 10 } = req.query; // Default values
 
@@ -38,13 +42,18 @@ router.get("/users/email/:email", async (req, res) => {
     if (!user) {
       return res.json({ userExists: false });
     }
-
-    res.json({ userExists: true, userData: user });
+    const JWT_KEY = `${process.env.JWT_KEY}`;
+    const token = jwt.sign({ id: user._id }, JWT_KEY, { expiresIn: "1h" });
+    res.status(200).json({
+      token: token,
+      userExists: true,
+      userData: user,
+    });
   } catch (error) {
     res.status(500).json({ message: "Server Error", error: error.message });
   }
 });
-router.get("/users/:id", async (req, res) => {
+router.get("/users/:id", authMiddleware, async (req, res) => {
   try {
     const id = req.params.id;
     const user = await User.findOne({ _id: id });
@@ -57,7 +66,7 @@ router.get("/users/:id", async (req, res) => {
   }
 });
 
-router.post("/users", async (req, res) => {
+router.post("/users", authMiddleware, async (req, res) => {
   try {
     const newUser = new User({ ...req.body });
 
@@ -69,7 +78,7 @@ router.post("/users", async (req, res) => {
       .json({ message: "Error saving user", error: error.message });
   }
 });
-router.post("/users/:id/expenses", async (req, res) => {
+router.post("/users/:id/expenses", authMiddleware, async (req, res) => {
   try {
     if (!Object.keys(req.body).every((key) => req.body[key])) {
       return res.status(400).json({ message: "All fields are required" });
@@ -87,7 +96,7 @@ router.post("/users/:id/expenses", async (req, res) => {
       .json({ message: "Error saving expense", error: error.message });
   }
 });
-router.get("/users/:id/expenses", async (req, res) => {
+router.get("/users/:id/expenses", authMiddleware, async (req, res) => {
   try {
     const id = req.params.id;
     const { page = 1, limit = 10 } = req.query; // Default values
@@ -114,7 +123,7 @@ router.get("/users/:id/expenses", async (req, res) => {
     res.status(500).json({ message: "Server Error", error: error.message });
   }
 });
-router.patch("/expenses/:id", async (req, res) => {
+router.patch("/expenses/:id", authMiddleware, async (req, res) => {
   try {
     const id = req.params.id;
     const updatedData = req.body;
@@ -130,7 +139,7 @@ router.patch("/expenses/:id", async (req, res) => {
     res.status(500).send({ message: "Error updating item", error: error });
   }
 });
-router.patch("/users/email/:email", async (req, res) => {
+router.patch("/users/email/:email", authMiddleware, async (req, res) => {
   try {
     const email = req.params.email;
     const updatedData = req.body;
@@ -146,7 +155,7 @@ router.patch("/users/email/:email", async (req, res) => {
     res.status(500).send({ message: "Error updating item", error: error });
   }
 });
-router.delete("/expenses/:id", async (req, res) => {
+router.delete("/expenses/:id", authMiddleware, async (req, res) => {
   try {
     const id = req.params.id;
 
@@ -167,7 +176,7 @@ router.delete("/expenses/:id", async (req, res) => {
       .json({ message: "Error deleting expense", error: error.message });
   }
 });
-router.delete("/users/:id", async (req, res) => {
+router.delete("/users/:id", authMiddleware, async (req, res) => {
   try {
     const id = req.params.id;
 
@@ -188,7 +197,7 @@ router.delete("/users/:id", async (req, res) => {
       .json({ message: "Error deleting user", error: error.message });
   }
 });
-router.patch("/users/:id", async (req, res) => {
+router.patch("/users/:id", authMiddleware, async (req, res) => {
   try {
     const { id } = req.params;
     const updatedData = req.body;

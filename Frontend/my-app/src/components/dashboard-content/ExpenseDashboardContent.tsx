@@ -35,6 +35,7 @@ import { useForm } from 'react-hook-form';
 import { DeleteIcon, EditIcon } from '../../pages/dashboard/DashboardIcons';
 import ExpenseModal from '../ExpenseModal';
 import { useSelector } from 'react-redux';
+import { headers } from '../../utils/shared';
 
 const ExpenseDashboardContent = () => {
   const [isAddExpenseModalOpen, setIsAddExpenseModalOpen] =
@@ -51,7 +52,7 @@ const ExpenseDashboardContent = () => {
   const [expenseMetaData, setExpenseMetaData] = useState<any>();
   const [selectedPage, setSelectedPage] = useState<number>(1);
   const userId = localStorage.getItem('UserId');
-  const isAdmin=useSelector((state:any)=>state.isAdmin)
+  const isAdmin = useSelector((state: any) => state.isAdmin);
   const filterData = ({
     sortValue,
     dateValue,
@@ -98,8 +99,12 @@ const ExpenseDashboardContent = () => {
     setFilteredExpensesData(result);
   };
   const getExpenses = async () => {
-    const fetchFn=await fetch(
-      `http://localhost:3000/users/${userId}/expenses?page=${selectedPage}`
+    const fetchFn = await fetch(
+      `http://localhost:3000/users/${userId}/expenses?page=${selectedPage}`,
+      {
+        method: 'GET',
+        headers,
+      }
     );
     const response = await fetchFn.json();
     setExpenseMetaData(response);
@@ -117,6 +122,7 @@ const ExpenseDashboardContent = () => {
       `http://localHost:3000/expenses/${expenseId}`,
       {
         method: 'DELETE',
+        headers,
       }
     );
     if (response.ok) {

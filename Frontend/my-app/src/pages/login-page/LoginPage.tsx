@@ -15,12 +15,14 @@ import { checkAndThrowError } from '../../utils/shared';
 import { emailRegex } from '../../utils/shared';
 import { boolean } from 'yup';
 import { useState } from 'react';
-import { updateIsAdmin } from '../../app/store';
+import { updateIsAdmin, updateIsUserLoggedIn } from '../../app/store';
 import { useDispatch } from 'react-redux';
 
 const LoginPage: React.FC = () => {
-  const [showUserNotFoundErr, setShowUserExistsError] =
-    useState<boolean>(false);
+  const [showError, setShowError] = useState<any>({
+    userNotFound: false,
+    invalidCredentials: false,
+  });
   const {
     register,
     handleSubmit,
@@ -34,19 +36,22 @@ const LoginPage: React.FC = () => {
       `http://localhost:3000/users/email/${data.email}`
     );
     if (fetchFn.ok) {
-      const { userExists, userData } = await fetchFn.json();
+      const { token, userExists, userData } = await fetchFn.json();
       if (!userExists) {
-        setShowUserExistsError(true);
+        setShowError({ ...showError, userNotFound: true });
       } else {
         if (userData.password === data.password.trim()) {
           localStorage.setItem('UserId', userData._id);
           localStorage.setItem('Budget', userData.budgetlimit);
+          localStorage.setItem('token', token);
+          dispatch(updateIsUserLoggedIn(true));
           console.log(userData._id, import.meta.env.VITE_ADMIN_ID);
           if (userData._id === import.meta.env.VITE_ADMIN_ID) {
-            localStorage.setItem('isAdmin', "true");
             dispatch(updateIsAdmin(true));
           }
           navigate('/dashboard');
+        } else {
+          setShowError({ ...showError, invalidCredentials: true });
         }
       }
     }
@@ -77,6 +82,12 @@ const LoginPage: React.FC = () => {
                 message: 'Email is not valid',
               },
             })}
+            onChange={() =>
+              setShowError({
+                userNotFound: false,
+                invalidCredentials: false,
+              })
+            }
             fullWidth
             placeholder="test@exmaple.com"
             endAdornment={
@@ -94,6 +105,9 @@ const LoginPage: React.FC = () => {
               ...register('password', { required: 'Password is required' }),
             }}
             checkAndThrowError={() => checkAndThrowError(errors, 'password')}
+            changeHandler={() =>
+              setShowError({ ...showError, invalidCredentials: false })
+            }
           />
 
           <div className={styles.rememberForgetDiv}>
@@ -105,8 +119,11 @@ const LoginPage: React.FC = () => {
             </Link>
           </div>
         </FormControl>
-        {showUserNotFoundErr && (
+        {showError.userNotFound && (
           <p className="errors poppins-regular">User not found</p>
+        )}
+        {showError.invalidCredentials && (
+          <p className="errors poppins-regular">Invalid Credentials</p>
         )}
         <SignupLoginBtn
           className={styles.loginBtn}

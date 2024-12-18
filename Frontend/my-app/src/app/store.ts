@@ -4,11 +4,13 @@ import {
   Action,
   createSlice,
 } from '@reduxjs/toolkit';
+import { checkTokenExpiration } from '../utils/shared';
 
 const initialState = {
   userData: null,
-  isAdmin: Boolean(localStorage.getItem("isAdmin")),
-  selectedDashboardTab: "Expenses",
+  isAdmin: import.meta.env.VITE_ADMIN_ID === localStorage.getItem('UserId'),
+  isUserLoggedIn: localStorage.getItem('UserId') && checkTokenExpiration(),
+  selectedDashboardTab: 'Expenses',
 };
 
 const slice = createSlice({
@@ -24,10 +26,18 @@ const slice = createSlice({
     storeSelectedDashboardTab(state, action) {
       state.selectedDashboardTab = action.payload;
     },
+    updateIsUserLoggedIn(state, action) {
+      state.isUserLoggedIn = action.payload;
+    },
   },
 });
 
-export const { storeUserData, updateIsAdmin, storeSelectedDashboardTab } = slice.actions;
+export const {
+  storeUserData,
+  updateIsAdmin,
+  storeSelectedDashboardTab,
+  updateIsUserLoggedIn,
+} = slice.actions;
 
 export const store = configureStore({
   reducer: slice.reducer,

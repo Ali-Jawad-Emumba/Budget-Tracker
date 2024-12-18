@@ -9,6 +9,7 @@ import styles from './MyAccount.module.css';
 import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import { storeUserData } from '../../app/store';
+import { headers } from '../../utils/shared';
 
 const MyAccount = () => {
   const userData = useSelector((state: any) => state.userData);
@@ -18,9 +19,7 @@ const MyAccount = () => {
   const onSubmit = async (data: any) => {
     const updateDataFn = await fetch(`http://localHost:3000/users/${userId}`, {
       method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers,
       body: JSON.stringify(data),
     });
     const updatedData = await updateDataFn.json();

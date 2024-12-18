@@ -7,9 +7,11 @@ import { useState } from 'react';
 const PasswordField = ({
   formRegister,
   checkAndThrowError,
+  changeHandler,
 }: {
   formRegister: any;
   checkAndThrowError: any;
+  changeHandler?: any;
 }) => {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -32,6 +34,7 @@ const PasswordField = ({
         fullWidth
         {...formRegister}
         placeholder="Enter your password"
+        onChange={changeHandler}
         type={showPassword ? 'text' : 'password'}
         endAdornment={
           <InputAdornment position="end">

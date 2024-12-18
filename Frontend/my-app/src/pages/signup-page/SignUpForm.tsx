@@ -7,7 +7,7 @@ import {
   InputBootstrapStyled,
   SignupLoginBtn,
 } from '../../utils/styled-components';
-import { checkAndThrowError, emailRegex } from '../../utils/shared';
+import { checkAndThrowError, emailRegex, headers } from '../../utils/shared';
 import PasswordField from '../../components/PasswordField';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 
@@ -69,9 +69,7 @@ const SignUpForm = ({
         useFor === 'edit modal' ? urlGetUserByEmail : 'http://localhost:3000/users/',
         {
           method: useFor === 'edit modal' ? 'PATCH' : 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          headers,
           body:
             useFor === 'modal' ? JSON.stringify(data) : getSignupDataBody(data),
         }
