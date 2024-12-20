@@ -7,9 +7,10 @@ import {
   InputBootstrapStyled,
   SignupLoginBtn,
 } from '../../utils/styled-components';
-import { checkAndThrowError, emailRegex, headers } from '../../utils/shared';
+import { checkAndThrowError, emailRegex } from '../../utils/shared';
 import PasswordField from '../../components/PasswordField';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
+import { useSelector } from 'react-redux';
 
 const SignUpForm = ({
   useFor,
@@ -30,6 +31,8 @@ const SignUpForm = ({
     watch,
     formState: { errors },
   } = useForm({ defaultValues });
+const headers=useSelector((state:any)=>state.callHeaders)
+
 
   const isModal = useFor.includes('modal');
 

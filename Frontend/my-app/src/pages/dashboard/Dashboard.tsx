@@ -8,6 +8,7 @@ import { fetchUserData, startTokenCheckInterval } from '../../utils/shared';
 import { useDispatch, useSelector } from 'react-redux';
 import { storeUserData } from '../../app/store';
 import UsersDashboardContent from '../../components/dashboard-content/UsersDashboardContent';
+import AnalysisDashboardContent from '../../components/dashboard-content/AnalysisDashboardContent';
 
 const Dashboard = () => {
   const [open, setOpen] = useState<boolean>(false);
@@ -31,6 +32,7 @@ const Dashboard = () => {
       <SideDrawer open={open} />
       <div className={styles.appBarAndContent}>
         <DashboardAppBar toggleDrawer={toggleDrawer} />
+        {selectedDashboardTab==="Analysis" && <AnalysisDashboardContent/>}
         {selectedDashboardTab==="Users" && <UsersDashboardContent/>}
         {selectedDashboardTab==="Expenses" && <ExpenseDashboardContent />}
       </div>

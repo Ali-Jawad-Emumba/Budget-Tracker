@@ -1,4 +1,5 @@
 import { jwtDecode } from 'jwt-decode';
+import { useSelector } from 'react-redux';
 
 export const checkAndThrowError = (errors: any, errorFor: string): any => {
   if (errors[errorFor])
@@ -11,8 +12,11 @@ export const checkAndThrowError = (errors: any, errorFor: string): any => {
 
 export const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
-export const startTokenCheckInterval = () => {
-  const interval = setInterval(() => checkTokenExpiration(), 5000);
+export const startTokenCheckInterval = (keepLoggedIn: boolean) => {
+  const interval = setInterval(
+    () => checkTokenExpiration(keepLoggedIn),
+    5000
+  );
   return interval;
 };
 
@@ -20,20 +24,19 @@ export const fetchUserData = async () => {
   const userId = localStorage.getItem('UserId');
   const fetchFn = await fetch(`http://localHost:3000/users/${userId}`, {
     method: 'GET',
-    headers,
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${localStorage.getItem('token')}`,
+    },
   });
   const response = await fetchFn.json();
   const data = response;
   return data;
 };
 
-export const headers = {
-  'Content-Type': 'application/json',
-  "Authorization": `Bearer ${localStorage.getItem('token')}`,
-};
-
-export const checkTokenExpiration = () => {
+export const checkTokenExpiration = (keepLoggedIn: boolean) => {
   const token = localStorage.getItem('token');
+  const refreshToken = localStorage.getItem('refresh-token');
 
   if (!token) {
     // No token found, user should be logged out
@@ -45,13 +48,39 @@ export const checkTokenExpiration = () => {
     const currentTime = Date.now() / 1000; // current time in seconds
     if (decoded.exp < currentTime) {
       // Token has expired
-      localStorage.removeItem('token'); // Clear the token from localStorage
-      localStorage.removeItem('UserId'); // Optionally, clear other session data
-      window.location.href = '/'; // Redirect to login or show expired message
-      return false; // Token is expired, user is logged out
-    }
+      if (keepLoggedIn && refreshToken) {
+        const decoded = jwtDecode<any>(refreshToken);
+        const currentTime = Date.now() / 1000; // current time in seconds
+        if (decoded.exp < currentTime) {
+          localStorage.removeItem('refresh-token'); // Clear the token from localStorage
+          localStorage.removeItem('token'); // Clear the token from localStorage
+          localStorage.removeItem('UserId'); // Optionally, clear other session data
+          window.location.href = '/'; // Redirect to login or show expired message
+          return false; // Token is expired, user is logged out}
+        } else {
+          async () => {
+            const response = await fetch(
+              'http://localHost:3000/refresh-token',
+              {
+                method: 'POST',
+                body: JSON.stringify({
+                  refreshToken: localStorage.getItem('refresh-token'),
+                }),
+              }
+            );
+            const accessToken = await response.json();
+            localStorage.setItem('token', accessToken);
+          };
+        }
+      } else {
+        localStorage.removeItem('token'); // Clear the token from localStorage
+        localStorage.removeItem('UserId'); // Optionally, clear other session data
+        window.location.href = '/'; // Redirect to login or show expired message
+        return false; // Token is expired, user is logged out}
+      }
 
-    return true; // Token is still valid
+      return true; // Token is still valid
+    }
   } catch (error) {
     // Invalid token or other error
     localStorage.removeItem('token');
@@ -60,5 +89,3 @@ export const checkTokenExpiration = () => {
     return false;
   }
 };
-
-

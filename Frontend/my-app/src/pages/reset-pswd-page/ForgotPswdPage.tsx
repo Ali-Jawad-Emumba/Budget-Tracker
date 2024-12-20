@@ -6,10 +6,13 @@ import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import styles from '../../utils/form-styles.module.css';
 import LoginSignupLayout from '../../components/login-signup-layout/LoginSignupLayout';
 import { useState } from 'react';
-import { headers } from '../../utils/shared';
+import { useSelector } from 'react-redux';
+
 
 const ForgotPswdPage: React.FC = () => {
   const [email, setEmail] = useState<string>();
+const headers=useSelector((state:any)=>state.callHeaders)
+
 
   const sendPswdResetLink = async () => {
     if (email) {

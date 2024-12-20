@@ -9,6 +9,7 @@ dotenv.config();
 
 const router = Router();
 const JWT_KEY = `${process.env.JWT_KEY}`;
+const JWT_REFRESH_KEY = `${process.env.JWT_REFRESH_KEY}`;
 export default router;
 
 router.get("/users", authMiddleware, async (req, res) => {
@@ -40,16 +41,29 @@ router.get("/users", authMiddleware, async (req, res) => {
 router.get("/users/email/:email", async (req, res) => {
   try {
     const email = req.params.email;
+    const keepLoggedIn = req.query.RememberMe;
     const user = await User.findOne({ email: email.toLowerCase().trim() });
     if (!user) {
       return res.json({ userExists: false });
     }
-    const token = jwt.sign({ id: user._id }, JWT_KEY, { expiresIn: "1h" });
-    res.status(200).json({
-      token: token,
-      userExists: true,
-      userData: user,
-    });
+    const token = jwt.sign({ id: user._id }, JWT_KEY, { expiresIn: "5s" });
+    if (keepLoggedIn) {
+      const refreshToken = jwt.sign({ id: user._id }, JWT_REFRESH_KEY, {
+        expiresIn: "1d",
+      });
+      res.status(200).json({
+        refreshToken,
+        token: token,
+        userExists: true,
+        userData: user,
+      });
+    } else {
+      res.status(200).json({
+        token: token,
+        userExists: true,
+        userData: user,
+      });
+    }
   } catch (error) {
     res.status(500).json({ message: "Server Error", error: error.message });
   }
@@ -120,6 +134,19 @@ router.get("/users/:id/expenses", authMiddleware, async (req, res) => {
       totalRecords: totalDocuments,
       data: expenses,
     });
+  } catch (error) {
+    res.status(500).json({ message: "Server Error", error: error.message });
+  }
+});
+router.get("/users/:id/all-expenses", authMiddleware, async (req, res) => {
+  try {
+    const id = req.params.id;
+    const expenses = await Expense.find({ userId: id });
+
+    if (!expenses) {
+      return res.status(404).json({ mssage: "Expenses not found" });
+    }
+    res.json(expenses);
   } catch (error) {
     res.status(500).json({ message: "Server Error", error: error.message });
   }
@@ -259,4 +286,15 @@ router.post("/reset-password", async (req, res) => {
     console.error(error);
     res.status(500).json({ message: "Internal server error" });
   }
+});
+router.post("/refresh-token", (req, res) => {
+  const { refreshToken } = req.body;
+  if (!refreshToken) return res.sendStatus(403); // Forbidden
+
+  jwt.verify(refreshToken, JWT_REFRESH_KEY, (err, user) => {
+    if (err) return res.sendStatus(403); // Invalid refresh token
+
+    const newAccessToken = jwt.sign({ id: user.id }, JWT_KEY, { expiresIn: "5s" });
+    res.json({ accessToken: newAccessToken, id:user.id });
+  });
 });

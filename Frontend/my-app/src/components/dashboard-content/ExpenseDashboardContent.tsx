@@ -35,7 +35,6 @@ import { useForm } from 'react-hook-form';
 import { DeleteIcon, EditIcon } from '../../pages/dashboard/DashboardIcons';
 import ExpenseModal from '../ExpenseModal';
 import { useSelector } from 'react-redux';
-import { headers } from '../../utils/shared';
 
 const ExpenseDashboardContent = () => {
   const [isAddExpenseModalOpen, setIsAddExpenseModalOpen] =
@@ -53,6 +52,8 @@ const ExpenseDashboardContent = () => {
   const [selectedPage, setSelectedPage] = useState<number>(1);
   const userId = localStorage.getItem('UserId');
   const isAdmin = useSelector((state: any) => state.isAdmin);
+  const headers = useSelector((state: any) => state.callHeaders);
+
   const filterData = ({
     sortValue,
     dateValue,
@@ -74,6 +75,16 @@ const ExpenseDashboardContent = () => {
         case 'high to low':
           result = result.sort((a: any, b: any) =>
             a.price === b.price ? 0 : a.price < b.price ? 1 : -1
+          );
+          break;
+        case 'old to new':
+          result = result.sort((a: any, b: any) =>
+            a.date === b.date ? 0 : new Date(a.date) > new Date(b.date) ? 1 : -1
+          );
+          break;
+        case 'new to old':
+          result = result.sort((a: any, b: any) =>
+            a.date === b.date ? 0 : new Date(a.date) > new Date(b.date) ? -1 : 1
           );
           break;
       }
@@ -131,9 +142,17 @@ const ExpenseDashboardContent = () => {
   };
 
   const budgetLimit: any = localStorage.getItem('Budget');
-  const ProgressBar = ({ price }: { price: number }) => {
-    const value = price > budgetLimit ? 100 : (price / budgetLimit) * 100;
-
+  const ProgressBar = ({ expense }: { expense: any }) => {
+    const totalExpenseOfMonth = filteredExpensesData
+      .filter(
+        (item: any) =>
+          new Date(item.date).getMonth() + 1 ===
+            new Date(expense.date).getMonth() + 1 &&
+          new Date(item.date).getFullYear() ===
+            new Date(expense.date).getFullYear()
+      )
+      .reduce((sum: number, element: any) => (sum += element.price), 0);
+    const value = (expense.price / totalExpenseOfMonth) * 100;
     return (
       <Box sx={{ display: 'flex', alignItems: 'center' }}>
         <Box sx={{ width: '100%', mr: 1 }}>
@@ -185,8 +204,14 @@ const ExpenseDashboardContent = () => {
                   }}
                 >
                   <MenuItem value="">None</MenuItem>
-                  <MenuItem value="low to high">Price: Low to High</MenuItem>
-                  <MenuItem value="high to low">Price: High to Low</MenuItem>
+                  <MenuItem value="low to high">
+                    Price: Lowest to Highest
+                  </MenuItem>
+                  <MenuItem value="high to low">
+                    Price: Highest to Lowest
+                  </MenuItem>
+                  <MenuItem value="old to new">Date: Oldest to Newest</MenuItem>
+                  <MenuItem value="new to old">Date: Newest to Oldest</MenuItem>
                 </Select>
               </div>
               <div>
@@ -262,7 +287,7 @@ const ExpenseDashboardContent = () => {
                       {row.title}
                     </TableCell>
                     <TableCell>
-                      <ProgressBar price={row.price} />
+                      <ProgressBar expense={row} />
                     </TableCell>
                     <TableCell>{row.price}</TableCell>
                     <TableCell>{row.date}</TableCell>

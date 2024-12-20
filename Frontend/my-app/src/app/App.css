@@ -139,3 +139,8 @@
 .dashboard-drawer-item-text .css-rizt0-MuiTypography-root {
   font-size: 0.875rem !important;
 }
+.recharts-legend-item svg path {
+  fill: #7539ff !important;
+}
+
+

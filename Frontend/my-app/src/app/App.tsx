@@ -9,10 +9,12 @@ import ProfilePage from '../pages/profile-page/ProfilePage';
 import ProtectedRoute from '../components/ProtectedRoute';
 import { checkTokenExpiration, startTokenCheckInterval } from '../utils/shared';
 import ResetPswdPage from '../pages/reset-pswd-page/ResetPswdPage';
+import { useSelector } from 'react-redux';
 
 export const App = () => {
+  const keepMeLoggedIn=useSelector((state:any)=>state.keepLoggedIn)
   useEffect(() => {
-    const interval = startTokenCheckInterval();
+    const interval = startTokenCheckInterval(keepMeLoggedIn);
     return () => clearInterval(interval);
   }, []);
   return (

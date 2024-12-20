@@ -11,12 +11,18 @@ import styles from '../../utils/form-styles.module.css';
 import PasswordField from '../../components/PasswordField';
 import { useForm } from 'react-hook-form';
 import { ReactJSX } from '@emotion/react/dist/declarations/src/jsx-namespace';
-import { checkAndThrowError, headers } from '../../utils/shared';
+import { checkAndThrowError } from '../../utils/shared';
 import { emailRegex } from '../../utils/shared';
 import { boolean } from 'yup';
-import { useState } from 'react';
-import { updateIsAdmin, updateIsUserLoggedIn } from '../../app/store';
+import { useEffect, useState } from 'react';
+import {
+  setCallsHeader,
+  updateIsAdmin,
+  updateIsUserLoggedIn,
+  updateKeepLoggedIn,
+} from '../../app/store';
 import { useDispatch } from 'react-redux';
+import { jwtDecode } from 'jwt-decode';
 
 const LoginPage: React.FC = () => {
   const [showError, setShowError] = useState<any>({
@@ -31,23 +37,30 @@ const LoginPage: React.FC = () => {
   } = useForm();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [rememberMe, setRememberMe] = useState<boolean>(false);
 
   const onSubmit = async (data: any) => {
     const fetchFn = await fetch(
-      `http://localhost:3000/users/email/${data.email}`
+      rememberMe
+        ? `http://localhost:3000/users/email/${data.email}?RememberMe=${true}`
+        : `http://localhost:3000/users/email/${data.email}`
     );
     if (fetchFn.ok) {
-      const { token, userExists, userData } = await fetchFn.json();
-      if (!userExists) {
+      const user = await fetchFn.json();
+      if (!user.userExists) {
         setShowError({ ...showError, userNotFound: true });
       } else {
-        if (userData.password === data.password.trim()) {
-          localStorage.setItem('UserId', userData._id);
-          localStorage.setItem('Budget', userData.budgetlimit);
-          localStorage.setItem('token', token);
+        if (user.userData.password === data.password.trim()) {
+          localStorage.setItem('UserId', user.userData._id);
+          localStorage.setItem('token', user.token);
+          if (rememberMe && user.refreshToken) {
+            localStorage.setItem('refresh-token', user.refreshToken);
+            dispatch(updateKeepLoggedIn(true));
+          }
+          dispatch(setCallsHeader(user.token));
           dispatch(updateIsUserLoggedIn(true));
-          console.log(userData._id, import.meta.env.VITE_ADMIN_ID);
-          if (userData._id === import.meta.env.VITE_ADMIN_ID) {
+          console.log(user.userData._id, import.meta.env.VITE_ADMIN_ID);
+          if (user.userData._id === import.meta.env.VITE_ADMIN_ID) {
             dispatch(updateIsAdmin(true));
           }
           navigate('/dashboard');
@@ -57,7 +70,37 @@ const LoginPage: React.FC = () => {
       }
     }
   };
+  useEffect(() => {
+    (async () => {
+      const refreshToken = localStorage.getItem('refresh-token');
 
+      if (refreshToken) {
+        const decoded = jwtDecode<any>(refreshToken);
+        const currentTime = Date.now() / 1000; // current time in seconds
+        if (decoded.exp > currentTime) {
+          const response = await fetch('http://localHost:3000/refresh-token', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              refreshToken: localStorage.getItem('refresh-token'),
+            }),
+          });
+          const data = await response.json();
+          localStorage.setItem('token', data.accessToken);
+          localStorage.setItem('UserId', data.id);
+          dispatch(setCallsHeader(data.accessToken));
+          dispatch(updateIsUserLoggedIn(true));
+
+          if (data.id === import.meta.env.VITE_ADMIN_ID) {
+            dispatch(updateIsAdmin(true));
+          }
+          navigate('/dashboard');
+        }
+      }
+    })();
+  }, []);
   return (
     <LoginSignupLayout image={illustration}>
       <div className={styles.welcomeText}>
@@ -114,7 +157,11 @@ const LoginPage: React.FC = () => {
 
           <div className={styles.rememberForgetDiv}>
             <label className={`${styles.rememberBtn} poppins-regular`}>
-              <input type="checkbox" /> Remember me{' '}
+              <input
+                type="checkbox"
+                onChange={(e) => setRememberMe(e.target.checked)}
+              />{' '}
+              Remember me{' '}
             </label>
             <Link
               className={`${styles.link} poppins-medium`}

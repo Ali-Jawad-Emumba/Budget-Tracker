@@ -35,7 +35,7 @@ import { useForm } from 'react-hook-form';
 import { DeleteIcon, EditIcon } from '../../pages/dashboard/DashboardIcons';
 import ExpenseModal from '../ExpenseModal';
 import { useSelector } from 'react-redux';
-import { headers } from '../../utils/shared';
+
 
 const UsersDashboardContent = () => {
   const [isAddExpenseModalOpen, setIsAddExpenseModalOpen] =
@@ -53,6 +53,8 @@ const UsersDashboardContent = () => {
   const [selectedPage, setSelectedPage] = useState<number>(1);
   const userId = localStorage.getItem('UserId');
   const isAdmin=useSelector((state:any)=>state.isAdmin)
+const headers=useSelector((state:any)=>state.callHeaders)
+
   const filterData = ({
     sortValue,
     search,

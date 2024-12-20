@@ -13,7 +13,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 import SignUpForm from '../pages/signup-page/SignUpForm';
-import { headers } from '../utils/shared';
+import { useSelector } from 'react-redux';
 
 const ExpenseModal = ({
   isOpen,
@@ -42,9 +42,12 @@ const ExpenseModal = ({
     JSON.stringify({
       title: data.title,
       price: data.price,
-      date: data.date || new Date().toLocaleDateString(),
+      date: expenseDate,
     });
-
+  const headers = useSelector((state: any) => state.callHeaders);
+  const [expenseDate, setExpenseDate] = useState<any>(
+    dayjs(useFor === 'Edit' ? expenseBeingEdit?.date : new Date())
+  );
   const editExpense = async (data: any) => {
     setIsLoading(true);
     const response = await fetch(
@@ -88,6 +91,7 @@ const ExpenseModal = ({
       reset(expenseBeingEdit); // Reset form to defaultValue when it changes
     }
   }, [expenseBeingEdit, reset]);
+
   const ExpenseForm = (
     <form onSubmit={handleSubmit(useFor === 'Add' ? addExpense : editExpense)}>
       <FormControl fullWidth>
@@ -111,7 +115,8 @@ const ExpenseModal = ({
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DatePicker
               className="datePicker"
-              defaultValue={dayjs(expenseBeingEdit?.date)}
+              value={dayjs(expenseDate)}
+              onChange={(event:any) => setExpenseDate(event.$d.toLocaleDateString())}
             />
           </LocalizationProvider>
         </FormControl>

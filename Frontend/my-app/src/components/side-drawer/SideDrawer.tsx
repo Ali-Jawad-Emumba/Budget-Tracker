@@ -24,6 +24,7 @@ import { Drawer, DrawerHeader } from '../../utils/styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import {
+  setCallsHeader,
   storeSelectedDashboardTab,
   storeUserData,
   updateIsAdmin,
@@ -58,11 +59,12 @@ export default function SideDrawer({ open }: { open: boolean }) {
       icon: <LogoutIcon />,
       action: () => {
         localStorage.removeItem('UserId');
-        localStorage.removeItem('token')
+        localStorage.removeItem('token');
         dispatch(updateIsAdmin(false));
         dispatch(storeSelectedDashboardTab('Expenses'));
         dispatch(storeUserData(null));
-        dispatch(updateIsUserLoggedIn(false))
+        dispatch(updateIsUserLoggedIn(false));
+        dispatch(setCallsHeader(null));
         navigate('/');
       },
     },

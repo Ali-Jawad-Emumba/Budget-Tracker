@@ -9,13 +9,15 @@ import styles from './MyAccount.module.css';
 import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import { storeUserData } from '../../app/store';
-import { headers } from '../../utils/shared';
+
 
 const MyAccount = () => {
   const userData = useSelector((state: any) => state.userData);
   const { register, handleSubmit } = useForm({ defaultValues: userData });
   const dispatch = useDispatch();
   const userId = localStorage.getItem('UserId');
+const headers=useSelector((state:any)=>state.callHeaders)
+
   const onSubmit = async (data: any) => {
     const updateDataFn = await fetch(`http://localHost:3000/users/${userId}`, {
       method: 'PATCH',

@@ -26,7 +26,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { storeUserData } from '../../app/store';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { fetchUserData, headers, startTokenCheckInterval } from '../../utils/shared';
+import { fetchUserData } from '../../utils/shared';
 
 const ProfilePage = () => {
   // const seletedProfileTab = useSelector(
@@ -43,6 +43,8 @@ const ProfilePage = () => {
     useState<boolean>(false);
   const [base64ProfilePic, setBase64ProfilePic] = useState<any>();
   const userId = localStorage.getItem('UserId');
+const headers=useSelector((state:any)=>state.callHeaders)
+
 
   useEffect(() => {
     if (!userData) {
