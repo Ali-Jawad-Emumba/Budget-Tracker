@@ -9,10 +9,13 @@ import { checkTokenExpiration } from '../utils/shared';
 const initialState = {
   userData: null,
   isAdmin: import.meta.env.VITE_ADMIN_ID === localStorage.getItem('UserId'),
-  isUserLoggedIn: localStorage.getItem('UserId') && checkTokenExpiration(Boolean(localStorage.getItem("refresh-token"))),
+  isUserLoggedIn:
+    localStorage.getItem('UserId') &&
+    checkTokenExpiration(Boolean(localStorage.getItem('refresh-token'))),
   selectedDashboardTab: 'Expenses',
-  keepLoggedIn:localStorage.getItem("refresh-token"),
-  expenseAllData:null
+  keepLoggedIn: localStorage.getItem('refresh-token'),
+  expenseAllData: null,
+  notifications: [],
 };
 
 const slice = createSlice({
@@ -31,13 +34,19 @@ const slice = createSlice({
     updateIsUserLoggedIn(state, action) {
       state.isUserLoggedIn = action.payload;
     },
- 
-    updateKeepLoggedIn(state, action){
-      state.keepLoggedIn=action.payload
+
+    updateKeepLoggedIn(state, action) {
+      state.keepLoggedIn = action.payload;
     },
-    storeExpenseAllData(state,action){
-      state.expenseAllData=action.payload
-    }
+    storeExpenseAllData(state, action) {
+      state.expenseAllData = action.payload;
+    },
+    updateNotifications(state, action) {
+      state.notifications = state.notifications.concat(action.payload);
+    },
+    clearNotifications(state) {
+      state.notifications = [];
+    },
   },
 });
 
@@ -47,7 +56,9 @@ export const {
   storeSelectedDashboardTab,
   updateIsUserLoggedIn,
   updateKeepLoggedIn,
-  storeExpenseAllData
+  storeExpenseAllData,
+  updateNotifications,
+  clearNotifications
 } = slice.actions;
 
 export const store = configureStore({

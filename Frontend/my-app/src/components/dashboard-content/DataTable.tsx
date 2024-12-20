@@ -87,7 +87,9 @@ const DataTable = ({
                 )}
               </TableCell>
               <TableCell>{row.price || row.email}</TableCell>
-              <TableCell>{row.date || row.phone}</TableCell>
+              <TableCell>
+                {new Date(row.date).toLocaleDateString() || row.phone}
+              </TableCell>
               <TableCell>
                 {
                   <div style={{ display: 'flex', gap: '10px' }}>

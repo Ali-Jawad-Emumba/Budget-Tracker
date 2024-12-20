@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 import styles from '../utils/form-styles.module.css';
-import { Button, FormControl, InputAdornment } from '@mui/material';
+import { Button, FormControl, InputAdornment, Snackbar } from '@mui/material';
 import {
   InputBootstrapStyled,
   SignupLoginBtn,
@@ -10,7 +10,9 @@ import {
 import { checkAndThrowError, emailRegex } from '../utils/shared';
 import PasswordField from './PasswordField';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
-import { useSelector } from 'react-redux';
+import Notifictaion from './notification/Notification';
+import { updateNotifications } from '../app/store';
+import { useDispatch } from 'react-redux';
 
 const SignUpForm = ({
   useFor,
@@ -31,7 +33,12 @@ const SignUpForm = ({
     watch,
     formState: { errors },
   } = useForm({ defaultValues });
-  
+  const [snackBar, setSnackBar] = useState<any>({
+    open: false,
+    useFor: '',
+    title: '',
+    description: '',
+  });
 
   const isModal = useFor.includes('modal');
 
@@ -58,6 +65,7 @@ const SignUpForm = ({
     return JSON.stringify(result);
   };
   const conditionalSize = isModal ? { width: '50%' } : { width: '100%' };
+  const dispatch = useDispatch();
 
   const onSubmit = async (data: any) => {
     const urlGetUserByEmail = `http://localhost:3000/users/email/${
@@ -80,11 +88,10 @@ const SignUpForm = ({
                   'Cotent-Type': 'application/json',
                 }
               : {
-                'Content-Type': 'application/json',
-                "Authorization": `Bearer ${localStorage.getItem('token')}`,
-              },
-          body:
-            useFor === 'modal' ? JSON.stringify(data) : getSignupDataBody(data),
+                  'Content-Type': 'application/json',
+                  Authorization: `Bearer ${localStorage.getItem('token')}`,
+                },
+          body: isModal ? JSON.stringify(data) : getSignupDataBody(data),
         }
       );
 
@@ -95,130 +102,167 @@ const SignUpForm = ({
         setModalOpen(false);
         reloadData();
       }
+      if (isModal && useFor === 'edit modal') {
+        setSnackBar({
+          open: true,
+          useFor: 'add',
+          title: 'User Updated',
+          description: 'User edited successfully',
+        });
+
+        setTimeout(() => setSnackBar(null), 5000);
+        dispatch(
+          updateNotifications({
+            name: `${data.firstname} ${data.lastname}`,
+            action: 'edit',
+            time: `${new Date()}`,
+          })
+        );
+      }
+      if (isModal && useFor === 'add modal') {
+        setSnackBar({
+          open: true,
+          useFor: 'add',
+          title: 'User Added',
+          description: 'User added successfully',
+        });
+
+        setTimeout(() => setSnackBar(null), 5000);
+        dispatch(
+          updateNotifications({
+            name: `${data.firstname} ${data.lastname}`,
+            action: 'add',
+            time: `${new Date()}`,
+          })
+        );
+      }
     }
   };
   return (
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      className={`${styles.form} ${styles.gapTen}`}
-    >
-      <div className={styles.signupFormFieldWrapper}>
-        <FormControl sx={{ width: '50%' }}>
-          <p className={styles.label}>First Name</p>
+    <>
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className={`${styles.form} ${styles.gapTen}`}
+      >
+        <div className={styles.signupFormFieldWrapper}>
+          <FormControl sx={{ width: '50%' }}>
+            <p className={styles.label}>First Name</p>
+            <InputBootstrapStyled
+              fullWidth
+              {...register('firstname', { required: 'Name is required' })}
+              placeholder="test@exmaple.com"
+            />
+            {checkAndThrowError(errors, 'firstname')}
+          </FormControl>
+          <FormControl sx={{ width: '50%' }}>
+            <p className={styles.label}>Last Name</p>
+            <InputBootstrapStyled
+              fullWidth
+              {...register('lastname', { required: 'Name is required' })}
+              placeholder="test@exmaple.com"
+            />
+            {checkAndThrowError(errors, 'lastname')}
+          </FormControl>
+        </div>
+        <FormControl>
+          <p className={styles.label}>Email</p>
           <InputBootstrapStyled
             fullWidth
-            {...register('firstname', { required: 'Name is required' })}
+            {...register('email', {
+              required: 'Email is required',
+              pattern: {
+                value: emailRegex,
+                message: 'Email is invalid',
+              },
+            })}
+            onChange={() =>
+              showUserExisitsError ? setShowUserExistsError(false) : null
+            }
             placeholder="test@exmaple.com"
+            endAdornment={
+              <InputAdornment position="end">
+                <EmailOutlinedIcon />
+              </InputAdornment>
+            }
           />
-          {checkAndThrowError(errors, 'firstname')}
+          {checkAndThrowError(errors, 'email')}
         </FormControl>
-        <FormControl sx={{ width: '50%' }}>
-          <p className={styles.label}>Last Name</p>
-          <InputBootstrapStyled
-            fullWidth
-            {...register('lastname', { required: 'Name is required' })}
-            placeholder="test@exmaple.com"
-          />
-          {checkAndThrowError(errors, 'lastname')}
-        </FormControl>
-      </div>
-      <FormControl>
-        <p className={styles.label}>Email</p>
-        <InputBootstrapStyled
-          fullWidth
-          {...register('email', {
-            required: 'Email is required',
-            pattern: {
-              value: emailRegex,
-              message: 'Email is invalid',
-            },
-          })}
-          onChange={() =>
-            showUserExisitsError ? setShowUserExistsError(false) : null
-          }
-          placeholder="test@exmaple.com"
-          endAdornment={
-            <InputAdornment position="end">
-              <EmailOutlinedIcon />
-            </InputAdornment>
-          }
-        />
-        {checkAndThrowError(errors, 'email')}
-      </FormControl>
-      <div className={isModal ? styles.signupFormFieldWrapper : ''}>
-        <FormControl sx={conditionalSize}>
-          <p className={styles.label}>Password</p>
-          <PasswordField
-            formRegister={{
-              ...register('password', { required: 'Password is required' }),
-            }}
-            checkAndThrowError={() => checkAndThrowError(errors, 'password')}
-          />
-        </FormControl>
-        {useFor === 'signup page' && (
+        <div className={isModal ? styles.signupFormFieldWrapper : ''}>
           <FormControl sx={conditionalSize}>
-            <p className={styles.label}>Confirm Password</p>
+            <p className={styles.label}>Password</p>
             <PasswordField
               formRegister={{
-                ...register('confirmedpassword', {
-                  required: 'Password is required',
-                  validate: (value) =>
-                    value === watch('password') || 'Passwords do not match',
-                }),
+                ...register('password', { required: 'Password is required' }),
               }}
-              checkAndThrowError={() =>
-                checkAndThrowError(errors, 'confirmedpassword')
-              }
+              checkAndThrowError={() => checkAndThrowError(errors, 'password')}
             />
           </FormControl>
-        )}
-        <FormControl sx={conditionalSize}>
-          <p className={styles.label}>Budget Limit</p>
-          <InputBootstrapStyled
-            fullWidth
-            {...register('budgetlimit')}
-            placeholder="Enter Amount"
-          />
-        </FormControl>
+          {useFor === 'signup page' && (
+            <FormControl sx={conditionalSize}>
+              <p className={styles.label}>Confirm Password</p>
+              <PasswordField
+                formRegister={{
+                  ...register('confirmedpassword', {
+                    required: 'Password is required',
+                    validate: (value) =>
+                      value === watch('password') || 'Passwords do not match',
+                  }),
+                }}
+                checkAndThrowError={() =>
+                  checkAndThrowError(errors, 'confirmedpassword')
+                }
+              />
+            </FormControl>
+          )}
+          <FormControl sx={conditionalSize}>
+            <p className={styles.label}>Budget Limit</p>
+            <InputBootstrapStyled
+              fullWidth
+              {...register('budgetlimit')}
+              placeholder="Enter Amount"
+            />
+          </FormControl>
 
-        {showUserExisitsError && (
-          <p className="errors poppins-regular">
-            This email is already registered
-          </p>
-        )}
-      </div>
-      {isModal && (
-        <div className={styles.signupFormFieldWrapper}>
-          <Button
-            sx={{ width: '50%' }}
-            variant="outlined"
-            onClick={() => setModalOpen(false)}
-          >
-            Cancel
-          </Button>
-          <Button type="submit" sx={{ width: '50%' }} variant="contained">
-            Save
-          </Button>
+          {showUserExisitsError && (
+            <p className="errors poppins-regular">
+              This email is already registered
+            </p>
+          )}
         </div>
-      )}
-      {useFor === 'signup page' && (
-        <>
-          <SignupLoginBtn
-            className={styles.loginBtn}
-            type="submit"
-            variant="contained"
-          >
-            Sign Up
-          </SignupLoginBtn>
-          <p className={`${styles.signupLine} poppins-regular`}>
-            Already have an account?{' '}
-            <Link className={`${styles.link} poppins-semibold`} to="/">
-              Log In
-            </Link>
-          </p>
-        </>
-      )}
-    </form>
+        {isModal && (
+          <div className={styles.signupFormFieldWrapper}>
+            <Button
+              sx={{ width: '50%' }}
+              variant="outlined"
+              onClick={() => setModalOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button type="submit" sx={{ width: '50%' }} variant="contained">
+              Save
+            </Button>
+          </div>
+        )}
+        {useFor === 'signup page' && (
+          <>
+            <SignupLoginBtn
+              className={styles.loginBtn}
+              type="submit"
+              variant="contained"
+            >
+              Sign Up
+            </SignupLoginBtn>
+            <p className={`${styles.signupLine} poppins-regular`}>
+              Already have an account?{' '}
+              <Link className={`${styles.link} poppins-semibold`} to="/">
+                Log In
+              </Link>
+            </p>
+          </>
+        )}
+      </form>
+      <Notifictaion {...snackBar} />
+    </>
   );
 };
 export default SignUpForm;

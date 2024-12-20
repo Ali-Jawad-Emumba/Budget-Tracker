@@ -8,6 +8,7 @@ import {
   LinearProgress,
   MenuItem,
   Select,
+  Snackbar,
   TextField,
   Typography,
 } from '@mui/material';
@@ -22,7 +23,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import DashboardContentLayout from './DashboardContentLayout';
 import Filter from './Filter';
 import DataTable from './DataTable';
-import { storeExpenseAllData } from '../../app/store';
+import Notifictaion from '../notification/Notification';
+import { updateNotifications } from '../../app/store';
 
 const ExpenseDashboardContent = () => {
   const [isAddExpenseModalOpen, setIsAddExpenseModalOpen] =
@@ -38,6 +40,13 @@ const ExpenseDashboardContent = () => {
   const [expenseMetaData, setExpenseMetaData] = useState<any>();
   const [selectedPage, setSelectedPage] = useState<number>(1);
   const userId = localStorage.getItem('UserId');
+  const dispatch = useDispatch();
+  const [snackBar, setSnackBar] = useState<any>({
+    open: false,
+    useFor: '',
+    title: '',
+    description: '',
+  });
 
   const filterData = ({
     sortValue,
@@ -116,7 +125,6 @@ const ExpenseDashboardContent = () => {
   useEffect(() => {
     (async () => await getExpenses())();
   }, []);
-  
 
   const deleteExpense = async (expenseId: number) => {
     const response = await fetch(
@@ -130,6 +138,21 @@ const ExpenseDashboardContent = () => {
       }
     );
     if (response.ok) {
+      setSnackBar({
+        open: true,
+        useFor: 'delete',
+        title: 'Expense Deleted',
+        description: 'Expense deleted successfully',
+      });
+
+      setTimeout(() => setSnackBar(null), 5000);
+      dispatch(
+        updateNotifications({
+          name: "Expense",
+          action: 'delete',
+          time: `${new Date()}`,
+        })
+      );
       await getExpenses();
     }
   };
@@ -284,6 +307,7 @@ const ExpenseDashboardContent = () => {
           reloadData={getExpenses}
         />
       </DashboardContentLayout>
+      <Notifictaion {...snackBar} />
     </>
   );
 };

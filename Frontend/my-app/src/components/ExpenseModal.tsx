@@ -6,6 +6,7 @@ import {
   DialogContent,
   DialogTitle,
   FormControl,
+  Snackbar,
 } from '@mui/material';
 import { InputBootstrapStyled } from '../utils/styled-components';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
@@ -13,6 +14,11 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 import SignUpForm from './SignUpForm';
+
+import Notifictaion from './notification/Notification';
+import { Description } from '@mui/icons-material';
+import { useDispatch } from 'react-redux';
+import { updateNotifications } from '../app/store';
 
 const ExpenseModal = ({
   isOpen,
@@ -39,9 +45,16 @@ const ExpenseModal = ({
     JSON.stringify({
       title: data.title,
       price: data.price,
-      date: expenseDate,
+      date: expenseDate || new Date(),
     });
   const [expenseDate, setExpenseDate] = useState<any>();
+  const dispatch = useDispatch();
+  const [snackBar, setSnackBar] = useState<any>({
+    open: false,
+    useFor: '',
+    title: '',
+    description: '',
+  });
   const editExpense = async (data: any) => {
     setIsLoading(true);
     const response = await fetch(
@@ -58,9 +71,25 @@ const ExpenseModal = ({
     if (response.ok) {
       setIsLoading(false);
       setIsOpen(false);
+      setSnackBar({
+        open: true,
+        useFor: 'edit',
+        title: 'Expense Updated',
+        description: 'Expense edited successfully',
+      });
+
+      setTimeout(() => setSnackBar(null), 5000);
+      dispatch(
+        updateNotifications({
+          name: data.title,
+          action: 'edit',
+          time: `${new Date()}`,
+        })
+      );
       reloadData();
     }
   };
+
   const addExpense = async (data: any) => {
     setIsLoading(true);
     const response = await fetch(
@@ -77,6 +106,21 @@ const ExpenseModal = ({
     if (response.ok) {
       setIsLoading(false);
       setIsOpen(false);
+      setSnackBar({
+        open: true,
+        useFor: 'add',
+        title: 'Expense Added',
+        description: 'Expense added successfully',
+      });
+
+      setTimeout(() => setSnackBar(null), 5000);
+      dispatch(
+        updateNotifications({
+          name: data.title,
+          action: 'add',
+          time: `${new Date()}`,
+        })
+      );
       reloadData();
     }
   };
@@ -95,61 +139,64 @@ const ExpenseModal = ({
   }, [expenseBeingEdit, reset]);
 
   return (
-    <Dialog onClose={() => setIsOpen(false)} open={isOpen}>
-      <DialogTitle>Expense</DialogTitle>
-      <DialogContent
-        sx={{ display: 'flex', flexDirection: 'column', gap: '10px' }}
-      >
-        <form
-          onSubmit={handleSubmit(useFor === 'Add' ? addExpense : editExpense)}
+    <>
+      <Dialog onClose={() => setIsOpen(false)} open={isOpen}>
+        <DialogTitle>Expense</DialogTitle>
+        <DialogContent
+          sx={{ display: 'flex', flexDirection: 'column', gap: '10px' }}
         >
-          <FormControl fullWidth>
-            <label>Title</label>
-            <InputBootstrapStyled
-              {...register('title', { required: true })}
-              fullWidth
-              sx={{ height: '40px' }}
-            />
-          </FormControl>
-          <div style={{ display: 'flex', gap: '10px' }}>
-            <FormControl>
-              <label>Price</label>
+          <form
+            onSubmit={handleSubmit(useFor === 'Add' ? addExpense : editExpense)}
+          >
+            <FormControl fullWidth>
+              <label>Title</label>
               <InputBootstrapStyled
-                {...register('price', { required: true })}
+                {...register('title', { required: true })}
+                fullWidth
                 sx={{ height: '40px' }}
               />
             </FormControl>
-            <FormControl>
-              <label>Date</label>
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DatePicker
-                  className="datePicker"
-                  disableFuture={true}
-                  value={dayjs(expenseDate)}
-                  onChange={(event: any) =>
-                    setExpenseDate(event.$d.toLocaleDateString())
-                  }
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <FormControl>
+                <label>Price</label>
+                <InputBootstrapStyled
+                  {...register('price', { required: true })}
+                  sx={{ height: '40px' }}
                 />
-              </LocalizationProvider>
-            </FormControl>
-          </div>
-          <div style={{ display: 'flex', gap: '10px' }}>
-            <Button variant="outlined" onClick={() => setIsOpen(false)}>
-              Cancel
-            </Button>
-            <Button type="submit" variant="contained">
-              {isLoading ? (
-                <CircularProgress size={'30px'} color="inherit" />
-              ) : useFor === 'Add' ? (
-                useFor
-              ) : (
-                'Update'
-              )}
-            </Button>
-          </div>
-        </form>
-      </DialogContent>
-    </Dialog>
+              </FormControl>
+              <FormControl>
+                <label>Date</label>
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DatePicker
+                    className="datePicker"
+                    disableFuture={true}
+                    value={dayjs(expenseDate)}
+                    onChange={(event: any) =>
+                      setExpenseDate(event.$d.toLocaleDateString())
+                    }
+                  />
+                </LocalizationProvider>
+              </FormControl>
+            </div>
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <Button variant="outlined" onClick={() => setIsOpen(false)}>
+                Cancel
+              </Button>
+              <Button type="submit" variant="contained">
+                {isLoading ? (
+                  <CircularProgress size={'30px'} color="inherit" />
+                ) : useFor === 'Add' ? (
+                  useFor
+                ) : (
+                  'Update'
+                )}
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
+      <Notifictaion {...snackBar} />
+    </>
   );
 };
 

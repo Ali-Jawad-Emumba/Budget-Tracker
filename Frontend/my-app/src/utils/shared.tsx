@@ -1,3 +1,4 @@
+import { Snackbar } from '@mui/material';
 import { jwtDecode } from 'jwt-decode';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -50,7 +51,6 @@ export const checkTokenExpiration = (keepLoggedIn: boolean) => {
         const currentTime = Date.now() / 1000; // current time in seconds
         if (decoded.exp > currentTime) {
           (async () => {
-            
             const response = await fetch(
               'http://localHost:3000/refresh-token',
               {
@@ -83,3 +83,7 @@ export const checkTokenExpiration = (keepLoggedIn: boolean) => {
     return false;
   }
 };
+
+
+
+
