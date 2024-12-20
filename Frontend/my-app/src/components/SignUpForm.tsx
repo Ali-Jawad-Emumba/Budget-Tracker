@@ -1,14 +1,14 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
-import styles from '../../utils/form-styles.module.css';
+import styles from '../utils/form-styles.module.css';
 import { Button, FormControl, InputAdornment } from '@mui/material';
 import {
   InputBootstrapStyled,
   SignupLoginBtn,
-} from '../../utils/styled-components';
-import { checkAndThrowError, emailRegex } from '../../utils/shared';
-import PasswordField from '../../components/PasswordField';
+} from '../utils/styled-components';
+import { checkAndThrowError, emailRegex } from '../utils/shared';
+import PasswordField from './PasswordField';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import { useSelector } from 'react-redux';
 
@@ -31,8 +31,7 @@ const SignUpForm = ({
     watch,
     formState: { errors },
   } = useForm({ defaultValues });
-const headers=useSelector((state:any)=>state.callHeaders)
-
+  
 
   const isModal = useFor.includes('modal');
 
@@ -80,7 +79,10 @@ const headers=useSelector((state:any)=>state.callHeaders)
               ? {
                   'Cotent-Type': 'application/json',
                 }
-              : headers,
+              : {
+                'Content-Type': 'application/json',
+                "Authorization": `Bearer ${localStorage.getItem('token')}`,
+              },
           body:
             useFor === 'modal' ? JSON.stringify(data) : getSignupDataBody(data),
         }
@@ -100,7 +102,7 @@ const headers=useSelector((state:any)=>state.callHeaders)
       onSubmit={handleSubmit(onSubmit)}
       className={`${styles.form} ${styles.gapTen}`}
     >
-      <div style={{ display: 'flex', gap: '15px' }}>
+      <div className={styles.signupFormFieldWrapper}>
         <FormControl sx={{ width: '50%' }}>
           <p className={styles.label}>First Name</p>
           <InputBootstrapStyled
@@ -143,7 +145,7 @@ const headers=useSelector((state:any)=>state.callHeaders)
         />
         {checkAndThrowError(errors, 'email')}
       </FormControl>
-      <div style={isModal ? { display: 'flex', gap: '15px' } : {}}>
+      <div className={isModal ? styles.signupFormFieldWrapper : ''}>
         <FormControl sx={conditionalSize}>
           <p className={styles.label}>Password</p>
           <PasswordField
@@ -186,7 +188,7 @@ const headers=useSelector((state:any)=>state.callHeaders)
         )}
       </div>
       {isModal && (
-        <div style={{ display: 'flex', gap: '15px' }}>
+        <div className={styles.signupFormFieldWrapper}>
           <Button
             sx={{ width: '50%' }}
             variant="outlined"

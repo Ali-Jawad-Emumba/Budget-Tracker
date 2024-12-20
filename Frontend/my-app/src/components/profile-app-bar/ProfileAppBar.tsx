@@ -1,6 +1,6 @@
 import { BellIcon } from '../../pages/dashboard/DashboardIcons';
 import ProfilePic from '../../assets/images/person profile.png';
-import Logo from '../Logo/Logo';
+import Logo from '../logo/Logo';
 import styles from './ProfileAppBar.module.css';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';

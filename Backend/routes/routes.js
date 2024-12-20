@@ -10,6 +10,8 @@ dotenv.config();
 const router = Router();
 const JWT_KEY = `${process.env.JWT_KEY}`;
 const JWT_REFRESH_KEY = `${process.env.JWT_REFRESH_KEY}`;
+const EMAIL=`${process.env.EMAIL}`
+const PASS=`${process.env.APP_PASSWORD}`
 export default router;
 
 router.get("/users", authMiddleware, async (req, res) => {
@@ -250,8 +252,8 @@ const transporter = nodemailer.createTransport({
   port: 587,
   secure: false, // true for port 465, false for other ports
   auth: {
-    user: "alijawad04@gmail.com",
-    pass: "ogrg fczh cmek nvtr",
+    user: EMAIL,
+    pass: PASS,
   },
 });
 router.post("/reset-password", async (req, res) => {
@@ -273,7 +275,7 @@ router.post("/reset-password", async (req, res) => {
 
     // Send email using Nodemailer
     const mailOptions = {
-      from: { name: "Your App", address: "alijawad04@gmail.com" },
+      from: { name: "Your App", address: EMAIL },
       to: user.email,
       subject: "Password Reset Request",
       text: `Hello, \n\nPlease click the following link to reset your password: \n\n${resetUrl}\n\nThe link will expire in 1 hour.`,
@@ -295,6 +297,6 @@ router.post("/refresh-token", (req, res) => {
     if (err) return res.sendStatus(403); // Invalid refresh token
 
     const newAccessToken = jwt.sign({ id: user.id }, JWT_KEY, { expiresIn: "5s" });
-    res.json({ accessToken: newAccessToken, id:user.id });
+    res.json({ token: newAccessToken, id:user.id });
   });
 });

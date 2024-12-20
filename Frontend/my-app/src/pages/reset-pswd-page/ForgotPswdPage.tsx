@@ -11,14 +11,17 @@ import { useSelector } from 'react-redux';
 
 const ForgotPswdPage: React.FC = () => {
   const [email, setEmail] = useState<string>();
-const headers=useSelector((state:any)=>state.callHeaders)
+
 
 
   const sendPswdResetLink = async () => {
     if (email) {
       await fetch('http://localHost:3000/reset-password', {
         method: 'POST',
-        headers,
+        headers:{
+          'Content-Type': 'application/json',
+          "Authorization": `Bearer ${localStorage.getItem('token')}`,
+        },
         body: JSON.stringify({
           email,
         }),

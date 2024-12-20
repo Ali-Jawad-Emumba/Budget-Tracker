@@ -11,11 +11,8 @@ const initialState = {
   isAdmin: import.meta.env.VITE_ADMIN_ID === localStorage.getItem('UserId'),
   isUserLoggedIn: localStorage.getItem('UserId') && checkTokenExpiration(Boolean(localStorage.getItem("refresh-token"))),
   selectedDashboardTab: 'Expenses',
-  callHeaders:{
-    'Content-Type': 'application/json',
-    "Authorization": `Bearer ${localStorage.getItem('token')}`,
-  },
-  keepLoggedIn:localStorage.getItem("refresh-token")
+  keepLoggedIn:localStorage.getItem("refresh-token"),
+  expenseAllData:null
 };
 
 const slice = createSlice({
@@ -34,14 +31,12 @@ const slice = createSlice({
     updateIsUserLoggedIn(state, action) {
       state.isUserLoggedIn = action.payload;
     },
-    setCallsHeader(state, action){
-      state.callHeaders={
-        'Content-Type': 'application/json',
-        "Authorization": `Bearer ${action.payload}`,
-      }
-    },
+ 
     updateKeepLoggedIn(state, action){
       state.keepLoggedIn=action.payload
+    },
+    storeExpenseAllData(state,action){
+      state.expenseAllData=action.payload
     }
   },
 });
@@ -51,8 +46,8 @@ export const {
   updateIsAdmin,
   storeSelectedDashboardTab,
   updateIsUserLoggedIn,
-  setCallsHeader,
-  updateKeepLoggedIn
+  updateKeepLoggedIn,
+  storeExpenseAllData
 } = slice.actions;
 
 export const store = configureStore({

@@ -12,20 +12,17 @@ import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
-import SignUpForm from '../pages/signup-page/SignUpForm';
-import { useSelector } from 'react-redux';
+import SignUpForm from './SignUpForm';
 
 const ExpenseModal = ({
   isOpen,
   setIsOpen,
-  role = 'User',
   useFor,
   expenseBeingEdit,
   reloadData,
 }: {
   isOpen: boolean;
   setIsOpen: any;
-  role?: string;
   useFor: string;
   expenseBeingEdit?: any;
   reloadData?: any;
@@ -44,17 +41,17 @@ const ExpenseModal = ({
       price: data.price,
       date: expenseDate,
     });
-  const headers = useSelector((state: any) => state.callHeaders);
-  const [expenseDate, setExpenseDate] = useState<any>(
-    dayjs(useFor === 'Edit' ? expenseBeingEdit?.date : new Date())
-  );
+  const [expenseDate, setExpenseDate] = useState<any>();
   const editExpense = async (data: any) => {
     setIsLoading(true);
     const response = await fetch(
       `http://localhost:3000/expenses/${expenseBeingEdit._id}`,
       {
         method: 'PATCH',
-        headers,
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
         body: getExpenseBody(data),
       }
     );
@@ -70,7 +67,10 @@ const ExpenseModal = ({
       `http://localhost:3000/users/${userId}/expenses`,
       {
         method: 'POST',
-        headers,
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
         body: getExpenseBody(data),
       }
     );
@@ -81,9 +81,11 @@ const ExpenseModal = ({
     }
   };
   useEffect(() => {
-    if (useFor === 'Add') {
-      reset(expenseBeingEdit); // Reset form to defaultValue when it changes
-    }
+    useFor === 'Add'
+      ? reset(expenseBeingEdit)
+      : setExpenseDate(
+          dayjs(useFor === 'Edit' ? expenseBeingEdit?.date : new Date())
+        );
     setIsLoading(false);
   }, [isOpen]);
   useEffect(() => {
@@ -92,69 +94,60 @@ const ExpenseModal = ({
     }
   }, [expenseBeingEdit, reset]);
 
-  const ExpenseForm = (
-    <form onSubmit={handleSubmit(useFor === 'Add' ? addExpense : editExpense)}>
-      <FormControl fullWidth>
-        <label>Title</label>
-        <InputBootstrapStyled
-          {...register('title', { required: true })}
-          fullWidth
-          sx={{ height: '40px' }}
-        />
-      </FormControl>
-      <div style={{ display: 'flex', gap: '10px' }}>
-        <FormControl>
-          <label>Price</label>
-          <InputBootstrapStyled
-            {...register('price', { required: true })}
-            sx={{ height: '40px' }}
-          />
-        </FormControl>
-        <FormControl>
-          <label>Date</label>
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DatePicker
-              className="datePicker"
-              value={dayjs(expenseDate)}
-              onChange={(event:any) => setExpenseDate(event.$d.toLocaleDateString())}
-            />
-          </LocalizationProvider>
-        </FormControl>
-      </div>
-      <div style={{ display: 'flex', gap: '10px' }}>
-        <Button variant="outlined" onClick={() => setIsOpen(false)}>
-          Cancel
-        </Button>
-        <Button type="submit" variant="contained">
-          {isLoading ? (
-            <CircularProgress size={'30px'} color="inherit" />
-          ) : useFor === 'Add' ? (
-            useFor
-          ) : (
-            'Update'
-          )}
-        </Button>
-      </div>
-    </form>
-  );
   return (
     <Dialog onClose={() => setIsOpen(false)} open={isOpen}>
-      <DialogTitle>
-        {`${useFor} ${role === 'Admin' ? 'User' : 'Expense'}`}
-      </DialogTitle>
+      <DialogTitle>Expense</DialogTitle>
       <DialogContent
         sx={{ display: 'flex', flexDirection: 'column', gap: '10px' }}
       >
-        {role === 'Admin' ? (
-          <SignUpForm
-            useFor={`${useFor.toLowerCase()} modal`}
-            defaultValues={expenseBeingEdit}
-            setModalOpen={setIsOpen}
-            reloadData={reloadData}
-          />
-        ) : (
-          ExpenseForm
-        )}
+        <form
+          onSubmit={handleSubmit(useFor === 'Add' ? addExpense : editExpense)}
+        >
+          <FormControl fullWidth>
+            <label>Title</label>
+            <InputBootstrapStyled
+              {...register('title', { required: true })}
+              fullWidth
+              sx={{ height: '40px' }}
+            />
+          </FormControl>
+          <div style={{ display: 'flex', gap: '10px' }}>
+            <FormControl>
+              <label>Price</label>
+              <InputBootstrapStyled
+                {...register('price', { required: true })}
+                sx={{ height: '40px' }}
+              />
+            </FormControl>
+            <FormControl>
+              <label>Date</label>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker
+                  className="datePicker"
+                  disableFuture={true}
+                  value={dayjs(expenseDate)}
+                  onChange={(event: any) =>
+                    setExpenseDate(event.$d.toLocaleDateString())
+                  }
+                />
+              </LocalizationProvider>
+            </FormControl>
+          </div>
+          <div style={{ display: 'flex', gap: '10px' }}>
+            <Button variant="outlined" onClick={() => setIsOpen(false)}>
+              Cancel
+            </Button>
+            <Button type="submit" variant="contained">
+              {isLoading ? (
+                <CircularProgress size={'30px'} color="inherit" />
+              ) : useFor === 'Add' ? (
+                useFor
+              ) : (
+                'Update'
+              )}
+            </Button>
+          </div>
+        </form>
       </DialogContent>
     </Dialog>
   );

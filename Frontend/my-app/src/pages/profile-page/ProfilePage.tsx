@@ -27,14 +27,11 @@ import { storeUserData } from '../../app/store';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { fetchUserData } from '../../utils/shared';
+import AppBar from '../../components/dashboard-app-bar/AppBar';
 
 const ProfilePage = () => {
-  // const seletedProfileTab = useSelector(
-  //   (state: any) => state.seletedProfileTab
-  // );
   const [selectedProfileTab, setSelectedProfileTab] =
     useState<string>('Profile');
-  // const dispatch = useDispatch();
   const navigate = useNavigate();
   let userData = useSelector((state: any) => state.userData);
   const [isLoading, setIsLoading] = useState<boolean>(!userData);
@@ -43,8 +40,6 @@ const ProfilePage = () => {
     useState<boolean>(false);
   const [base64ProfilePic, setBase64ProfilePic] = useState<any>();
   const userId = localStorage.getItem('UserId');
-const headers=useSelector((state:any)=>state.callHeaders)
-
 
   useEffect(() => {
     if (!userData) {
@@ -71,7 +66,6 @@ const headers=useSelector((state:any)=>state.callHeaders)
     );
 
   const convertProfilePicToBase64 = (file: any) => {
-    let base64Image;
     const reader = new FileReader();
     reader.onloadend = () => {
       setBase64ProfilePic(reader.result as string);
@@ -82,7 +76,10 @@ const headers=useSelector((state:any)=>state.callHeaders)
   const saveProfilePic = async () => {
     const updateDataFn = await fetch(`http://localHost:3000/users/${userId}`, {
       method: 'PATCH',
-      headers,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
       body: JSON.stringify({
         profilepic: base64ProfilePic,
       }),
@@ -97,7 +94,7 @@ const headers=useSelector((state:any)=>state.callHeaders)
     <>
       <div className={styles.pageLayout}>
         <div className={styles.appBar}>
-          <ProfileAppBar />
+          <AppBar useFor="profile" />
         </div>
 
         <div className={styles.profileBar}>

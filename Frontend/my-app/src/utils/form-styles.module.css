@@ -48,3 +48,7 @@
   flex-direction: column;
   gap: 10px;
 }
+.signupFormFieldWrapper {
+  display: flex;
+  gap: 15px;
+}

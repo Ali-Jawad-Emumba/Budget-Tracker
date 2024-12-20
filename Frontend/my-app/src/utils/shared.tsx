@@ -1,5 +1,5 @@
 import { jwtDecode } from 'jwt-decode';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 export const checkAndThrowError = (errors: any, errorFor: string): any => {
   if (errors[errorFor])
@@ -13,10 +13,7 @@ export const checkAndThrowError = (errors: any, errorFor: string): any => {
 export const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
 export const startTokenCheckInterval = (keepLoggedIn: boolean) => {
-  const interval = setInterval(
-    () => checkTokenExpiration(keepLoggedIn),
-    5000
-  );
+  const interval = setInterval(() => checkTokenExpiration(keepLoggedIn), 5000);
   return interval;
 };
 
@@ -51,31 +48,29 @@ export const checkTokenExpiration = (keepLoggedIn: boolean) => {
       if (keepLoggedIn && refreshToken) {
         const decoded = jwtDecode<any>(refreshToken);
         const currentTime = Date.now() / 1000; // current time in seconds
-        if (decoded.exp < currentTime) {
-          localStorage.removeItem('refresh-token'); // Clear the token from localStorage
-          localStorage.removeItem('token'); // Clear the token from localStorage
-          localStorage.removeItem('UserId'); // Optionally, clear other session data
-          window.location.href = '/'; // Redirect to login or show expired message
-          return false; // Token is expired, user is logged out}
-        } else {
-          async () => {
+        if (decoded.exp > currentTime) {
+          (async () => {
+            
             const response = await fetch(
               'http://localHost:3000/refresh-token',
               {
                 method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
                 body: JSON.stringify({
                   refreshToken: localStorage.getItem('refresh-token'),
                 }),
               }
             );
-            const accessToken = await response.json();
-            localStorage.setItem('token', accessToken);
-          };
+            const data = await response.json();
+            localStorage.setItem('token', data.token);
+          })();
         }
       } else {
         localStorage.removeItem('token'); // Clear the token from localStorage
         localStorage.removeItem('UserId'); // Optionally, clear other session data
-        window.location.href = '/'; // Redirect to login or show expired message
+        if (!refreshToken) window.location.href = '/'; // Redirect to login or show expired message
         return false; // Token is expired, user is logged out}
       }
 
@@ -83,9 +78,8 @@ export const checkTokenExpiration = (keepLoggedIn: boolean) => {
     }
   } catch (error) {
     // Invalid token or other error
-    localStorage.removeItem('token');
-    localStorage.removeItem('UserId');
-    window.location.href = '/'; // Redirect to login page
+
+    if (!refreshToken) window.location.href = '/'; // Redirect to login page
     return false;
   }
 };

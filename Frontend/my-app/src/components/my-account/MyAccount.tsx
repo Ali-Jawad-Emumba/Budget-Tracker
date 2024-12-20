@@ -16,12 +16,15 @@ const MyAccount = () => {
   const { register, handleSubmit } = useForm({ defaultValues: userData });
   const dispatch = useDispatch();
   const userId = localStorage.getItem('UserId');
-const headers=useSelector((state:any)=>state.callHeaders)
+
 
   const onSubmit = async (data: any) => {
     const updateDataFn = await fetch(`http://localHost:3000/users/${userId}`, {
       method: 'PATCH',
-      headers,
+      headers:{
+        'Content-Type': 'application/json',
+        "Authorization": `Bearer ${localStorage.getItem('token')}`,
+      },
       body: JSON.stringify(data),
     });
     const updatedData = await updateDataFn.json();

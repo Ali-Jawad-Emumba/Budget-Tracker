@@ -10,13 +10,13 @@ import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import styles from '../../utils/form-styles.module.css';
 import PasswordField from '../../components/PasswordField';
 import { useForm } from 'react-hook-form';
-import { ReactJSX } from '@emotion/react/dist/declarations/src/jsx-namespace';
+
 import { checkAndThrowError } from '../../utils/shared';
 import { emailRegex } from '../../utils/shared';
-import { boolean } from 'yup';
+
 import { useEffect, useState } from 'react';
 import {
-  setCallsHeader,
+
   updateIsAdmin,
   updateIsUserLoggedIn,
   updateKeepLoggedIn,
@@ -29,7 +29,6 @@ const LoginPage: React.FC = () => {
     userNotFound: false,
     invalidCredentials: false,
   });
-  const [userEmail, setUserEmail] = useState<string>();
   const {
     register,
     handleSubmit,
@@ -39,37 +38,6 @@ const LoginPage: React.FC = () => {
   const dispatch = useDispatch();
   const [rememberMe, setRememberMe] = useState<boolean>(false);
 
-  const onSubmit = async (data: any) => {
-    const fetchFn = await fetch(
-      rememberMe
-        ? `http://localhost:3000/users/email/${data.email}?RememberMe=${true}`
-        : `http://localhost:3000/users/email/${data.email}`
-    );
-    if (fetchFn.ok) {
-      const user = await fetchFn.json();
-      if (!user.userExists) {
-        setShowError({ ...showError, userNotFound: true });
-      } else {
-        if (user.userData.password === data.password.trim()) {
-          localStorage.setItem('UserId', user.userData._id);
-          localStorage.setItem('token', user.token);
-          if (rememberMe && user.refreshToken) {
-            localStorage.setItem('refresh-token', user.refreshToken);
-            dispatch(updateKeepLoggedIn(true));
-          }
-          dispatch(setCallsHeader(user.token));
-          dispatch(updateIsUserLoggedIn(true));
-          console.log(user.userData._id, import.meta.env.VITE_ADMIN_ID);
-          if (user.userData._id === import.meta.env.VITE_ADMIN_ID) {
-            dispatch(updateIsAdmin(true));
-          }
-          navigate('/dashboard');
-        } else {
-          setShowError({ ...showError, invalidCredentials: true });
-        }
-      }
-    }
-  };
   useEffect(() => {
     (async () => {
       const refreshToken = localStorage.getItem('refresh-token');
@@ -88,19 +56,48 @@ const LoginPage: React.FC = () => {
             }),
           });
           const data = await response.json();
-          localStorage.setItem('token', data.accessToken);
-          localStorage.setItem('UserId', data.id);
-          dispatch(setCallsHeader(data.accessToken));
-          dispatch(updateIsUserLoggedIn(true));
-
-          if (data.id === import.meta.env.VITE_ADMIN_ID) {
-            dispatch(updateIsAdmin(true));
-          }
-          navigate('/dashboard');
+          login(data, data.id);
         }
       }
     })();
   }, []);
+  const login = (user: any, userId: string) => {
+    localStorage.setItem('UserId', userId);
+    localStorage.setItem('token', user.token);
+    dispatch(updateIsUserLoggedIn(true));
+    if (userId === import.meta.env.VITE_ADMIN_ID) {
+      dispatch(updateIsAdmin(true));
+    }
+    navigate('/dashboard');
+  };
+
+  const onSubmit = async (data: any) => {
+    const emailInput = data.email;
+    const passwordInput = data.password;
+    const fetchFn = await fetch(
+      rememberMe
+        ? `http://localhost:3000/users/email/${emailInput}?RememberMe=${true}`
+        : `http://localhost:3000/users/email/${emailInput}`
+    );
+    if (fetchFn.ok) {
+      const user = await fetchFn.json();
+      const userData = user.userData;
+      if (!user.userExists) {
+        setShowError({ ...showError, userNotFound: true });
+      } else {
+        if (userData.password === passwordInput.trim()) {
+          if (rememberMe && user.refreshToken) {
+            localStorage.setItem('refresh-token', user.refreshToken);
+            dispatch(updateKeepLoggedIn(true));
+          }
+          login(user, userData._id);
+        } else {
+          setShowError({ ...showError, invalidCredentials: true });
+        }
+      }
+    }
+  };
+
   return (
     <LoginSignupLayout image={illustration}>
       <div className={styles.welcomeText}>
@@ -126,13 +123,12 @@ const LoginPage: React.FC = () => {
                 message: 'Email is not valid',
               },
             })}
-            onChange={(e) => {
-              setUserEmail(e.target.value);
+            onChange={(e) =>
               setShowError({
                 userNotFound: false,
                 invalidCredentials: false,
-              });
-            }}
+              })
+            }
             fullWidth
             placeholder="test@exmaple.com"
             endAdornment={
