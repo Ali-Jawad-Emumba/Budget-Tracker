@@ -12,7 +12,8 @@
   height: 49px;
 }
 
-.logoDashboard {
+.logoDashboard,
+.logoProfile {
   display: flex;
   gap: 10px;
   padding: auto;
@@ -30,4 +31,10 @@
 .logoDashboard .appName {
   font-size: 0.938rem;
   margin: 0;
+}
+.logoProfile img {
+  width: 25%;
+}
+.logoProfile .appName {
+  font-size: 1.2rem;
 }

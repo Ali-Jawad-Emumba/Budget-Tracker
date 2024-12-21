@@ -40,6 +40,32 @@ router.get("/users", authMiddleware, async (req, res) => {
     res.status(500).json({ message: "Server Error", error: error.message });
   }
 });
+router.get("/expenses", authMiddleware, async (req, res) => {
+  try {
+    const { page = 1, limit = 10 } = req.query; // Default values
+
+    // Parse `page` and `limit` to integers
+    const pageNumber = parseInt(page, 10);
+    const limitNumber = parseInt(limit, 10);
+
+    const expenses = await Expense.find()
+      .skip((pageNumber - 1) * limitNumber) // Skip records for previous pages
+      .limit(limitNumber) // Limit the number of records
+      .exec();
+    const totalDocuments = await User.countDocuments();
+    if (!expenses) {
+      return res.status(404).json({ message: "No expenses found" });
+    }
+    res.json({
+      totalPages: Math.ceil(totalDocuments / limitNumber),
+      currentPage: pageNumber,
+      totalRecords: totalDocuments,
+      data: expenses,
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Server Error", error: error.message });
+  }
+});
 router.get("/users/email/:email", async (req, res) => {
   try {
     const email = req.params.email;

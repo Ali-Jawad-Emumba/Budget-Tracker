@@ -176,7 +176,7 @@ const SignUpForm = ({
           />
           {checkAndThrowError(errors, 'email')}
         </FormControl>
-        <div className={isModal ? styles.signupFormFieldWrapper : ''}>
+        <div className={isModal ? styles.signupFormFieldWrapper : styles.passwords}>
           <FormControl sx={conditionalSize}>
             <p className={styles.label}>Password</p>
             <PasswordField

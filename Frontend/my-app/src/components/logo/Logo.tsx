@@ -4,10 +4,20 @@ import { LogoProps } from '../../utils/types';
 import { useNavigate } from 'react-router-dom';
 
 const Logo = ({ useFor }: LogoProps) => {
+  const getClass = () => {
+    switch (useFor) {
+      case 'dashboard':
+        return styles.logoDashboard;
+      case 'profile':
+        return styles.logoProfile;
+      default:
+        return styles.logoLoginSignup;
+    }
+  };
   return (
     <div
       className={
-        useFor === 'dashboard' ? styles.logoDashboard : styles.logoLoginSignup
+        getClass()
       }
     >
       <img src={logo} />

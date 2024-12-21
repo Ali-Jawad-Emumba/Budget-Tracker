@@ -1,4 +1,4 @@
-import { DashboardButton } from '../../utils/styled-components';
+import { StyledButton } from '../../utils/styled-components';
 import styles from './DashboardContent.module.css';
 import { InputAdornment, MenuItem, Select, TextField } from '@mui/material';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react';
 import DataTable from './DataTable';
 import DashboardContentLayout from './DashboardContentLayout';
 import Filter from './Filter';
-import UserModal from '../UsersModal';
+import UserModal from '../modal/UsersModal';
 import Notifictaion from '../notification/Notification';
 import { useDispatch } from 'react-redux';
 import { updateNotifications } from '../../app/store';
@@ -52,40 +52,19 @@ const UsersDashboardContent = () => {
     (async () => await getUsers())();
   }, [token]);
 
-  const deleteUser = async (userId: number) => {
-    const response = await deleteUserById(userId);
-    if (response.ok) {
-      const userDeleted = await response.json();
-      setSnackBar({
-        open: true,
-        useFor: 'delete',
-        title: 'User Deleted',
-        description: 'User deleted successfully',
-      });
-
-      setTimeout(() => setSnackBar(null), 5000);
-      dispatch(
-        updateNotifications({
-          name: userDeleted.title,
-          action: 'delete',
-          time: `${new Date()}`,
-        })
-      );
-      await getUsers();
-    }
-  };
+ 
   return (
     <>
       <DashboardContentLayout
         title="Users"
         tableTitle="Users"
         button={
-          <DashboardButton
+          <StyledButton
             onClick={() => setIsAddUserModalOpen(true)}
             sx={{ margin: 'auto 0' }}
           >
             Add User
-          </DashboardButton>
+          </StyledButton>
         }
         filters={
           <>
@@ -149,7 +128,6 @@ const UsersDashboardContent = () => {
           setSelectedPage={setSelectedPage}
           metaData={expenseMetaData}
           getData={getUsers}
-          deleteItem={deleteUser}
         />
 
         <UserModal

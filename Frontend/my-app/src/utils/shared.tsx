@@ -1,7 +1,8 @@
-import { Snackbar } from '@mui/material';
+import { IconButton, Snackbar } from '@mui/material';
 import { jwtDecode } from 'jwt-decode';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAccessToken } from './api-calls';
+import { CloseIcon } from './icons';
 
 export const checkAndThrowError = (errors: any, errorFor: string): any => {
   if (errors[errorFor])
@@ -18,8 +19,6 @@ export const startTokenCheckInterval = (keepLoggedIn: boolean) => {
   const interval = setInterval(() => checkTokenExpiration(keepLoggedIn), 5000);
   return interval;
 };
-
-
 
 export const checkTokenExpiration = (keepLoggedIn: boolean) => {
   const token = localStorage.getItem('token');
@@ -41,7 +40,7 @@ export const checkTokenExpiration = (keepLoggedIn: boolean) => {
         if (decoded.exp > currentTime) {
           (async () => {
             const data = await getAccessToken();
-            localStorage.setItem('token', data.token)
+            localStorage.setItem('token', data.token);
           })();
         }
       } else {
@@ -91,3 +90,18 @@ export const nameValidation = {
   pattern: patternValidation,
 };
 export const BASE_URL = import.meta.env.VITE_BASE_URL;
+
+export const CloseButton = ({ setIsOpen }: { setIsOpen: any }) => (
+  <IconButton
+    aria-label="close"
+    onClick={() => setIsOpen(false)}
+    sx={(theme) => ({
+      position: 'absolute',
+      right: 8,
+      top: 8,
+      color: theme.palette.grey[500],
+    })}
+  >
+    <CloseIcon />
+  </IconButton>
+);

@@ -19,7 +19,7 @@ export interface InitialState {
   keepLoggedIn: boolean;
   expenseAllData: any;
   notifications: any;
-  userId:string|null
+  userId: string | null;
 }
 
 export interface ChartData {
@@ -43,7 +43,6 @@ export interface DataTableProps {
   setSelectedPage: any;
   metaData: any;
   getData: any;
-  deleteItem: any;
 }
 
 export interface FilterProps {
@@ -68,10 +67,12 @@ export interface SignupFormProps {
   setModalOpen?: any;
   reloadData?: any;
 }
-export interface ModalProps{
+export interface ModalProps {
   isOpen: boolean;
   setIsOpen: any;
   useFor: string;
   beingEdit?: any;
   reloadData?: any;
+  idToDelete?: number;
+  item?: any;
 }

@@ -22,16 +22,17 @@ const AppBar = ({ useFor, toggleDrawer }: AppBarProps) => {
           useFor === 'dashboard' ? toggleDrawer : () => navigate('/dashboard')
         }
       >
-        {useFor === 'dashboard' ? <SubjectIcon /> : <Logo useFor="dashboard" />}
+        {useFor === 'dashboard' ? <SubjectIcon /> : <Logo useFor={useFor} />}
       </div>
       <div className={styles.bellIconAndProfile}>
-        {notifictaions.length > 0 ? (
+        <div className={styles.bellIcon}>{notifictaions.length > 0 ? (
           <div onClick={() => setShowNotificationsList(!showNotificationsList)}>
             <BellIconNotified />
           </div>
         ) : (
           <BellIcon />
         )}
+        </div>
         {showNotificationsList && (
           <NotifictaionLists
             setShowNotificationsList={setShowNotificationsList}

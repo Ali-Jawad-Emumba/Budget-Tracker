@@ -10,6 +10,7 @@
   font-size: 1.5rem;
   color: #878a99;
   margin-top: 0;
+  margin-bottom: 2px;
 }
 .label {
   font-family: 'Poppins';
@@ -28,7 +29,7 @@
   font-weight: 600;
 }
 .signupLine {
-  margin: auto;
+  margin: auto !important;
 }
 .gapTen {
   gap: 10px;
@@ -51,4 +52,9 @@
 .signupFormFieldWrapper {
   display: flex;
   gap: 15px;
+}
+.passwords {
+  display: flex;
+  flex-direction: column;
+  gap:10px
 }

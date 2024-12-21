@@ -11,6 +11,7 @@ export const InputBootstrapStyled = styled(FilledInput)(({ theme }) => ({
   width: '100%',
   boxSizing: 'border-box',
   borderRadius: 4,
+
   '& .MuiInputBase-input': {
     position: 'relative',
     fontSize: 16,
@@ -47,13 +48,23 @@ export const SignupLoginBtn = styled(Button)(() => ({
   color: 'white',
 }));
 
-export const DashboardButton = styled(Button)(() => ({
+export const StyledButton = styled(Button)(() => ({
   backgroundColor: '#7539FF',
   width: '150px',
   height: 'fit-content',
   color: 'white',
   textTransform: 'none',
   fontSize: '0.875rem',
+}));
+export const CancelButton = styled(Button)(() => ({
+  backgroundColor: '#FFF',
+  width: '150px',
+  height: 'fit-content',
+  color: '#9E9E9E',
+  textTransform: 'none',
+  fontSize: '0.875rem',
+  border:"1px solid #9E9E9E",
+  borderRadius:"8px"
 }));
 
 export const openedMixin = (theme: Theme): CSSObject => ({

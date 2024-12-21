@@ -1,13 +1,14 @@
 .notification {
   display: flex;
-  padding: 10px 20px;
+  padding: 15px 20px;
   position: absolute;
   top: 10px;
   right: 10px;
-  border-radius: 10px;
-  width:300px;
-  align-items: start;
-  gap:10px
+  border-radius: 6px;
+  width: 300px;
+  align-items: flex-start;
+  gap: 10px;
+  z-index: 999;
 }
 .green {
   border: 1px solid #3ec484;
@@ -16,12 +17,10 @@
 .green h2 {
   color: #08b461;
 }
-h2 {
-    margin: 0;
-}
+
 .green svg g circle,
 .green svg g path {
-    stroke:#08b461
+  stroke: #08b461;
 }
 .red {
   border: 1px solid #c43e5e;
@@ -32,8 +31,22 @@ h2 {
 }
 .red svg g circle,
 .red svg g path {
-    stroke:#ea3b3b
+  stroke: #ea3b3b;
+}
+
+.notification h2 {
+  font-family: 'Poppins';
+  font-weight: 600;
+  font-size: 1rem;
+  margin: 0;
+  padding: 0;
 }
 .notification p {
+  font-family: 'Poppins';
+  font-weight: 400;
+  font-size: 0.875rem;
   color: #1a274f;
+}
+.tickIcon{
+  margin-top:3px
 }

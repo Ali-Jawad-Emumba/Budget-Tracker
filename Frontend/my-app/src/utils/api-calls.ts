@@ -55,7 +55,7 @@ export const getExpensesData = async (
   }
 };
 
-export const deleteExpenseById = async (id: number) => {
+export const deleteExpenseById = async (id: number | undefined) => {
   return await fetch(`${BASE_URL}/expenses/${id}`, {
     method: 'DELETE',
     headers: {
@@ -77,7 +77,7 @@ export const getAllUsers = async (selectedPage: number) => {
   return response;
 };
 
-export const deleteUserById = async (id: number) => {
+export const deleteUserById = async (id: number | undefined) => {
   return await fetch(`${BASE_URL}/users/${id}`, {
     method: 'DELETE',
     headers: {
@@ -152,4 +152,15 @@ export const fetchUserData = async (userId: string | null) => {
     const data = response;
     return data;
   }
+};
+export const getAllExpensesForAdmin = async (selectedPage: number) => {
+  const fetchFn = await fetch(`${BASE_URL}/expenses?page=${selectedPage}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${localStorage.getItem('token')}`,
+    },
+  });
+  const response = await fetchFn.json();
+  return response;
 };

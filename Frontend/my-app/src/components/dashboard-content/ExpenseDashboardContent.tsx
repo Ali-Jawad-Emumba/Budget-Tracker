@@ -1,4 +1,4 @@
-import { DashboardButton } from '../../utils/styled-components';
+import { StyledButton } from '../../utils/styled-components';
 import styles from './DashboardContent.module.css';
 
 import {
@@ -14,14 +14,18 @@ import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
-import ExpenseModal from '../ExpenseModal';
+import ExpenseModal from '../modal/ExpenseModal';
 import { useDispatch, useSelector } from 'react-redux';
 import DashboardContentLayout from './DashboardContentLayout';
 import Filter from './Filter';
 import DataTable from './DataTable';
 import Notifictaion from '../notification/Notification';
 import { storeExpenseAllData, updateNotifications } from '../../app/store';
-import { deleteExpenseById, getExpensesData } from '../../utils/api-calls';
+import {
+  deleteExpenseById,
+  getAllExpensesForAdmin,
+  getExpensesData,
+} from '../../utils/api-calls';
 import { filterExpenseData as filterData } from './DashboardContent.service';
 import { InitialState } from '../../utils/types';
 
@@ -38,6 +42,7 @@ const ExpenseDashboardContent = () => {
   const [search, setSearch] = useState<string>();
   const [expenseMetaData, setExpenseMetaData] = useState<any>();
   const [selectedPage, setSelectedPage] = useState<number>(1);
+  const isAdmin = useSelector((state: InitialState) => state.isAdmin);
   const dispatch = useDispatch();
   const expenseStoredData = useSelector(
     (state: InitialState) => state.expenseAllData
@@ -51,7 +56,9 @@ const ExpenseDashboardContent = () => {
 
   const userId = useSelector((state: InitialState) => state.userId);
   const getExpenses = async () => {
-    const response = await getExpensesData(userId, selectedPage);
+    const response = isAdmin
+      ? await getAllExpensesForAdmin(selectedPage)
+      : await getExpensesData(userId, selectedPage);
     setExpenseMetaData(response);
     dispatch(storeExpenseAllData(response));
     const data = response.data;
@@ -71,41 +78,18 @@ const ExpenseDashboardContent = () => {
     }
   }, []);
 
-  const deleteExpense = async (expenseId: number) => {
-    const response = await deleteExpenseById(expenseId);
-    if (response.ok) {
-      const expenseDeleted = await response.json();
-      setSnackBar({
-        open: true,
-        useFor: 'delete',
-        title: 'Expense Deleted',
-        description: 'Expense deleted successfully',
-      });
-
-      setTimeout(() => setSnackBar(null), 5000);
-      dispatch(
-        updateNotifications({
-          name: expenseDeleted.title,
-          action: 'delete',
-          time: `${new Date()}`,
-        })
-      );
-      await getExpenses();
-    }
-  };
-
   return (
     <>
       <DashboardContentLayout
         title="Expense"
         tableTitle="Expense"
         button={
-          <DashboardButton
+          <StyledButton
             onClick={() => setIsAddExpenseModalOpen(true)}
             sx={{ margin: 'auto 0' }}
           >
             Add Expense
-          </DashboardButton>
+          </StyledButton>
         }
         filters={
           <>
@@ -210,7 +194,6 @@ const ExpenseDashboardContent = () => {
           setSelectedPage={setSelectedPage}
           metaData={expenseMetaData}
           getData={getExpenses}
-          deleteItem={deleteExpense}
         />
         <ExpenseModal
           useFor="Add"

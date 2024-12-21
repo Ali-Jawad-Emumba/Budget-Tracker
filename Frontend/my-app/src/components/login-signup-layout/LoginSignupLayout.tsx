@@ -11,9 +11,12 @@ const LoginSignupLayout: React.FC<LoginSignupLayoutProp> = ({
     <>
       <div className={styles.layout}>
         <Logo useFor="Login Signup" />
-        <div className={styles.formLoginLayout}>{children}</div>
-        <div className={styles.illustration}>
-          <img src={image} />
+        <div className={styles.formAndImage}>
+          <div className={styles.formLoginLayout}>{children}</div>
+          <hr className={styles.verticalLine}/>
+          <div className={styles.illustration}>
+            <img src={image} />
+          </div>
         </div>
       </div>
     </>
