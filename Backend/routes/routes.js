@@ -22,7 +22,7 @@ router.get("/users", authMiddleware, async (req, res) => {
     const limitNumber = parseInt(limit);
 
     const users = await User.find()
-      .skip((pageNumber - 1) * limitNumber) // Skip records for previous pages
+      .skip((pageNumber - 1) * limitNumber) /// Skip records for previous pages
       .limit(limitNumber) // Limit the number of records
       .exec();
     const totalDocuments = await User.countDocuments();
