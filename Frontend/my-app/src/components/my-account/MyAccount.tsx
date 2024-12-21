@@ -9,23 +9,33 @@ import styles from './MyAccount.module.css';
 import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import { storeUserData } from '../../app/store';
-
+import {
+  emailValidation,
+  getMaxLengthValidation,
+  nameValidation,
+  patternValidation,
+  requiredMessage,
+} from '../../utils/shared';
+import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import dayjs from 'dayjs';
+import { useState } from 'react';
 
 const MyAccount = () => {
   const userData = useSelector((state: any) => state.userData);
   const { register, handleSubmit } = useForm({ defaultValues: userData });
+  const [DOB, setDOB] = useState<string>('');
   const dispatch = useDispatch();
   const userId = localStorage.getItem('UserId');
-
 
   const onSubmit = async (data: any) => {
     const updateDataFn = await fetch(`http://localHost:3000/users/${userId}`, {
       method: 'PATCH',
-      headers:{
+      headers: {
         'Content-Type': 'application/json',
-        "Authorization": `Bearer ${localStorage.getItem('token')}`,
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify({ ...data, dob: DOB }),
     });
     const updatedData = await updateDataFn.json();
     dispatch(storeUserData(updatedData));
@@ -40,13 +50,13 @@ const MyAccount = () => {
               <FormControl className={styles.widthThirtyPercent}>
                 <label>First Name</label>
                 <InputBootstrapStyled
-                  {...register('firstname', { required: true })}
+                  {...register('firstname', nameValidation)}
                 />
               </FormControl>
               <FormControl className={styles.widthThirtyPercent}>
                 <label>Last Name</label>
                 <InputBootstrapStyled
-                  {...register('lastname', { required: true })}
+                  {...register('lastname', nameValidation)}
                 />
               </FormControl>
               <FormControl className={styles.widthThirtyPercent}>
@@ -82,7 +92,7 @@ const MyAccount = () => {
 
               <FormControl className={styles.widthTwentyFivePercent}>
                 <label>Zip Code</label>
-                <InputBootstrapStyled {...register('zipcode')} />
+                <InputBootstrapStyled {...register('zipcode')} type="number" />
               </FormControl>
               <FormControl style={{ width: '100%' }}>
                 <label>Complete Address</label>
@@ -96,13 +106,11 @@ const MyAccount = () => {
             <div className={styles.accountField}>
               <FormControl className={styles.widthThirtyPercent}>
                 <label>Phone Number</label>
-                <InputBootstrapStyled {...register('phone')} />
+                <InputBootstrapStyled {...register('phone')} type="number" />
               </FormControl>
               <FormControl className={styles.widthThirtyPercent}>
                 <label>Email</label>
-                <InputBootstrapStyled
-                  {...register('email', { required: true })}
-                />
+                <InputBootstrapStyled {...register('email', emailValidation)} />
               </FormControl>
               <FormControl className={styles.widthThirtyPercent}>
                 <label>Website URL</label>
@@ -115,7 +123,20 @@ const MyAccount = () => {
             <div className={styles.accountField}>
               <FormControl className={styles.widthThirtyPercent}>
                 <label>Date of Birth</label>
-                <InputBootstrapStyled {...register('dob')} />
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DatePicker
+                    className="datePicker"
+                    disableFuture={true}
+                    sx={{
+                      backgroundColor: '#f0ecec',
+                      
+                    }}
+                    value={dayjs(DOB)}
+                    onChange={(event: any) =>
+                      setDOB(event.$d.toLocaleDateString())
+                    }
+                  />
+                </LocalizationProvider>
               </FormControl>
               <FormControl className={styles.widthThirtyPercent}>
                 <label>Eductaion</label>
@@ -133,7 +154,11 @@ const MyAccount = () => {
               <FormControl className={styles.widthThirtyPercent}>
                 <label>Budget</label>
                 <InputBootstrapStyled
-                  {...register('budgetlimit', { required: true })}
+                  {...register('budgetlimit', {
+                    required: requiredMessage,
+                    max: 99999999,
+                  })}
+                  type="number"
                 />
               </FormControl>
             </div>

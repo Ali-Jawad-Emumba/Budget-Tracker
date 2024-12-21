@@ -11,7 +11,7 @@ import styles from '../../utils/form-styles.module.css';
 import PasswordField from '../../components/PasswordField';
 import { useForm } from 'react-hook-form';
 
-import { checkAndThrowError } from '../../utils/shared';
+import { checkAndThrowError, emailValidation, passwordValidation } from '../../utils/shared';
 import { emailRegex } from '../../utils/shared';
 
 import { useEffect, useState } from 'react';
@@ -116,13 +116,8 @@ const LoginPage: React.FC = () => {
           </label>
           <InputBootstrapStyled
             id="email"
-            {...register('email', {
-              required: 'Email is required',
-              pattern: {
-                value: emailRegex,
-                message: 'Email is not valid',
-              },
-            })}
+            {...register('email', emailValidation)
+            }
             onChange={(e) =>
               setShowError({
                 userNotFound: false,
@@ -143,7 +138,7 @@ const LoginPage: React.FC = () => {
           <label className={styles.label}>Password</label>
           <PasswordField
             formRegister={{
-              ...register('password', { required: 'Password is required' }),
+              ...register('password', passwordValidation),
             }}
             checkAndThrowError={() => checkAndThrowError(errors, 'password')}
             changeHandler={() =>

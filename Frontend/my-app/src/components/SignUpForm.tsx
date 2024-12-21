@@ -7,7 +7,7 @@ import {
   InputBootstrapStyled,
   SignupLoginBtn,
 } from '../utils/styled-components';
-import { checkAndThrowError, emailRegex } from '../utils/shared';
+import { checkAndThrowError, emailRegex, emailValidation, getCharactersMessage, getMaxLengthValidation, nameValidation, passwordValidation, patternMessage, patternValidation, requiredMessage } from '../utils/shared';
 import PasswordField from './PasswordField';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import Notifictaion from './notification/Notification';
@@ -39,7 +39,9 @@ const SignUpForm = ({
     title: '',
     description: '',
   });
+ 
 
+  
   const isModal = useFor.includes('modal');
 
   const navigate = useNavigate();
@@ -149,7 +151,7 @@ const SignUpForm = ({
             <p className={styles.label}>First Name</p>
             <InputBootstrapStyled
               fullWidth
-              {...register('firstname', { required: 'Name is required' })}
+              {...register('firstname', nameValidation)}
               placeholder="test@exmaple.com"
             />
             {checkAndThrowError(errors, 'firstname')}
@@ -158,7 +160,7 @@ const SignUpForm = ({
             <p className={styles.label}>Last Name</p>
             <InputBootstrapStyled
               fullWidth
-              {...register('lastname', { required: 'Name is required' })}
+              {...register('lastname', nameValidation)}
               placeholder="test@exmaple.com"
             />
             {checkAndThrowError(errors, 'lastname')}
@@ -168,13 +170,8 @@ const SignUpForm = ({
           <p className={styles.label}>Email</p>
           <InputBootstrapStyled
             fullWidth
-            {...register('email', {
-              required: 'Email is required',
-              pattern: {
-                value: emailRegex,
-                message: 'Email is invalid',
-              },
-            })}
+            {...register('email', emailValidation)
+            }
             onChange={() =>
               showUserExisitsError ? setShowUserExistsError(false) : null
             }
@@ -192,7 +189,12 @@ const SignUpForm = ({
             <p className={styles.label}>Password</p>
             <PasswordField
               formRegister={{
-                ...register('password', { required: 'Password is required' }),
+                ...register('password', {
+                  ...passwordValidation,
+                  validate: (value) =>
+                    value === watch('confirmpassword') ||
+                    'Passwords do not match',
+                }),
               }}
               checkAndThrowError={() => checkAndThrowError(errors, 'password')}
             />
@@ -203,7 +205,7 @@ const SignUpForm = ({
               <PasswordField
                 formRegister={{
                   ...register('confirmedpassword', {
-                    required: 'Password is required',
+                    ...passwordValidation,
                     validate: (value) =>
                       value === watch('password') || 'Passwords do not match',
                   }),
@@ -218,9 +220,11 @@ const SignUpForm = ({
             <p className={styles.label}>Budget Limit</p>
             <InputBootstrapStyled
               fullWidth
-              {...register('budgetlimit')}
+              {...register('budgetlimit', { required: requiredMessage, max: 99999999 })}
               placeholder="Enter Amount"
+              type="number"
             />
+            {checkAndThrowError(errors, 'budgetlimit')}
           </FormControl>
 
           {showUserExisitsError && (

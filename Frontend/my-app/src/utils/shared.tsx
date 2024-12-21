@@ -84,6 +84,32 @@ export const checkTokenExpiration = (keepLoggedIn: boolean) => {
   }
 };
 
-
-
-
+export const patternMessage = 'Only alphabets, spaces and hyphens allowed';
+export const getCharactersMessage = (max: number) =>
+  `Must not be longer than ${max} characters`;
+export const requiredMessage = 'This field is required';
+export const emailValidation = {
+  required: requiredMessage,
+  pattern: {
+    value: emailRegex,
+    message: 'Email is invalid',
+  },
+};
+export const getMaxLengthValidation = (max: number) => ({
+  value: max,
+  message: getCharactersMessage(max),
+});
+export const patternValidation = {
+  value: /^[a-zA-Z\s\-]+$/,
+  message: patternMessage,
+};
+export const passwordValidation = {
+  required: requiredMessage,
+  maxLength: getMaxLengthValidation(8),
+  pattern: patternValidation,
+};
+export const nameValidation = {
+  required: requiredMessage,
+  maxLength: getMaxLengthValidation(50),
+  pattern: patternValidation,
+};

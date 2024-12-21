@@ -33,7 +33,7 @@ const UsersDashboardContent = () => {
 
   const [search, setSearch] = useState<string>();
   const [expenseMetaData, setUserMetaData] = useState<any>();
-  const dispatch=useDispatch()
+  const dispatch = useDispatch();
   const [selectedPage, setSelectedPage] = useState<number>(1);
   const [snackBar, setSnackBar] = useState<any>({
     open: false,
@@ -119,6 +119,7 @@ const UsersDashboardContent = () => {
       },
     });
     if (response.ok) {
+      const userDeleted = await response.json();
       setSnackBar({
         open: true,
         useFor: 'delete',
@@ -127,13 +128,13 @@ const UsersDashboardContent = () => {
       });
 
       setTimeout(() => setSnackBar(null), 5000);
-         dispatch(
-              updateNotifications({
-                name: "User",
-                action: 'delete',
-                time: `${new Date()}`,
-              })
-            );
+      dispatch(
+        updateNotifications({
+          name: userDeleted.title,
+          action: 'delete',
+          time: `${new Date()}`,
+        })
+      );
       await getUsers();
     }
   };

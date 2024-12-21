@@ -7,7 +7,7 @@ import {
 import { checkTokenExpiration } from '../utils/shared';
 
 const initialState = {
-  userData: null,
+  userData: {},
   isAdmin: import.meta.env.VITE_ADMIN_ID === localStorage.getItem('UserId'),
   isUserLoggedIn:
     localStorage.getItem('UserId') &&

@@ -42,14 +42,14 @@ const ProfilePage = () => {
   const userId = localStorage.getItem('UserId');
 
   useEffect(() => {
-    if (!userData) {
-      (async () => {
-        const data = await fetchUserData();
-        console.log(data);
-        dispatch(storeUserData({ ...data }));
-        setIsLoading(false);
-      })();
-    }
+      if (Object.keys(userData).every((field) => !userData[field])) {
+        (async () => {
+          const data = await fetchUserData();
+          console.log(data);
+          dispatch(storeUserData({ ...data }));
+          setIsLoading(false);
+        })();
+      }
   }, []);
 
   if (isLoading)

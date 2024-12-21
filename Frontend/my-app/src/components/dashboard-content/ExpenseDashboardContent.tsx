@@ -138,6 +138,7 @@ const ExpenseDashboardContent = () => {
       }
     );
     if (response.ok) {
+      const expenseDeleted=await response.json()
       setSnackBar({
         open: true,
         useFor: 'delete',
@@ -148,7 +149,7 @@ const ExpenseDashboardContent = () => {
       setTimeout(() => setSnackBar(null), 5000);
       dispatch(
         updateNotifications({
-          name: "Expense",
+          name: expenseDeleted.title,
           action: 'delete',
           time: `${new Date()}`,
         })

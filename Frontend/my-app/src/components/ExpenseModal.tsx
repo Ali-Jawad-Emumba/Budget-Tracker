@@ -19,6 +19,7 @@ import Notifictaion from './notification/Notification';
 import { Description } from '@mui/icons-material';
 import { useDispatch } from 'react-redux';
 import { updateNotifications } from '../app/store';
+import { getCharactersMessage, requiredMessage } from '../utils/shared';
 
 const ExpenseModal = ({
   isOpen,
@@ -55,6 +56,7 @@ const ExpenseModal = ({
     title: '',
     description: '',
   });
+  const maxLengthValidation = { value: 30, message: getCharactersMessage(30) };
   const editExpense = async (data: any) => {
     setIsLoading(true);
     const response = await fetch(
@@ -151,7 +153,10 @@ const ExpenseModal = ({
             <FormControl fullWidth>
               <label>Title</label>
               <InputBootstrapStyled
-                {...register('title', { required: true })}
+                {...register('title', {
+                  required: requiredMessage,
+                  maxLength: maxLengthValidation,
+                })}
                 fullWidth
                 sx={{ height: '40px' }}
               />
@@ -160,8 +165,9 @@ const ExpenseModal = ({
               <FormControl>
                 <label>Price</label>
                 <InputBootstrapStyled
-                  {...register('price', { required: true })}
+                  {...register('price', { required: requiredMessage, maxLength:maxLengthValidation})}
                   sx={{ height: '40px' }}
+                  type="number"
                 />
               </FormControl>
               <FormControl>

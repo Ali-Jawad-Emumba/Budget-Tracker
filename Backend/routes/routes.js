@@ -10,8 +10,8 @@ dotenv.config();
 const router = Router();
 const JWT_KEY = `${process.env.JWT_KEY}`;
 const JWT_REFRESH_KEY = `${process.env.JWT_REFRESH_KEY}`;
-const EMAIL=`${process.env.EMAIL}`
-const PASS=`${process.env.APP_PASSWORD}`
+const EMAIL = `${process.env.EMAIL}`;
+const PASS = `${process.env.APP_PASSWORD}`;
 export default router;
 
 router.get("/users", authMiddleware, async (req, res) => {
@@ -199,7 +199,7 @@ router.delete("/expenses/:id", authMiddleware, async (req, res) => {
     // If the expense exists, proceed to delete it
     await Expense.findByIdAndDelete(id);
 
-    res.status(200).json({ message: "Expense deleted successfully" });
+    res.json(expense);
   } catch (error) {
     res
       .status(500)
@@ -219,8 +219,8 @@ router.delete("/users/:id", authMiddleware, async (req, res) => {
 
     // If the expense exists, proceed to delete it
     await User.findByIdAndDelete(id);
-
-    res.status(200).json({ message: "User deleted successfully" });
+    res.json(expense);
+  
   } catch (error) {
     res
       .status(500)
@@ -275,7 +275,7 @@ router.post("/reset-password", async (req, res) => {
 
     // Send email using Nodemailer
     const mailOptions = {
-      from: { name: "Your App", address: EMAIL },
+      from: { name: "Budget Tracker", address: EMAIL },
       to: user.email,
       subject: "Password Reset Request",
       text: `Hello, \n\nPlease click the following link to reset your password: \n\n${resetUrl}\n\nThe link will expire in 1 hour.`,
@@ -296,7 +296,9 @@ router.post("/refresh-token", (req, res) => {
   jwt.verify(refreshToken, JWT_REFRESH_KEY, (err, user) => {
     if (err) return res.sendStatus(403); // Invalid refresh token
 
-    const newAccessToken = jwt.sign({ id: user.id }, JWT_KEY, { expiresIn: "5s" });
-    res.json({ token: newAccessToken, id:user.id });
+    const newAccessToken = jwt.sign({ id: user.id }, JWT_KEY, {
+      expiresIn: "5s",
+    });
+    res.json({ token: newAccessToken, id: user.id });
   });
 });
