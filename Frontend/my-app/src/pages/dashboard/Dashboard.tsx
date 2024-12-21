@@ -19,10 +19,12 @@ const Dashboard = () => {
   };
   const userData = useSelector((state: any) => state.userData);
   const dispatch = useDispatch();
-  const selectedDashboardTab=useSelector((state:any)=>state.selectedDashboardTab)
+  const selectedDashboardTab = useSelector(
+    (state: any) => state.selectedDashboardTab
+  );
   const userId = useSelector((state: InitialState) => state.userId);
   useEffect(() => {
-    if (!userData) {
+    if (!userData || Object.keys(userData).every((field) => !userData[field])) {
       (async () => {
         const data = await fetchUserData(userId);
         dispatch(storeUserData({ ...data }));
@@ -30,16 +32,14 @@ const Dashboard = () => {
     }
   }, []);
 
-  
-
   return (
     <div className={styles.layout}>
       <SideDrawer open={open} />
       <div className={styles.appBarAndContent}>
-        <AppBar toggleDrawer={toggleDrawer} useFor="dashboard"/>
-        {selectedDashboardTab==="Analysis" && <AnalysisDashboardContent/>}
-        {selectedDashboardTab==="Users" && <UsersDashboardContent/>}
-        {selectedDashboardTab==="Expenses" && <ExpenseDashboardContent />}
+        <AppBar toggleDrawer={toggleDrawer} useFor="dashboard" />
+        {selectedDashboardTab === 'Analysis' && <AnalysisDashboardContent />}
+        {selectedDashboardTab === 'Users' && <UsersDashboardContent />}
+        {selectedDashboardTab === 'Expenses' && <ExpenseDashboardContent />}
       </div>
     </div>
   );

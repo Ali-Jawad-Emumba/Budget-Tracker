@@ -38,8 +38,8 @@ const ResetPswdPage: React.FC = () => {
     const currentTime = Date.now() / 1000; // current time in seconds
     const interval = setInterval(() => {
       if (decoded.exp < currentTime) {
-        // Token has expired
-        localStorage.removeItem('reset-token'); // Clear the token from localStorage
+        // Token has expired as seconds are decoded.exp-currentTime<0
+        localStorage.removeItem('reset-token');
         setTokenExpired(true);
       }
     }, 300000);

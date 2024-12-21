@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
 
-// User Schema
 const expenseSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.ObjectId,

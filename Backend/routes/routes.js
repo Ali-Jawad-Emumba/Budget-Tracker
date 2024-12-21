@@ -16,11 +16,10 @@ export default router;
 
 router.get("/users", authMiddleware, async (req, res) => {
   try {
-    const { page = 1, limit = 10 } = req.query; // Default values
+    const { page, limit = 10 } = req.query;
 
-    // Parse `page` and `limit` to integers
-    const pageNumber = parseInt(page, 10);
-    const limitNumber = parseInt(limit, 10);
+    const pageNumber = parseInt(page);
+    const limitNumber = parseInt(limit);
 
     const users = await User.find()
       .skip((pageNumber - 1) * limitNumber) // Skip records for previous pages
@@ -42,11 +41,10 @@ router.get("/users", authMiddleware, async (req, res) => {
 });
 router.get("/expenses", authMiddleware, async (req, res) => {
   try {
-    const { page = 1, limit = 10 } = req.query; // Default values
+    const { page, limit = 10 } = req.query;
 
-    // Parse `page` and `limit` to integers
-    const pageNumber = parseInt(page, 10);
-    const limitNumber = parseInt(limit, 10);
+    const pageNumber = parseInt(page);
+    const limitNumber = parseInt(limit);
 
     const expenses = await Expense.find()
       .skip((pageNumber - 1) * limitNumber) // Skip records for previous pages
@@ -142,11 +140,10 @@ router.post("/users/:id/expenses", authMiddleware, async (req, res) => {
 router.get("/users/:id/expenses", authMiddleware, async (req, res) => {
   try {
     const id = req.params.id;
-    const { page = 1, limit = 10 } = req.query; // Default values
+    const { page, limit = 10 } = req.query;
 
-    // Parse `page` and `limit` to integers
-    const pageNumber = parseInt(page, 10);
-    const limitNumber = parseInt(limit, 10);
+    const pageNumber = parseInt(page);
+    const limitNumber = parseInt(limit);
 
     const expenses = await Expense.find({ userId: id })
       .skip((pageNumber - 1) * limitNumber) // Skip records for previous pages
@@ -215,14 +212,12 @@ router.delete("/expenses/:id", authMiddleware, async (req, res) => {
   try {
     const id = req.params.id;
 
-    // Check if the expense exists before trying to delete it
     const expense = await Expense.findById(id);
 
     if (!expense) {
       return res.status(404).json({ message: "Expense not found" });
     }
 
-    // If the expense exists, proceed to delete it
     await Expense.findByIdAndDelete(id);
 
     res.json(expense);
@@ -236,17 +231,14 @@ router.delete("/users/:id", authMiddleware, async (req, res) => {
   try {
     const id = req.params.id;
 
-    // Check if the expense exists before trying to delete it
     const expense = await User.findById(id);
 
     if (!expense) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // If the expense exists, proceed to delete it
     await User.findByIdAndDelete(id);
     res.json(expense);
-  
   } catch (error) {
     res
       .status(500)
@@ -276,7 +268,7 @@ const transporter = nodemailer.createTransport({
   service: "gmail",
   host: "smtp.gmail.com",
   port: 587,
-  secure: false, // true for port 465, false for other ports
+  secure: false,
   auth: {
     user: EMAIL,
     pass: PASS,
@@ -286,20 +278,16 @@ router.post("/reset-password", async (req, res) => {
   const { email } = req.body;
 
   try {
-    // Find user by email
     const user = await User.findOne({ email });
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Generate a reset token (JWT)
     const resetToken = jwt.sign({ id: user._id }, JWT_KEY, { expiresIn: "1h" });
 
-    // Generate password reset URL with the token
     const resetUrl = `http://localHost:4200/reset-password?token=${resetToken}&email=${email}`;
 
-    // Send email using Nodemailer
     const mailOptions = {
       from: { name: "Budget Tracker", address: EMAIL },
       to: user.email,
@@ -320,7 +308,7 @@ router.post("/refresh-token", (req, res) => {
   if (!refreshToken) return res.sendStatus(403); // Forbidden
 
   jwt.verify(refreshToken, JWT_REFRESH_KEY, (err, user) => {
-    if (err) return res.sendStatus(403); // Invalid refresh token
+    if (err) return res.sendStatus(403); 
 
     const newAccessToken = jwt.sign({ id: user.id }, JWT_KEY, {
       expiresIn: "1h",

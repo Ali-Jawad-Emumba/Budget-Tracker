@@ -30,10 +30,16 @@
   padding: 10px 0;
   border-bottom: 1px solid lightgray;
 }
-h3 {
+.notificationItem h3 {
   margin: 0;
+  font-family: 'Poppins';
+  font-weight: 600;
+  font-size: 1rem;
 }
-p {
+.notificationItem p {
   margin: 0;
+  font-family: 'Poppins';
+  font-weight: 400;
+  font-size: 0.875rem;
   margin-top: 5px;
 }

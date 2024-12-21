@@ -14,7 +14,6 @@ export const filterExpenseData = ({
   search?: string;
 }) => {
   let result = [...data];
-  // Apply sort filter
   if (sortValue) {
     switch (sortValue) {
       case 'low to high':
@@ -40,7 +39,6 @@ export const filterExpenseData = ({
     }
   }
 
-  // Apply date filter
   if (dateValue) {
     result = result.filter(
       (expense: any) =>
@@ -48,8 +46,6 @@ export const filterExpenseData = ({
         new Date(dateValue).toLocaleDateString()
     );
   }
-
-  // Apply search filter
   if (search) {
     const searchLower = search.toLowerCase();
     result = result.filter((expense: any) =>
@@ -73,7 +69,7 @@ export const filterUsersData = ({
   search?: string;
 }) => {
   let result = [...data];
-  // Apply sort filter
+
   if (sortValue) {
     switch (sortValue) {
       case 'name':
@@ -99,7 +95,6 @@ export const filterUsersData = ({
     }
   }
 
-  // Apply search filter
   if (search) {
     const searchLower = search.toLowerCase();
     result = result.filter((user: any) =>
@@ -133,11 +128,11 @@ const removeDuplication = (data: any) =>
   );
 
 const filterMonths = (expenseData: any, lastMonths: number) => {
-  const today = new Date(); // Current date
-  const sixMonthsAgo = new Date(today); // Copy the current date
-  sixMonthsAgo.setMonth(today.getMonth() - lastMonths); // Subtract 6 months
-  const month = sixMonthsAgo.getMonth() + 1;
-  const year = sixMonthsAgo.getFullYear();
+  const today = new Date(); 
+  const monthsAgo = new Date(today); 
+  monthsAgo.setMonth(today.getMonth() - lastMonths);
+  const month = monthsAgo.getMonth() + 1;
+  const year = monthsAgo.getFullYear();
   if (month + lastMonths > months.length) {
     const monthsOfNewYear = month + lastMonths - months.length;
     const monthsOfLastYear = months.length - month;
@@ -208,7 +203,7 @@ const formatDataForChart = (result: any) => {
 
 export const filterData = (data: any, sortValue: string, setChartData: any) => {
   const expenseData = [...(data||[])];
-  // Apply sort filter
+ 
   let monthsFiltered: any[];
   switch (sortValue) {
     case '12 months':

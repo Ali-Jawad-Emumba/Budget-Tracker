@@ -43,10 +43,9 @@ const ProfilePage = () => {
   const userId = useSelector((state: InitialState) => state.userId);
 
   useEffect(() => {
-    if (Object.keys(userData).every((field) => !userData[field])) {
+    if (!userData || Object.keys(userData).every((field) => !userData[field])) {
       (async () => {
         const data = await fetchUserData(userId);
-        console.log(data);
         dispatch(storeUserData({ ...data }));
         setIsLoading(false);
       })();

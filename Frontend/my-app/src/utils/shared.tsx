@@ -33,10 +33,9 @@ export const checkTokenExpiration = (keepLoggedIn: boolean) => {
     const decoded = jwtDecode<any>(token);
     const currentTime = Date.now() / 1000; // current time in seconds
     if (decoded.exp < currentTime) {
-      // Token has expired
+      // Token has expired as seconds are decoded.exp-currentTime<0
       if (keepLoggedIn && refreshToken) {
         const decoded = jwtDecode<any>(refreshToken);
-        const currentTime = Date.now() / 1000; // current time in seconds
         if (decoded.exp > currentTime) {
           (async () => {
             const data = await getAccessToken();
@@ -44,17 +43,16 @@ export const checkTokenExpiration = (keepLoggedIn: boolean) => {
           })();
         }
       } else {
-        localStorage.removeItem('token'); // Clear the token from localStorage
-        localStorage.removeItem('UserId'); // Optionally, clear other session data
-        if (!refreshToken) window.location.href = '/'; // Redirect to login or show expired message
-        return false; // Token is expired, user is logged out}
+        localStorage.removeItem('reset-token');
+        localStorage.removeItem('token');
+        localStorage.removeItem('UserId'); 
+        window.location.href = '/'; 
+        return false; 
       }
 
-      return true; // Token is still valid
+      return true; 
     }
   } catch (error) {
-    // Invalid token or other error
-
     if (!refreshToken) window.location.href = '/'; // Redirect to login page
     return false;
   }

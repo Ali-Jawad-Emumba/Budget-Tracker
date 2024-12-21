@@ -51,7 +51,7 @@ const LoginPage: React.FC = () => {
       if (refreshToken) {
         const decoded = jwtDecode<any>(refreshToken);
         const currentTime = Date.now() / 1000; // current time in seconds
-        if (decoded.exp > currentTime) {
+        if (decoded.exp > currentTime) { //token still valiod as decoded.exp-currentTime>0
           const data = await getAccessToken();
           login(data, data.id);
         }
@@ -169,7 +169,6 @@ const LoginPage: React.FC = () => {
           className={styles.loginBtn}
           variant="contained"
           type="submit"
-          // onClick={() => navigate('/dashboard')}
         >
           Log In
         </SignupLoginBtn>

@@ -118,7 +118,7 @@ const ExpenseModal = ({
   };
   useEffect(() => {
     useFor === 'Add'
-      ? reset(beingEdit)
+      ? reset()
       : setExpenseDate(dayjs(useFor === 'Edit' ? beingEdit?.date : new Date()));
     setIsLoading(false);
   }, [isOpen]);
