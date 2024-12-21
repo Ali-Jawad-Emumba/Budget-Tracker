@@ -1,23 +1,14 @@
-import { useForm } from 'react-hook-form';
 import { Dialog, DialogContent, DialogTitle } from '@mui/material';
-
-import dayjs from 'dayjs';
-import { useEffect, useState } from 'react';
 import SignUpForm from './SignUpForm';
+import { ModalProps } from '../utils/types';
 
 const UserModal = ({
   isOpen,
   setIsOpen,
   useFor,
-  expenseBeingEdit,
+  beingEdit,
   reloadData,
-}: {
-  isOpen: boolean;
-  setIsOpen: any;
-  useFor: string;
-  expenseBeingEdit?: any;
-  reloadData?: any;
-}) => {
+}: ModalProps) => {
 
   return (
     <Dialog onClose={() => setIsOpen(false)} open={isOpen}>
@@ -27,7 +18,7 @@ const UserModal = ({
       >
         <SignUpForm
           useFor={`${useFor.toLowerCase()} modal`}
-          defaultValues={expenseBeingEdit}
+          defaultValues={beingEdit}
           setModalOpen={setIsOpen}
           reloadData={reloadData}
         />

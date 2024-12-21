@@ -7,24 +7,20 @@ import {
   InputBootstrapStyled,
   SignupLoginBtn,
 } from '../utils/styled-components';
-import { checkAndThrowError, emailRegex, emailValidation, getCharactersMessage, getMaxLengthValidation, nameValidation, passwordValidation, patternMessage, patternValidation, requiredMessage } from '../utils/shared';
+import { BASE_URL, checkAndThrowError, emailRegex, emailValidation, getCharactersMessage, getMaxLengthValidation, nameValidation, passwordValidation, patternMessage, patternValidation, requiredMessage } from '../utils/shared';
 import PasswordField from './PasswordField';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import Notifictaion from './notification/Notification';
 import { updateNotifications } from '../app/store';
 import { useDispatch } from 'react-redux';
+import { SignupFormProps } from '../utils/types';
 
 const SignUpForm = ({
   useFor,
   defaultValues,
   setModalOpen,
   reloadData,
-}: {
-  useFor: string;
-  defaultValues?: any;
-  setModalOpen?: any;
-  reloadData?: any;
-}) => {
+}: SignupFormProps) => {
   const [showUserExisitsError, setShowUserExistsError] =
     useState<boolean>(false);
   const {
@@ -39,11 +35,7 @@ const SignUpForm = ({
     title: '',
     description: '',
   });
- 
-
-  
   const isModal = useFor.includes('modal');
-
   const navigate = useNavigate();
   const getSignupDataBody = (data: any) => {
     let result = {
@@ -70,7 +62,7 @@ const SignUpForm = ({
   const dispatch = useDispatch();
 
   const onSubmit = async (data: any) => {
-    const urlGetUserByEmail = `http://localhost:3000/users/email/${
+    const urlGetUserByEmail = `${BASE_URL}/users/email/${
       useFor === 'edit modal' ? defaultValues.email : data.email
     }`;
     const fetchFn = await fetch(urlGetUserByEmail);
@@ -81,7 +73,7 @@ const SignUpForm = ({
       let response = await fetch(
         useFor === 'edit modal'
           ? urlGetUserByEmail
-          : 'http://localhost:3000/users/',
+          : `${BASE_URL}/users/`,
         {
           method: useFor === 'edit modal' ? 'PATCH' : 'POST',
           headers:

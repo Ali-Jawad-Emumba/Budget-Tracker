@@ -7,27 +7,11 @@ import styles from '../../utils/form-styles.module.css';
 import LoginSignupLayout from '../../components/login-signup-layout/LoginSignupLayout';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
-
+import { sendPswdResetLink } from '../../utils/api-calls';
 
 const ForgotPswdPage: React.FC = () => {
   const [email, setEmail] = useState<string>();
 
-
-
-  const sendPswdResetLink = async () => {
-    if (email) {
-      await fetch('http://localHost:3000/reset-password', {
-        method: 'POST',
-        headers:{
-          'Content-Type': 'application/json',
-          "Authorization": `Bearer ${localStorage.getItem('token')}`,
-        },
-        body: JSON.stringify({
-          email,
-        }),
-      });
-    }
-  };
   return (
     <LoginSignupLayout image={illustration}>
       <div className={styles.welcomeText}>
@@ -52,7 +36,7 @@ const ForgotPswdPage: React.FC = () => {
         <Button
           className={styles.loginBtn}
           variant="contained"
-          onClick={sendPswdResetLink}
+          onClick={() => sendPswdResetLink(email)}
         >
           Send Reset Password Link
         </Button>

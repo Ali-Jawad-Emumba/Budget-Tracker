@@ -1,17 +1,13 @@
 import { useEffect, useState } from 'react';
 import styles from './Notification.module.css';
+import { NotificationProps } from 'src/utils/types';
 
-const Notifictaion = ({
+const Notification = ({
   useFor,
   title,
   description,
   open,
-}: {
-  useFor: string;
-  open: boolean;
-  title: string;
-  description: string;
-}) => {
+}: NotificationProps) => {
   const tickIcon = (
     <svg
       width="24"
@@ -60,4 +56,4 @@ const Notifictaion = ({
       </div>
     );
 };
-export default Notifictaion;
+export default Notification;

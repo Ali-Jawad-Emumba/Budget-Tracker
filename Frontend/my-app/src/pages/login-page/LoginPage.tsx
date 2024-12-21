@@ -11,18 +11,24 @@ import styles from '../../utils/form-styles.module.css';
 import PasswordField from '../../components/PasswordField';
 import { useForm } from 'react-hook-form';
 
-import { checkAndThrowError, emailValidation, passwordValidation } from '../../utils/shared';
+import {
+  BASE_URL,
+  checkAndThrowError,
+  emailValidation,
+  passwordValidation,
+} from '../../utils/shared';
 import { emailRegex } from '../../utils/shared';
 
 import { useEffect, useState } from 'react';
 import {
-
+  storeUserId,
   updateIsAdmin,
   updateIsUserLoggedIn,
   updateKeepLoggedIn,
 } from '../../app/store';
 import { useDispatch } from 'react-redux';
 import { jwtDecode } from 'jwt-decode';
+import { getAccessToken } from '../../utils/api-calls';
 
 const LoginPage: React.FC = () => {
   const [showError, setShowError] = useState<any>({
@@ -46,16 +52,7 @@ const LoginPage: React.FC = () => {
         const decoded = jwtDecode<any>(refreshToken);
         const currentTime = Date.now() / 1000; // current time in seconds
         if (decoded.exp > currentTime) {
-          const response = await fetch('http://localHost:3000/refresh-token', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              refreshToken: localStorage.getItem('refresh-token'),
-            }),
-          });
-          const data = await response.json();
+          const data = await getAccessToken();
           login(data, data.id);
         }
       }
@@ -64,6 +61,7 @@ const LoginPage: React.FC = () => {
   const login = (user: any, userId: string) => {
     localStorage.setItem('UserId', userId);
     localStorage.setItem('token', user.token);
+    dispatch(storeUserId(userId));
     dispatch(updateIsUserLoggedIn(true));
     if (userId === import.meta.env.VITE_ADMIN_ID) {
       dispatch(updateIsAdmin(true));
@@ -76,8 +74,8 @@ const LoginPage: React.FC = () => {
     const passwordInput = data.password;
     const fetchFn = await fetch(
       rememberMe
-        ? `http://localhost:3000/users/email/${emailInput}?RememberMe=${true}`
-        : `http://localhost:3000/users/email/${emailInput}`
+        ? `${BASE_URL}/users/email/${emailInput}?RememberMe=${true}`
+        : `${BASE_URL}/users/email/${emailInput}`
     );
     if (fetchFn.ok) {
       const user = await fetchFn.json();
@@ -116,8 +114,7 @@ const LoginPage: React.FC = () => {
           </label>
           <InputBootstrapStyled
             id="email"
-            {...register('email', emailValidation)
-            }
+            {...register('email', emailValidation)}
             onChange={(e) =>
               setShowError({
                 userNotFound: false,

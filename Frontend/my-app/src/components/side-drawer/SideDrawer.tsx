@@ -18,7 +18,7 @@ import {
   ExpensesIcon,
   LogoutIcon,
   UsersIcon,
-} from './DrawerIcons';
+} from '../../utils/icons';
 import { useNavigate } from 'react-router-dom';
 import { Drawer, DrawerHeader } from '../../utils/styled-components';
 import { useDispatch, useSelector } from 'react-redux';
@@ -27,6 +27,7 @@ import {
  
   storeSelectedDashboardTab,
   storeUserData,
+  storeUserId,
   updateIsAdmin,
   updateIsUserLoggedIn,
 } from '../../app/store';
@@ -37,6 +38,19 @@ export default function SideDrawer({ open }: { open: boolean }) {
   const [selectedDashboardTab, setSelectedDashboardTab] =
     useState<string>('Expenses');
   const isAdmin = useSelector((state: any) => state.isAdmin);
+  const logout=()=>{
+    localStorage.removeItem('UserId');
+    localStorage.removeItem('token');
+    localStorage.removeItem('refresh-token');
+    dispatch(storeUserId(null))
+    dispatch(updateIsAdmin(false));
+    dispatch(storeSelectedDashboardTab('Expenses'));
+    dispatch(storeUserData(null));
+    dispatch(updateIsUserLoggedIn(false));
+  
+    navigate('/');
+  }
+
   const [drawerItems, setDrawerItems] = useState<any>([
     {
       text: 'Analysis',
@@ -57,20 +71,10 @@ export default function SideDrawer({ open }: { open: boolean }) {
     {
       text: 'Logout',
       icon: <LogoutIcon />,
-      action: () => {
-        localStorage.removeItem('UserId');
-        localStorage.removeItem('token');
-        localStorage.removeItem('refresh-token');
-        dispatch(updateIsAdmin(false));
-        dispatch(storeSelectedDashboardTab('Expenses'));
-        dispatch(storeUserData(null));
-        dispatch(updateIsUserLoggedIn(false));
-      
-        navigate('/');
-      },
+      action: logout,
     },
   ]);
-
+ 
   useEffect(() => {
     if (isAdmin && drawerItems.every((item: any) => item.text !== 'Users')) {
       const adminDrawer = [...drawerItems];

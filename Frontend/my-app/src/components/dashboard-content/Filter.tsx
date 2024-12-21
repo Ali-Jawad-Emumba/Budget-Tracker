@@ -1,6 +1,9 @@
+import { FilterProps } from '../../utils/types';
 import styles from './DashboardContent.module.css';
 
-const Filter = ({ title, children }: { title: string; children: any }) => (
+
+
+const Filter = ({ title, children }: FilterProps) => (
   <div>
     <div className={styles.filterDiv}>
       <div className={styles.filter}>

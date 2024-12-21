@@ -20,24 +20,18 @@ import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
 import { useState } from 'react';
+import { updateMyProfile } from '../../utils/api-calls';
+import { InitialState } from 'src/utils/types';
 
 const MyAccount = () => {
-  const userData = useSelector((state: any) => state.userData);
+  const userData = useSelector((state: InitialState) => state.userData);
   const { register, handleSubmit } = useForm({ defaultValues: userData });
   const [DOB, setDOB] = useState<string>('');
   const dispatch = useDispatch();
-  const userId = localStorage.getItem('UserId');
+  const userId=useSelector((state:InitialState)=>state.userId)
 
   const onSubmit = async (data: any) => {
-    const updateDataFn = await fetch(`http://localHost:3000/users/${userId}`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
-      },
-      body: JSON.stringify({ ...data, dob: DOB }),
-    });
-    const updatedData = await updateDataFn.json();
+    const updatedData=await updateMyProfile(userId, {...data, dob:DOB})
     dispatch(storeUserData(updatedData));
   };
   return (

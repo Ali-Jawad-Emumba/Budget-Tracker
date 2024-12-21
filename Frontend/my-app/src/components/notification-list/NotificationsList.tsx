@@ -3,7 +3,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { clearNotifications } from '../../app/store';
 import styles from './NotificationsList.module.css';
 
-const NotifictaionLists = ({ setShowNotificationsList }: any) => {
+const NotifictaionLists = ({
+  setShowNotificationsList,
+}: {
+  setShowNotificationsList: any;
+}) => {
   const getIcon = (action: string) => {
     switch (action) {
       case 'add':
@@ -29,20 +33,20 @@ const NotifictaionLists = ({ setShowNotificationsList }: any) => {
 
   return (
     <div className={styles.menu}>
-        <div className={styles.list}>
-      {notifications.map((notification: any) => (
-        <div className={styles.notificationItem}>
-          <div
-            className={styles.icon}
-            style={{ backgroundColor: getIcon(notification.action) }}
-          ></div>
-          <div>
-            <h3>{notification.name}</h3>
-            <p>{getDescription(notification.action)}</p>
-            <p>5 Min ago</p>
+      <div className={styles.list}>
+        {notifications.map((notification: any) => (
+          <div className={styles.notificationItem}>
+            <div
+              className={styles.icon}
+              style={{ backgroundColor: getIcon(notification.action) }}
+            ></div>
+            <div>
+              <h3>{notification.name}</h3>
+              <p>{getDescription(notification.action)}</p>
+              <p>5 Min ago</p>
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
       </div>
       <Button
         onClick={() => {

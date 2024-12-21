@@ -2,20 +2,16 @@ import { DashboardButton } from '../../utils/styled-components';
 import styles from './DashboardContent.module.css';
 
 import {
-  Box,
   Button,
   InputAdornment,
-  LinearProgress,
   MenuItem,
   Select,
-  Snackbar,
   TextField,
-  Typography,
 } from '@mui/material';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import { useEffect, useState } from 'react';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
-import dayjs from 'dayjs';
+
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 import ExpenseModal from '../ExpenseModal';
@@ -25,6 +21,9 @@ import Filter from './Filter';
 import DataTable from './DataTable';
 import Notifictaion from '../notification/Notification';
 import { updateNotifications } from '../../app/store';
+import { deleteExpenseById, getExpensesData } from '../../utils/api-calls';
+import { filterExpenseData as filterData } from './DashboardContent.service';
+import { InitialState } from '../../utils/types';
 
 const ExpenseDashboardContent = () => {
   const [isAddExpenseModalOpen, setIsAddExpenseModalOpen] =
@@ -39,7 +38,6 @@ const ExpenseDashboardContent = () => {
   const [search, setSearch] = useState<string>();
   const [expenseMetaData, setExpenseMetaData] = useState<any>();
   const [selectedPage, setSelectedPage] = useState<number>(1);
-  const userId = localStorage.getItem('UserId');
   const dispatch = useDispatch();
   const [snackBar, setSnackBar] = useState<any>({
     open: false,
@@ -48,73 +46,9 @@ const ExpenseDashboardContent = () => {
     description: '',
   });
 
-  const filterData = ({
-    sortValue,
-    dateValue,
-    search,
-  }: {
-    sortValue?: string;
-    dateValue?: any | null;
-    search?: string;
-  }) => {
-    let result = [...originalExpensesData];
-    // Apply sort filter
-    if (sortValue) {
-      switch (sortValue) {
-        case 'low to high':
-          result = result.sort((a: any, b: any) =>
-            a.price === b.price ? 0 : a.price < b.price ? -1 : 1
-          );
-          break;
-        case 'high to low':
-          result = result.sort((a: any, b: any) =>
-            a.price === b.price ? 0 : a.price < b.price ? 1 : -1
-          );
-          break;
-        case 'old to new':
-          result = result.sort((a: any, b: any) =>
-            a.date === b.date ? 0 : new Date(a.date) > new Date(b.date) ? 1 : -1
-          );
-          break;
-        case 'new to old':
-          result = result.sort((a: any, b: any) =>
-            a.date === b.date ? 0 : new Date(a.date) > new Date(b.date) ? -1 : 1
-          );
-          break;
-      }
-    }
-
-    // Apply date filter
-    if (dateValue) {
-      result = result.filter(
-        (expense: any) =>
-          new Date(expense.date).toLocaleDateString() ===
-          new Date(dateValue).toLocaleDateString()
-      );
-    }
-
-    // Apply search filter
-    if (search) {
-      const searchLower = search.toLowerCase();
-      result = result.filter((expense: any) =>
-        expense.title.toLowerCase().includes(searchLower)
-      );
-    }
-
-    setFilteredExpensesData(result);
-  };
+  const userId = useSelector((state: InitialState) => state.userId);
   const getExpenses = async () => {
-    const fetchFn = await fetch(
-      `http://localhost:3000/users/${userId}/expenses?page=${selectedPage}`,
-      {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      }
-    );
-    const response = await fetchFn.json();
+    const response = await getExpensesData(userId, selectedPage);
     setExpenseMetaData(response);
 
     const data = response.data;
@@ -127,18 +61,9 @@ const ExpenseDashboardContent = () => {
   }, []);
 
   const deleteExpense = async (expenseId: number) => {
-    const response = await fetch(
-      `http://localHost:3000/expenses/${expenseId}`,
-      {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      }
-    );
+    const response = await deleteExpenseById(expenseId);
     if (response.ok) {
-      const expenseDeleted=await response.json()
+      const expenseDeleted = await response.json();
       setSnackBar({
         open: true,
         useFor: 'delete',
@@ -158,32 +83,6 @@ const ExpenseDashboardContent = () => {
     }
   };
 
-  const budgetLimit: any = localStorage.getItem('Budget');
-  const ProgressBar = ({ expense }: { expense: any }) => {
-    const totalExpenseOfMonth = filteredExpensesData
-      .filter(
-        (item: any) =>
-          new Date(item.date).getMonth() + 1 ===
-            new Date(expense.date).getMonth() + 1 &&
-          new Date(item.date).getFullYear() ===
-            new Date(expense.date).getFullYear()
-      )
-      .reduce((sum: number, element: any) => (sum += element.price), 0);
-    const value = (expense.price / totalExpenseOfMonth) * 100;
-    return (
-      <Box sx={{ display: 'flex', alignItems: 'center' }}>
-        <Box sx={{ width: '100%', mr: 1 }}>
-          <LinearProgress variant="determinate" value={value} />
-        </Box>
-        <Box sx={{ minWidth: 35 }}>
-          <Typography
-            variant="body2"
-            sx={{ color: 'text.secondary' }}
-          >{`${Math.round(value)}%`}</Typography>
-        </Box>
-      </Box>
-    );
-  };
   return (
     <>
       <DashboardContentLayout
@@ -207,6 +106,8 @@ const ExpenseDashboardContent = () => {
                 onChange={(e) => {
                   setSortFilterValue(e.target.value);
                   filterData({
+                    data: originalExpensesData,
+                    setData: setFilteredExpensesData,
                     sortValue: e.target.value,
                     dateValue: dateFilter,
                     search: search,
@@ -233,6 +134,8 @@ const ExpenseDashboardContent = () => {
                   onChange={(e) => {
                     setDateFilter(e);
                     filterData({
+                      data: originalExpensesData,
+                      setData: setFilteredExpensesData,
                       sortValue: sortFilterValue,
                       dateValue: e,
                       search: search,
@@ -244,6 +147,8 @@ const ExpenseDashboardContent = () => {
                     onClick={() => {
                       setDateFilter(null);
                       filterData({
+                        data: originalExpensesData,
+                        setData: setFilteredExpensesData,
                         sortValue: sortFilterValue,
                         dateValue: null,
                         search: search,
@@ -265,6 +170,8 @@ const ExpenseDashboardContent = () => {
                 onInput={(e: any) => {
                   setSearch(e.target.value);
                   filterData({
+                    data: originalExpensesData,
+                    setData: setFilteredExpensesData,
                     sortValue: sortFilterValue,
                     dateValue: dateFilter,
                     search: e.target.value,
@@ -304,7 +211,7 @@ const ExpenseDashboardContent = () => {
           useFor="Edit"
           isOpen={isEditExpenseModalOpen}
           setIsOpen={setIsEditExpenseModalOpen}
-          expenseBeingEdit={expenseBeingEdit}
+          beingEdit={expenseBeingEdit}
           reloadData={getExpenses}
         />
       </DashboardContentLayout>

@@ -1,3 +1,4 @@
+import { DashboardContentLayoutProps } from '../../utils/types';
 import styles from './DashboardContent.module.css';
 
 const DashboardContentLayout = ({
@@ -6,13 +7,7 @@ const DashboardContentLayout = ({
   button,
   filters,
   children,
-}: {
-  title: string;
-  tableTitle: string;
-  button: any;
-  filters: any;
-  children: any;
-}) => {
+}: DashboardContentLayoutProps) => {
   return (
     <>
       <div className={styles.dashboardContent}>

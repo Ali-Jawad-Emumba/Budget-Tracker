@@ -12,7 +12,10 @@ import {
   Typography,
 } from '@mui/material';
 import styles from './DashboardContent.module.css';
-import { DeleteIcon, EditIcon } from '../../pages/dashboard/DashboardIcons';
+import { DeleteIcon, EditIcon } from '../../utils/icons';
+import { DataTableProps, InitialState } from '../../utils/types';
+import { useSelector } from 'react-redux';
+
 const DataTable = ({
   useFor,
   data,
@@ -22,18 +25,10 @@ const DataTable = ({
   metaData,
   getData,
   deleteItem,
-}: {
-  useFor: string;
-  data: any;
-  setBeingEdit: any;
-  setIsEditModalOpen: any;
-  setSelectedPage: any;
-  metaData: any;
-  getData: any;
-  deleteItem: any;
-}) => {
+}: DataTableProps) => {
   const expenseCells = ['Expense', 'Total Expenditure', 'Price(PKR)', 'Date'];
   const userCells = ['First Name', 'Last Name', 'Email', 'Number', 'Role'];
+  const isAdmin=useSelector((state:InitialState)=>state.isAdmin)
   const ProgressBar = ({ expense }: { expense: any }) => {
     const totalExpenseOfMonth = data
       .filter(
@@ -88,8 +83,9 @@ const DataTable = ({
               </TableCell>
               <TableCell>{row.price || row.email}</TableCell>
               <TableCell>
-                {new Date(row.date).toLocaleDateString() || row.phone}
+                {useFor==="Expenses"? new Date(row.date).toLocaleDateString() : row.phone}
               </TableCell>
+              {isAdmin && <TableCell>{row._id===import.meta.env.VITE_ADMIN_ID?"Admin":"User"}</TableCell>}
               <TableCell>
                 {
                   <div style={{ display: 'flex', gap: '10px' }}>

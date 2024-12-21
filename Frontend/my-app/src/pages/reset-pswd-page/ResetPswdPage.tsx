@@ -10,6 +10,7 @@ import { checkAndThrowError } from '../../utils/shared';
 import PasswordField from '../../components/PasswordField';
 import { useForm } from 'react-hook-form';
 import { jwtDecode } from 'jwt-decode';
+import { updateAccountPassword } from '../../utils/api-calls';
 
 const ResetPswdPage: React.FC = () => {
   const {
@@ -26,11 +27,7 @@ const ResetPswdPage: React.FC = () => {
     Boolean(localStorage.getItem('reset-token'))
   );
   const onSubmit = async (data: any) => {
-    const response = await fetch(`http://localHost:3000/users/email/${email}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-    });
+    const response = await updateAccountPassword({ email, data });
     if (response.ok) {
       navigate('/');
     }
@@ -45,8 +42,8 @@ const ResetPswdPage: React.FC = () => {
         localStorage.removeItem('reset-token'); // Clear the token from localStorage
         setTokenExpired(true);
       }
-    },300000);
-    return ()=>clearInterval(interval)
+    }, 300000);
+    return () => clearInterval(interval);
   }, [token]);
   if (tokenExpired) {
     return <p>This Link is Expired</p>;

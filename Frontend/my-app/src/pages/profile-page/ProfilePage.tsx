@@ -9,7 +9,6 @@ import {
   Input,
   Paper,
 } from '@mui/material';
-import ProfileAppBar from '../../components/profile-app-bar/ProfileAppBar';
 
 import ProfilePic from '../../assets/images/person profile.png';
 import styles from './ProfilePage.module.css';
@@ -19,15 +18,17 @@ import {
   LocationIcon,
   MailIcon,
   PhoneIcon,
-} from './ProfilePageIcons';
+} from '../../utils/icons';
 import ProfileDetails from '../../components/profile-details/ProfileDetails';
 import MyAccount from '../../components/my-account/MyAccount';
 import { useDispatch, useSelector } from 'react-redux';
 import { storeUserData } from '../../app/store';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { fetchUserData } from '../../utils/shared';
-import AppBar from '../../components/dashboard-app-bar/AppBar';
+import { fetchUserData } from '../../utils/api-calls';
+import AppBar from '../../components/app-bar/AppBar';
+import { updateMyProfile } from '../../utils/api-calls';
+import { InitialState } from '../../utils/types';
 
 const ProfilePage = () => {
   const [selectedProfileTab, setSelectedProfileTab] =
@@ -39,17 +40,17 @@ const ProfilePage = () => {
   const [isProfilePicModalOpen, setIsProfilePicModalOpen] =
     useState<boolean>(false);
   const [base64ProfilePic, setBase64ProfilePic] = useState<any>();
-  const userId = localStorage.getItem('UserId');
+  const userId = useSelector((state: InitialState) => state.userId);
 
   useEffect(() => {
-      if (Object.keys(userData).every((field) => !userData[field])) {
-        (async () => {
-          const data = await fetchUserData();
-          console.log(data);
-          dispatch(storeUserData({ ...data }));
-          setIsLoading(false);
-        })();
-      }
+    if (Object.keys(userData).every((field) => !userData[field])) {
+      (async () => {
+        const data = await fetchUserData(userId);
+        console.log(data);
+        dispatch(storeUserData({ ...data }));
+        setIsLoading(false);
+      })();
+    }
   }, []);
 
   if (isLoading)
@@ -72,19 +73,11 @@ const ProfilePage = () => {
     };
     reader.readAsDataURL(file);
   };
-
+ 
   const saveProfilePic = async () => {
-    const updateDataFn = await fetch(`http://localHost:3000/users/${userId}`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
-      },
-      body: JSON.stringify({
-        profilepic: base64ProfilePic,
-      }),
+    const updatedUserData = await updateMyProfile(userId, {
+      profilepic: base64ProfilePic,
     });
-    const updatedUserData = await updateDataFn.json();
     dispatch(storeUserData(updatedUserData));
     setBase64ProfilePic(null);
     setIsProfilePicModalOpen(false);

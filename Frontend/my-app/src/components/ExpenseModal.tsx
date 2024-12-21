@@ -19,21 +19,21 @@ import Notifictaion from './notification/Notification';
 import { Description } from '@mui/icons-material';
 import { useDispatch } from 'react-redux';
 import { updateNotifications } from '../app/store';
-import { getCharactersMessage, requiredMessage } from '../utils/shared';
+import {
+  getCharactersMessage,
+  requiredMessage,
+} from '../utils/shared';
+import { patchExpense, postExpense } from '../utils/api-calls';
+import { ModalProps } from '../utils/types';
+
 
 const ExpenseModal = ({
   isOpen,
   setIsOpen,
   useFor,
-  expenseBeingEdit,
+  beingEdit,
   reloadData,
-}: {
-  isOpen: boolean;
-  setIsOpen: any;
-  useFor: string;
-  expenseBeingEdit?: any;
-  reloadData?: any;
-}) => {
+}:ModalProps ) => {
   const userId = localStorage.getItem('UserId');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const {
@@ -41,7 +41,7 @@ const ExpenseModal = ({
     handleSubmit,
     formState: { errors },
     reset,
-  } = useForm({ defaultValues: expenseBeingEdit });
+  } = useForm({ defaultValues: beingEdit });
   const getExpenseBody = (data: any) =>
     JSON.stringify({
       title: data.title,
@@ -59,17 +59,10 @@ const ExpenseModal = ({
   const maxLengthValidation = { value: 30, message: getCharactersMessage(30) };
   const editExpense = async (data: any) => {
     setIsLoading(true);
-    const response = await fetch(
-      `http://localhost:3000/expenses/${expenseBeingEdit._id}`,
-      {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-        body: getExpenseBody(data),
-      }
-    );
+    const response = await patchExpense({
+      id: beingEdit._id,
+      data: getExpenseBody(data),
+    });
     if (response.ok) {
       setIsLoading(false);
       setIsOpen(false);
@@ -94,17 +87,10 @@ const ExpenseModal = ({
 
   const addExpense = async (data: any) => {
     setIsLoading(true);
-    const response = await fetch(
-      `http://localhost:3000/users/${userId}/expenses`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-        body: getExpenseBody(data),
-      }
-    );
+    const response = await postExpense({
+      id: userId,
+      data: getExpenseBody(data),
+    });
     if (response.ok) {
       setIsLoading(false);
       setIsOpen(false);
@@ -128,17 +114,17 @@ const ExpenseModal = ({
   };
   useEffect(() => {
     useFor === 'Add'
-      ? reset(expenseBeingEdit)
+      ? reset(beingEdit)
       : setExpenseDate(
-          dayjs(useFor === 'Edit' ? expenseBeingEdit?.date : new Date())
+          dayjs(useFor === 'Edit' ? beingEdit?.date : new Date())
         );
     setIsLoading(false);
   }, [isOpen]);
   useEffect(() => {
-    if (expenseBeingEdit) {
-      reset(expenseBeingEdit); // Reset form to defaultValue when it changes
+    if (beingEdit) {
+      reset(beingEdit); // Reset form to defaultValue when it changes
     }
-  }, [expenseBeingEdit, reset]);
+  }, [beingEdit, reset]);
 
   return (
     <>
@@ -165,7 +151,10 @@ const ExpenseModal = ({
               <FormControl>
                 <label>Price</label>
                 <InputBootstrapStyled
-                  {...register('price', { required: requiredMessage, maxLength:maxLengthValidation})}
+                  {...register('price', {
+                    required: requiredMessage,
+                    maxLength: maxLengthValidation,
+                  })}
                   sx={{ height: '40px' }}
                   type="number"
                 />

@@ -5,23 +5,30 @@ import {
   createSlice,
 } from '@reduxjs/toolkit';
 import { checkTokenExpiration } from '../utils/shared';
+import { InitialState } from '../utils/types';
 
-const initialState = {
+
+const initialState: InitialState = {
   userData: {},
   isAdmin: import.meta.env.VITE_ADMIN_ID === localStorage.getItem('UserId'),
-  isUserLoggedIn:
+  isUserLoggedIn: Boolean(
     localStorage.getItem('UserId') &&
-    checkTokenExpiration(Boolean(localStorage.getItem('refresh-token'))),
+      checkTokenExpiration(Boolean(localStorage.getItem('refresh-token')))
+  ),
   selectedDashboardTab: 'Expenses',
-  keepLoggedIn: localStorage.getItem('refresh-token'),
+  keepLoggedIn: Boolean(localStorage.getItem('refresh-token')),
   expenseAllData: null,
   notifications: [],
+  userId:localStorage.getItem("UserId")
 };
 
 const slice = createSlice({
   name: 'Slice',
   initialState,
   reducers: {
+    storeUserId(state, action){
+      state.userId=action.payload
+    },
     storeUserData(state, action) {
       state.userData = action.payload;
     },
@@ -58,7 +65,8 @@ export const {
   updateKeepLoggedIn,
   storeExpenseAllData,
   updateNotifications,
-  clearNotifications
+  clearNotifications,
+  storeUserId
 } = slice.actions;
 
 export const store = configureStore({

@@ -3,16 +3,13 @@ import { InputBootstrapStyled } from '../utils/styled-components';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { Visibility } from '@mui/icons-material';
 import { useState } from 'react';
+import { PasswordFieldProps } from '../utils/types';
 
 const PasswordField = ({
   formRegister,
   checkAndThrowError,
   changeHandler,
-}: {
-  formRegister: any;
-  checkAndThrowError: any;
-  changeHandler?: any;
-}) => {
+}: PasswordFieldProps) => {
   const [showPassword, setShowPassword] = useState(false);
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);

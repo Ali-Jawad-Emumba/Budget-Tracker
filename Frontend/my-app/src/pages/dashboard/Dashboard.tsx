@@ -1,15 +1,16 @@
 import { useEffect, useState } from 'react';
 import SideDrawer from '../../components/side-drawer/SideDrawer';
 import styles from './Dashboard.module.css';
-import DashboardAppBar from '../../components/dashboard-app-bar/AppBar';
+
 import ExpenseDashboardContent from '../../components/dashboard-content/ExpenseDashboardContent';
 import { useNavigate } from 'react-router-dom';
-import { fetchUserData, startTokenCheckInterval } from '../../utils/shared';
+import { fetchUserData } from '../../utils/api-calls';
 import { useDispatch, useSelector } from 'react-redux';
 import { storeUserData } from '../../app/store';
 import UsersDashboardContent from '../../components/dashboard-content/UsersDashboardContent';
 import AnalysisDashboardContent from '../../components/dashboard-content/AnalysisDashboardContent';
-import AppBar from '../../components/dashboard-app-bar/AppBar';
+import AppBar from '../../components/app-bar/AppBar';
+import { InitialState } from '../../utils/types';
 
 const Dashboard = () => {
   const [open, setOpen] = useState<boolean>(false);
@@ -19,11 +20,11 @@ const Dashboard = () => {
   const userData = useSelector((state: any) => state.userData);
   const dispatch = useDispatch();
   const selectedDashboardTab=useSelector((state:any)=>state.selectedDashboardTab)
- 
+  const userId = useSelector((state: InitialState) => state.userId);
   useEffect(() => {
     if (!userData) {
       (async () => {
-        const data = await fetchUserData();
+        const data = await fetchUserData(userId);
         dispatch(storeUserData({ ...data }));
       })();
     }

@@ -1,17 +1,8 @@
 import { DashboardButton } from '../../utils/styled-components';
 import styles from './DashboardContent.module.css';
-import {
-  InputAdornment,
-  MenuItem,
-  Select,
-  Snackbar,
-  TextField,
-  Typography,
-} from '@mui/material';
+import { InputAdornment, MenuItem, Select, TextField } from '@mui/material';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import { useEffect, useState } from 'react';
-
-import ExpenseModal from '../ExpenseModal';
 
 import DataTable from './DataTable';
 import DashboardContentLayout from './DashboardContentLayout';
@@ -20,6 +11,8 @@ import UserModal from '../UsersModal';
 import Notifictaion from '../notification/Notification';
 import { useDispatch } from 'react-redux';
 import { updateNotifications } from '../../app/store';
+import { deleteUserById, getAllUsers } from '../../utils/api-calls';
+import { filterUsersData as filterData } from './DashboardContent.service';
 
 const UsersDashboardContent = () => {
   const [isAddUserModalOpen, setIsAddUserModalOpen] = useState<boolean>(false);
@@ -42,64 +35,8 @@ const UsersDashboardContent = () => {
     description: '',
   });
 
-  const filterData = ({
-    sortValue,
-    search,
-  }: {
-    sortValue?: string;
-    search?: string;
-  }) => {
-    let result = [...originalUsersData];
-    // Apply sort filter
-    if (sortValue) {
-      switch (sortValue) {
-        case 'name':
-          result = result.sort((a: any, b: any) =>
-            a.firstname === b.firstname ? 0 : a.firstname < b.firstname ? -1 : 1
-          );
-          break;
-        case 'email':
-          result = result.sort((a: any, b: any) =>
-            a.email === b.email ? 0 : a.email < b.email ? -1 : 1
-          );
-          break;
-        case 'role':
-          result = [
-            ...result.filter(
-              (user) => user._id === import.meta.env.VITE_ADMIN_ID
-            ),
-            ...result.filter(
-              (user) => user._id !== import.meta.env.VITE_ADMIN_ID
-            ),
-          ];
-          break;
-      }
-    }
-
-    // Apply search filter
-    if (search) {
-      const searchLower = search.toLowerCase();
-      result = result.filter((user: any) =>
-        [user.firstname, user.lastname, user.email].some((field) =>
-          field.toLowerCase().includes(searchLower)
-        )
-      );
-    }
-
-    setFilteredUsersData(result);
-  };
   const getUsers = async () => {
-    const fetchFn = await fetch(
-      `http://localHost:3000/users?page=${selectedPage}`,
-      {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      }
-    );
-    const response = await fetchFn.json();
+    const response = await getAllUsers(selectedPage);
     setUserMetaData(response);
     const data = response.data;
     setOriginalUsersData(data);
@@ -111,13 +48,7 @@ const UsersDashboardContent = () => {
   }, []);
 
   const deleteUser = async (userId: number) => {
-    const response = await fetch(`http://localHost:3000/users/${userId}`, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
-      },
-    });
+    const response = await deleteUserById(userId);
     if (response.ok) {
       const userDeleted = await response.json();
       setSnackBar({
@@ -161,6 +92,8 @@ const UsersDashboardContent = () => {
                 onChange={(e) => {
                   setSortFilterValue(e.target.value);
                   filterData({
+                    data: originalUsersData,
+                    setData: setFilteredUsersData,
                     sortValue: e.target.value,
                     search: search,
                   });
@@ -183,6 +116,8 @@ const UsersDashboardContent = () => {
                 onInput={(e: any) => {
                   setSearch(e.target.value);
                   filterData({
+                    data: originalUsersData,
+                    setData: setFilteredUsersData,
                     sortValue: sortFilterValue,
                     search: e.target.value,
                   });
@@ -222,7 +157,7 @@ const UsersDashboardContent = () => {
           useFor="Edit"
           isOpen={isEditUserModalOpen}
           setIsOpen={setIsEditUserModalOpen}
-          expenseBeingEdit={expenseBeingEdit}
+          beingEdit={expenseBeingEdit}
           reloadData={getUsers}
         />
       </DashboardContentLayout>

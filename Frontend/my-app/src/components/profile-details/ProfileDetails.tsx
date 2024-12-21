@@ -1,13 +1,12 @@
-import { Paper } from '@mui/material';
 import styles from './ProfileDetails.module.css';
 import ProfileCard from './ProfileCard';
-import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { storeUserData } from '../../app/store';
-import { fetchUserData } from '../../utils/shared';
+
+import {  useSelector } from 'react-redux';
+import { InitialState } from '../../utils/types';
+
 
 const ProfileDetails = () => {
-  const userData = useSelector((state: any) => state.userData);
+  const userData = useSelector((state: InitialState) => state.userData);
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
       <ProfileCard heading="About Me">

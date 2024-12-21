@@ -1,8 +1,4 @@
-import {
-  BellIcon,
-  BellIconNotified,
-  SubjectIcon,
-} from '../../pages/dashboard/DashboardIcons';
+import { BellIcon, BellIconNotified, SubjectIcon } from '../../utils/icons';
 import styles from './AppBar.module.css';
 import profilePic from '../../assets/images/person profile.png';
 import { useNavigate } from 'react-router-dom';
@@ -10,17 +6,12 @@ import { useSelector } from 'react-redux';
 import Logo from '../logo/Logo';
 import { useState } from 'react';
 import NotifictaionLists from '../notification-list/NotificationsList';
+import { AppBarProps, InitialState } from '../../utils/types';
 
-const AppBar = ({
-  useFor,
-  toggleDrawer,
-}: {
-  useFor: string;
-  toggleDrawer?: any;
-}) => {
+const AppBar = ({ useFor, toggleDrawer }: AppBarProps) => {
   const navigate = useNavigate();
-  let userData = useSelector((state: any) => state.userData);
-  const notifictaions = useSelector((state: any) => state.notifications);
+  let userData = useSelector((state: InitialState) => state.userData);
+  const notifictaions = useSelector((state: InitialState) => state.notifications);
   const [showNotificationsList, setShowNotificationsList] =
     useState<boolean>(false);
   return (
@@ -41,7 +32,11 @@ const AppBar = ({
         ) : (
           <BellIcon />
         )}
-        {showNotificationsList && <NotifictaionLists setShowNotificationsList={setShowNotificationsList}/>}
+        {showNotificationsList && (
+          <NotifictaionLists
+            setShowNotificationsList={setShowNotificationsList}
+          />
+        )}
         <img
           className="app-bar-profile-pic"
           src={userData?.profilepic || profilePic}

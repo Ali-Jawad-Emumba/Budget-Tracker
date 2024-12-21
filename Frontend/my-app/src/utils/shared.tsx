@@ -1,6 +1,7 @@
 import { Snackbar } from '@mui/material';
 import { jwtDecode } from 'jwt-decode';
 import { useDispatch, useSelector } from 'react-redux';
+import { getAccessToken } from './api-calls';
 
 export const checkAndThrowError = (errors: any, errorFor: string): any => {
   if (errors[errorFor])
@@ -18,19 +19,7 @@ export const startTokenCheckInterval = (keepLoggedIn: boolean) => {
   return interval;
 };
 
-export const fetchUserData = async () => {
-  const userId = localStorage.getItem('UserId');
-  const fetchFn = await fetch(`http://localHost:3000/users/${userId}`, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${localStorage.getItem('token')}`,
-    },
-  });
-  const response = await fetchFn.json();
-  const data = response;
-  return data;
-};
+
 
 export const checkTokenExpiration = (keepLoggedIn: boolean) => {
   const token = localStorage.getItem('token');
@@ -51,19 +40,7 @@ export const checkTokenExpiration = (keepLoggedIn: boolean) => {
         const currentTime = Date.now() / 1000; // current time in seconds
         if (decoded.exp > currentTime) {
           (async () => {
-            const response = await fetch(
-              'http://localHost:3000/refresh-token',
-              {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                  refreshToken: localStorage.getItem('refresh-token'),
-                }),
-              }
-            );
-            const data = await response.json();
+            const data = await getAccessToken();
             localStorage.setItem('token', data.token);
           })();
         }
@@ -113,3 +90,4 @@ export const nameValidation = {
   maxLength: getMaxLengthValidation(50),
   pattern: patternValidation,
 };
+export const BASE_URL = import.meta.env.VITE_BASE_URL;
