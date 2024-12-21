@@ -28,7 +28,7 @@ const DataTable = ({
 }: DataTableProps) => {
   const expenseCells = ['Expense', 'Total Expenditure', 'Price(PKR)', 'Date'];
   const userCells = ['First Name', 'Last Name', 'Email', 'Number', 'Role'];
-  const isAdmin=useSelector((state:InitialState)=>state.isAdmin)
+  const isAdmin = useSelector((state: InitialState) => state.isAdmin);
   const ProgressBar = ({ expense }: { expense: any }) => {
     const totalExpenseOfMonth = data
       .filter(
@@ -61,8 +61,8 @@ const DataTable = ({
         <TableHead>
           <TableRow>
             {[...(useFor === 'Expenses' ? expenseCells : userCells)].map(
-              (cell: string) => (
-                <TableCell>{cell}</TableCell>
+              (cell: string, index: number) => (
+                <TableCell key={index}>{cell}</TableCell>
               )
             )}
             <TableCell>Actions</TableCell>
@@ -83,9 +83,15 @@ const DataTable = ({
               </TableCell>
               <TableCell>{row.price || row.email}</TableCell>
               <TableCell>
-                {useFor==="Expenses"? new Date(row.date).toLocaleDateString() : row.phone}
+                {useFor === 'Expenses'
+                  ? new Date(row.date).toLocaleDateString()
+                  : row.phone}
               </TableCell>
-              {isAdmin && <TableCell>{row._id===import.meta.env.VITE_ADMIN_ID?"Admin":"User"}</TableCell>}
+              {isAdmin && (
+                <TableCell>
+                  {row._id === import.meta.env.VITE_ADMIN_ID ? 'Admin' : 'User'}
+                </TableCell>
+              )}
               <TableCell>
                 {
                   <div style={{ display: 'flex', gap: '10px' }}>

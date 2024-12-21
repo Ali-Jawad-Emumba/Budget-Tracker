@@ -207,7 +207,7 @@ const formatDataForChart = (result: any) => {
 };
 
 export const filterData = (data: any, sortValue: string, setChartData: any) => {
-  const expenseData = [...data];
+  const expenseData = [...(data||[])];
   // Apply sort filter
   let monthsFiltered: any[];
   switch (sortValue) {

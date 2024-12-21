@@ -41,7 +41,7 @@ export const checkTokenExpiration = (keepLoggedIn: boolean) => {
         if (decoded.exp > currentTime) {
           (async () => {
             const data = await getAccessToken();
-            localStorage.setItem('token', data.token);
+            localStorage.setItem('token', data.token)
           })();
         }
       } else {

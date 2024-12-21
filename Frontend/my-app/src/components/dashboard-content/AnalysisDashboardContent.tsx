@@ -24,6 +24,9 @@ const AnalysisDashboardContent = () => {
   const [sortFilterValue, setSortFilterValue] = useState<string>('12 months');
   const [chartData, setChartData] = useState<ChartData[]>();
   const userId = useSelector((state: InitialState) => state.userId);
+  const expenseStoredData = useSelector(
+    (state: InitialState) => state.expenseAllData
+  );
   const getExpenses = async () => {
     const data = await getAllExpenses(userId);
     setOriginalExpensesData(data);
@@ -31,11 +34,15 @@ const AnalysisDashboardContent = () => {
   };
 
   useEffect(() => {
-    (async () => {
-      await getExpenses();
-    })();
+    if (
+      Object.keys(expenseStoredData).every((field) => !expenseStoredData[field])
+    ) {
+      (async () => await getExpenses())();
+    } else {
+      setOriginalExpensesData(expenseStoredData.data);
+      filterData(expenseStoredData.data, '12 months', setChartData);
+    }
   }, []);
-
   return (
     <DashboardContentLayout
       title="Analysis"

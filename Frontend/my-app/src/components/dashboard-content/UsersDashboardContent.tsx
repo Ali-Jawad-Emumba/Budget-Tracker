@@ -34,6 +34,7 @@ const UsersDashboardContent = () => {
     title: '',
     description: '',
   });
+  const [token, setToken] = useState<string | null>(null);
 
   const getUsers = async () => {
     const response = await getAllUsers(selectedPage);
@@ -45,7 +46,11 @@ const UsersDashboardContent = () => {
 
   useEffect(() => {
     (async () => await getUsers())();
+    setInterval(() => setToken(localStorage.getItem('token')));
   }, []);
+  useEffect(() => {
+    (async () => await getUsers())();
+  }, [token]);
 
   const deleteUser = async (userId: number) => {
     const response = await deleteUserById(userId);

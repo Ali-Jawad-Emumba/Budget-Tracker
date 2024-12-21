@@ -19,7 +19,7 @@ export interface InitialState {
   keepLoggedIn: boolean;
   expenseAllData: any;
   notifications: any;
-  userId: string | null;
+  userId:string|null
 }
 
 export interface ChartData {
@@ -68,7 +68,7 @@ export interface SignupFormProps {
   setModalOpen?: any;
   reloadData?: any;
 }
-export interface ModalProps {
+export interface ModalProps{
   isOpen: boolean;
   setIsOpen: any;
   useFor: string;

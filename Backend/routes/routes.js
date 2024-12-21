@@ -48,7 +48,7 @@ router.get("/users/email/:email", async (req, res) => {
     if (!user) {
       return res.json({ userExists: false });
     }
-    const token = jwt.sign({ id: user._id }, JWT_KEY, { expiresIn: "5s" });
+    const token = jwt.sign({ id: user._id }, JWT_KEY, { expiresIn: "1h" });
     if (keepLoggedIn) {
       const refreshToken = jwt.sign({ id: user._id }, JWT_REFRESH_KEY, {
         expiresIn: "1d",
@@ -297,7 +297,7 @@ router.post("/refresh-token", (req, res) => {
     if (err) return res.sendStatus(403); // Invalid refresh token
 
     const newAccessToken = jwt.sign({ id: user.id }, JWT_KEY, {
-      expiresIn: "5s",
+      expiresIn: "1h",
     });
     res.json({ token: newAccessToken, id: user.id });
   });

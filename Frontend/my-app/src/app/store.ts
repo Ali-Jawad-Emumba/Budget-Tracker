@@ -17,7 +17,7 @@ const initialState: InitialState = {
   ),
   selectedDashboardTab: 'Expenses',
   keepLoggedIn: Boolean(localStorage.getItem('refresh-token')),
-  expenseAllData: null,
+  expenseAllData: {},
   notifications: [],
   userId:localStorage.getItem("UserId")
 };

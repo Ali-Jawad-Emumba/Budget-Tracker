@@ -25,6 +25,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import {
  
+  storeExpenseAllData,
   storeSelectedDashboardTab,
   storeUserData,
   storeUserId,
@@ -44,6 +45,7 @@ export default function SideDrawer({ open }: { open: boolean }) {
     localStorage.removeItem('refresh-token');
     dispatch(storeUserId(null))
     dispatch(updateIsAdmin(false));
+    dispatch(storeExpenseAllData({}))
     dispatch(storeSelectedDashboardTab('Expenses'));
     dispatch(storeUserData(null));
     dispatch(updateIsUserLoggedIn(false));

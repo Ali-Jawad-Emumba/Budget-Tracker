@@ -34,8 +34,8 @@ const NotifictaionLists = ({
   return (
     <div className={styles.menu}>
       <div className={styles.list}>
-        {notifications.map((notification: any) => (
-          <div className={styles.notificationItem}>
+        {notifications.map((notification: any, index: number) => (
+          <div className={styles.notificationItem} key={index}>
             <div
               className={styles.icon}
               style={{ backgroundColor: getIcon(notification.action) }}

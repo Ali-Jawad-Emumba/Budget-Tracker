@@ -20,7 +20,7 @@ import DashboardContentLayout from './DashboardContentLayout';
 import Filter from './Filter';
 import DataTable from './DataTable';
 import Notifictaion from '../notification/Notification';
-import { updateNotifications } from '../../app/store';
+import { storeExpenseAllData, updateNotifications } from '../../app/store';
 import { deleteExpenseById, getExpensesData } from '../../utils/api-calls';
 import { filterExpenseData as filterData } from './DashboardContent.service';
 import { InitialState } from '../../utils/types';
@@ -39,6 +39,9 @@ const ExpenseDashboardContent = () => {
   const [expenseMetaData, setExpenseMetaData] = useState<any>();
   const [selectedPage, setSelectedPage] = useState<number>(1);
   const dispatch = useDispatch();
+  const expenseStoredData = useSelector(
+    (state: InitialState) => state.expenseAllData
+  );
   const [snackBar, setSnackBar] = useState<any>({
     open: false,
     useFor: '',
@@ -50,14 +53,22 @@ const ExpenseDashboardContent = () => {
   const getExpenses = async () => {
     const response = await getExpensesData(userId, selectedPage);
     setExpenseMetaData(response);
-
+    dispatch(storeExpenseAllData(response));
     const data = response.data;
     setOriginalExpensesData(data);
     setFilteredExpensesData(data);
   };
 
   useEffect(() => {
-    (async () => await getExpenses())();
+    if (
+      Object.keys(expenseStoredData).every((field) => !expenseStoredData[field])
+    ) {
+      (async () => await getExpenses())();
+    } else {
+      setExpenseMetaData(expenseStoredData);
+      setOriginalExpensesData(expenseStoredData.data);
+      setFilteredExpensesData(expenseStoredData.data);
+    }
   }, []);
 
   const deleteExpense = async (expenseId: number) => {
