@@ -73,7 +73,7 @@ const DeleteModal = ({
   return (
     <>
       <Dialog onClose={() => setIsOpen(false)} open={isOpen}>
-        <div className={styles.modal} style={{ width: '350px' }}>
+        <div className={styles.modal} style={{ width: '400px' }}>
           <DialogTitle>
             Delete {useFor}
             <CloseButton setIsOpen={setIsOpen} />

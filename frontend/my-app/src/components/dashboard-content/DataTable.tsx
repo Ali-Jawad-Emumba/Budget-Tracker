@@ -37,6 +37,7 @@ const DataTable = ({
     setIsDeleteModalOpen(true);
   };
   const shallShowUsers = isAdmin && useFor === 'Expenses';
+  const shallShowRoles = isAdmin && useFor === 'Users';
   const ProgressBar = ({ expense }: { expense: any }) => {
     const totalExpenseOfMonth = data
       .filter(
@@ -101,7 +102,7 @@ const DataTable = ({
                     ? new Date(row.date).toLocaleDateString()
                     : row.phone}
                 </TableCell>
-                {isAdmin && (
+                {shallShowRoles && (
                   <TableCell>
                     {row._id === import.meta.env.VITE_ADMIN_ID
                       ? 'Admin'

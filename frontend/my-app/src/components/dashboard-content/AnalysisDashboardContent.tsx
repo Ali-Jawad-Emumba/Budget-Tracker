@@ -35,7 +35,7 @@ const AnalysisDashboardContent = () => {
 
   useEffect(() => {
     if (
-      Object.keys(expenseStoredData).every((field) => !expenseStoredData[field])
+      !expenseStoredData || Object.keys(expenseStoredData).every((field) => !expenseStoredData[field])
     ) {
       (async () => await getExpenses())();
     } else {
