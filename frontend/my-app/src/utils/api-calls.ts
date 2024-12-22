@@ -4,7 +4,7 @@ export const patchExpense = async (req: any) => {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${localStorage.getItem('token')}`,
+      'Authorization': `Bearer ${localStorage.getItem('token')}`,
     },
     body: req.data,
   });
@@ -15,7 +15,7 @@ export const postExpense = async (req: any) => {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${localStorage.getItem('token')}`,
+      'Authorization': `Bearer ${localStorage.getItem('token')}`,
     },
     body: req.data,
   });
@@ -27,7 +27,7 @@ export const getAllExpenses = async (userId: string | null) => {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
       },
     });
     const response = await fetchFn.json();
@@ -46,7 +46,7 @@ export const getExpensesData = async (
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
         },
       }
     );
@@ -60,7 +60,7 @@ export const deleteExpenseById = async (id: number | undefined) => {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${localStorage.getItem('token')}`,
+      'Authorization': `Bearer ${localStorage.getItem('token')}`,
     },
   });
 };
@@ -70,7 +70,7 @@ export const getAllUsers = async (selectedPage: number) => {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${localStorage.getItem('token')}`,
+      'Authorization': `Bearer ${localStorage.getItem('token')}`,
     },
   });
   const response = await fetchFn.json();
@@ -82,7 +82,7 @@ export const deleteUserById = async (id: number | undefined) => {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${localStorage.getItem('token')}`,
+      'Authorization': `Bearer ${localStorage.getItem('token')}`,
     },
   });
 };
@@ -93,7 +93,7 @@ export const updateMyProfile = async (userId: string | null, reqBody: any) => {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
       },
       body: JSON.stringify(reqBody),
     });
@@ -122,7 +122,7 @@ export const sendPswdResetLink = async (email: any) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
       },
       body: JSON.stringify({
         email,
@@ -145,7 +145,7 @@ export const fetchUserData = async (userId: string | null) => {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
       },
     });
     const response = await fetchFn.json();
@@ -158,7 +158,7 @@ export const getAllExpensesForAdmin = async (selectedPage: number) => {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${localStorage.getItem('token')}`,
+      'Authorization': `Bearer ${localStorage.getItem('token')}`,
     },
   });
   const response = await fetchFn.json();
