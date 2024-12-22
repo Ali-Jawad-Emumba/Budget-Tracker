@@ -45,7 +45,7 @@ const LoginPage: React.FC = () => {
   const [rememberMe, setRememberMe] = useState<boolean>(false);
 
   useEffect(() => {
-    (async () => {
+    const resetAccessToken=async () => {
       const refreshToken = localStorage.getItem('refresh-token');
 
       if (refreshToken) {
@@ -56,7 +56,8 @@ const LoginPage: React.FC = () => {
           login(data, data.id);
         }
       }
-    })();
+    };
+    resetAccessToken()
   }, []);
   const login = (user: any, userId: string) => {
     localStorage.setItem('UserId', userId);

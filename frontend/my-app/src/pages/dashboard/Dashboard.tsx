@@ -6,7 +6,7 @@ import ExpenseDashboardContent from '../../components/dashboard-content/ExpenseD
 import { useNavigate } from 'react-router-dom';
 import { fetchUserData } from '../../utils/api-calls';
 import { useDispatch, useSelector } from 'react-redux';
-import { storeUserData } from '../../app/store';
+import { storeSelectedDashboardTab, storeUserData } from '../../app/store';
 import UsersDashboardContent from '../../components/dashboard-content/UsersDashboardContent';
 import AnalysisDashboardContent from '../../components/dashboard-content/AnalysisDashboardContent';
 import AppBar from '../../components/app-bar/AppBar';
@@ -25,11 +25,13 @@ const Dashboard = () => {
   const userId = useSelector((state: InitialState) => state.userId);
   useEffect(() => {
     if (!userData || Object.keys(userData).every((field) => !userData[field])) {
-      (async () => {
+      const fetchAndStoreData = async () => {
         const data = await fetchUserData(userId);
         dispatch(storeUserData({ ...data }));
-      })();
+      };
+      fetchAndStoreData();
     }
+    dispatch(storeSelectedDashboardTab('Expenses'));
   }, []);
 
   return (

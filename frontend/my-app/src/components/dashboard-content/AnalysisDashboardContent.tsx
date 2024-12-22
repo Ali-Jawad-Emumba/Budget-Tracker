@@ -14,35 +14,41 @@ import {
 } from 'recharts';
 import DashboardContentLayout from './DashboardContentLayout';
 import Filter from './Filter';
-import { getAllExpenses } from '../../utils/api-calls';
+import {
+  getAllExpenses,
+  getAllExpensesForAdminChart,
+} from '../../utils/api-calls';
 import { filterData } from './DashboardContent.service';
 import { ChartData, InitialState } from '../../utils/types';
 import { useSelector } from 'react-redux';
+import { fetchDashboardData } from '../../utils/shared';
 
 const AnalysisDashboardContent = () => {
   const [originalExpensesData, setOriginalExpensesData] = useState<any>();
   const [sortFilterValue, setSortFilterValue] = useState<string>('12 months');
   const [chartData, setChartData] = useState<ChartData[]>();
   const userId = useSelector((state: InitialState) => state.userId);
-  const expenseStoredData = useSelector(
-    (state: InitialState) => state.expenseAllData
-  );
+  const [token, setToken] = useState<string | null>();
+  const isAdmin = useSelector((state: InitialState) => state.isAdmin);
+  const [tokenCheckInterval, setTokenCheckInterval] = useState<any>();
+
   const getExpenses = async () => {
-    const data = await getAllExpenses(userId);
+    const data = isAdmin
+      ? await getAllExpensesForAdminChart()
+      : await getAllExpenses(userId);
     setOriginalExpensesData(data);
     filterData(data, '12 months', setChartData);
   };
 
   useEffect(() => {
-    if (
-      !expenseStoredData || Object.keys(expenseStoredData).every((field) => !expenseStoredData[field])
-    ) {
-      (async () => await getExpenses())();
-    } else {
-      setOriginalExpensesData(expenseStoredData.data);
-      filterData(expenseStoredData.data, '12 months', setChartData);
-    }
+    fetchDashboardData(getExpenses, originalExpensesData, setToken, setTokenCheckInterval)
   }, []);
+  useEffect(() => {
+    const fetchData = async () => await getExpenses();
+    fetchData();
+    if (tokenCheckInterval) clearInterval(tokenCheckInterval);
+  }, [token]);
+
   return (
     <DashboardContentLayout
       title="Analysis"

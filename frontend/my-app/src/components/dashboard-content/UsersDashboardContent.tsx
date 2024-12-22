@@ -13,14 +13,15 @@ import { useDispatch } from 'react-redux';
 import { updateNotifications } from '../../app/store';
 import { deleteUserById, getAllUsers } from '../../utils/api-calls';
 import { filterUsersData as filterData } from './DashboardContent.service';
+import { fetchDashboardData } from '../../utils/shared';
 
 const UsersDashboardContent = () => {
   const [isAddUserModalOpen, setIsAddUserModalOpen] = useState<boolean>(false);
   const [isEditUserModalOpen, setIsEditUserModalOpen] =
     useState<boolean>(false);
 
-  const [originalUsersData, setOriginalUsersData] = useState<any>();
-  const [filteredUsersData, setFilteredUsersData] = useState<any>();
+  const [originalUsersData, setOriginalUsersData] = useState<any[]>();
+  const [filteredUsersData, setFilteredUsersData] = useState<any[]>();
   const [expenseBeingEdit, setUserBeingEdit] = useState<any>();
   const [sortFilterValue, setSortFilterValue] = useState<string>('');
 
@@ -35,6 +36,7 @@ const UsersDashboardContent = () => {
     description: '',
   });
   const [token, setToken] = useState<string | null>(null);
+  const [tokenCheckInterval, setTokenCheckInterval] = useState<any>();
 
   const getUsers = async () => {
     const response = await getAllUsers(selectedPage);
@@ -45,14 +47,19 @@ const UsersDashboardContent = () => {
   };
 
   useEffect(() => {
-    (async () => await getUsers())();
-    setInterval(() => setToken(localStorage.getItem('token')));
+    fetchDashboardData(
+      getUsers,
+      originalUsersData,
+      setToken,
+      setTokenCheckInterval
+    );
   }, []);
   useEffect(() => {
-    (async () => await getUsers())();
+    const fetchData = async () => await getUsers();
+    fetchData();
+    if (tokenCheckInterval) clearInterval(tokenCheckInterval);
   }, [token]);
 
- 
   return (
     <>
       <DashboardContentLayout

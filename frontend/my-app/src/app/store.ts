@@ -17,7 +17,6 @@ const initialState: InitialState = {
   ),
   selectedDashboardTab: 'Expenses',
   keepLoggedIn: Boolean(localStorage.getItem('refresh-token')),
-  expenseAllData: {},
   notifications: [],
   userId:localStorage.getItem("UserId")
 };
@@ -45,9 +44,7 @@ const slice = createSlice({
     updateKeepLoggedIn(state, action) {
       state.keepLoggedIn = action.payload;
     },
-    storeExpenseAllData(state, action) {
-      state.expenseAllData = action.payload;
-    },
+ 
     updateNotifications(state, action) {
       state.notifications = state.notifications.concat(action.payload);
     },
@@ -63,7 +60,6 @@ export const {
   storeSelectedDashboardTab,
   updateIsUserLoggedIn,
   updateKeepLoggedIn,
-  storeExpenseAllData,
   updateNotifications,
   clearNotifications,
   storeUserId

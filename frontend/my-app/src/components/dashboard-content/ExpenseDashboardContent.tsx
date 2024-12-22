@@ -20,22 +20,22 @@ import DashboardContentLayout from './DashboardContentLayout';
 import Filter from './Filter';
 import DataTable from './DataTable';
 import Notifictaion from '../notification/Notification';
-import { storeExpenseAllData, updateNotifications } from '../../app/store';
 import {
   deleteExpenseById,
-  getAllExpensesForAdmin,
+  getAllExpensesForAdminTable,
   getExpensesData,
 } from '../../utils/api-calls';
 import { filterExpenseData as filterData } from './DashboardContent.service';
 import { InitialState } from '../../utils/types';
+import { fetchDashboardData } from '../../utils/shared';
 
 const ExpenseDashboardContent = () => {
   const [isAddExpenseModalOpen, setIsAddExpenseModalOpen] =
     useState<boolean>(false);
   const [isEditExpenseModalOpen, setIsEditExpenseModalOpen] =
     useState<boolean>(false);
-  const [originalExpensesData, setOriginalExpensesData] = useState<any>();
-  const [filteredExpensesData, setFilteredExpensesData] = useState<any>();
+  const [originalExpensesData, setOriginalExpensesData] = useState<any[]>();
+  const [filteredExpensesData, setFilteredExpensesData] = useState<any[]>();
   const [expenseBeingEdit, setExpenseBeingEdit] = useState<any>();
   const [sortFilterValue, setSortFilterValue] = useState<string>('');
   const [dateFilter, setDateFilter] = useState<any>();
@@ -44,39 +44,39 @@ const ExpenseDashboardContent = () => {
   const [selectedPage, setSelectedPage] = useState<number>(1);
   const isAdmin = useSelector((state: InitialState) => state.isAdmin);
   const dispatch = useDispatch();
-  const expenseStoredData = useSelector(
-    (state: InitialState) => state.expenseAllData
-  );
+  const [token, setToken] = useState<string | null>();
   const [snackBar, setSnackBar] = useState<any>({
     open: false,
     useFor: '',
     title: '',
     description: '',
   });
+  const [tokenCheckInterval, setTokenCheckInterval] = useState<any>();
 
   const userId = useSelector((state: InitialState) => state.userId);
   const getExpenses = async () => {
     const response = isAdmin
-      ? await getAllExpensesForAdmin(selectedPage)
+      ? await getAllExpensesForAdminTable(selectedPage)
       : await getExpensesData(userId, selectedPage);
     setExpenseMetaData(response);
-    dispatch(storeExpenseAllData(response));
     const data = response.data;
     setOriginalExpensesData(data);
     setFilteredExpensesData(data);
   };
 
   useEffect(() => {
-    if (
-      !expenseStoredData || Object.keys(expenseStoredData).every((field) => !expenseStoredData[field])
-    ) {
-      (async () => await getExpenses())();
-    } else {
-      setExpenseMetaData(expenseStoredData);
-      setOriginalExpensesData(expenseStoredData.data);
-      setFilteredExpensesData(expenseStoredData.data);
-    }
+    fetchDashboardData(
+      getExpenses,
+      originalExpensesData,
+      setToken,
+      setTokenCheckInterval
+    );
   }, []);
+  useEffect(() => {
+    const fetchData = async () => await getExpenses();
+    fetchData();
+    if (tokenCheckInterval) clearInterval(tokenCheckInterval);
+  }, [token]);
 
   return (
     <>

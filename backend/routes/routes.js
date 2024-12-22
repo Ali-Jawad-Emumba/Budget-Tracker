@@ -39,31 +39,35 @@ router.get("/users", authMiddleware, async (req, res) => {
     res.status(500).json({ message: "Server Error", error: error.message });
   }
 });
-router.get("/expenses", authMiddleware, async (req, res) => {
-  try {
-    const { page, limit = 10 } = req.query;
+router.get(
+  "/all-users-expenses-with-pagination",
+  authMiddleware,
+  async (req, res) => {
+    try {
+      const { page, limit = 10 } = req.query;
 
-    const pageNumber = parseInt(page);
-    const limitNumber = parseInt(limit);
+      const pageNumber = parseInt(page);
+      const limitNumber = parseInt(limit);
 
-    const expenses = await Expense.find()
-      .skip((pageNumber - 1) * limitNumber) // Skip records for previous pages
-      .limit(limitNumber) // Limit the number of records
-      .exec();
-    const totalDocuments = await User.countDocuments();
-    if (!expenses) {
-      return res.status(404).json({ message: "No expenses found" });
+      const expenses = await Expense.find()
+        .skip((pageNumber - 1) * limitNumber) // Skip records for previous pages
+        .limit(limitNumber) // Limit the number of records
+        .exec();
+      const totalDocuments = await User.countDocuments();
+      if (!expenses) {
+        return res.status(404).json({ message: "No expenses found" });
+      }
+      res.json({
+        totalPages: Math.ceil(totalDocuments / limitNumber),
+        currentPage: pageNumber,
+        totalRecords: totalDocuments,
+        data: expenses,
+      });
+    } catch (error) {
+      res.status(500).json({ message: "Server Error", error: error.message });
     }
-    res.json({
-      totalPages: Math.ceil(totalDocuments / limitNumber),
-      currentPage: pageNumber,
-      totalRecords: totalDocuments,
-      data: expenses,
-    });
-  } catch (error) {
-    res.status(500).json({ message: "Server Error", error: error.message });
   }
-});
+);
 router.get("/users/email/:email", async (req, res) => {
   try {
     const email = req.params.email;
@@ -167,6 +171,18 @@ router.get("/users/:id/all-expenses", authMiddleware, async (req, res) => {
   try {
     const id = req.params.id;
     const expenses = await Expense.find({ userId: id });
+
+    if (!expenses) {
+      return res.status(404).json({ mssage: "Expenses not found" });
+    }
+    res.json(expenses);
+  } catch (error) {
+    res.status(500).json({ message: "Server Error", error: error.message });
+  }
+});
+router.get("/all-users-expenses", authMiddleware, async (req, res) => {
+  try {
+    const expenses = await Expense.find();
 
     if (!expenses) {
       return res.status(404).json({ mssage: "Expenses not found" });
@@ -296,7 +312,8 @@ router.post("/reset-password", async (req, res) => {
       html: `<p>Hello,</p><p>Please click the following link to reset your password:</p><p><a href="${resetUrl}">${resetUrl}</a></p><p>The link will expire in 1 hour.</p>`,
     };
 
-    (async () => await transporter.sendMail(mailOptions))();
+    const sendEmail = async () => await transporter.sendMail(mailOptions);
+    sendEmail();
     res.status(200).json({ message: "Password reset link sent to your email" });
   } catch (error) {
     console.error(error);
@@ -308,10 +325,10 @@ router.post("/refresh-token", (req, res) => {
   if (!refreshToken) return res.sendStatus(403); // Forbidden
 
   jwt.verify(refreshToken, JWT_REFRESH_KEY, (err, user) => {
-    if (err) return res.sendStatus(403); 
+    if (err) return res.sendStatus(403);
 
     const newAccessToken = jwt.sign({ id: user.id }, JWT_KEY, {
-      expiresIn: "1h",
+      expiresIn: "10s",
     });
     res.json({ token: newAccessToken, id: user.id });
   });

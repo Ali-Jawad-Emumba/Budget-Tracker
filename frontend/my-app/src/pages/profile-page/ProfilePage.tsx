@@ -44,11 +44,12 @@ const ProfilePage = () => {
 
   useEffect(() => {
     if (!userData || Object.keys(userData).every((field) => !userData[field])) {
-      (async () => {
+      const fetchAndStoreData=async () => {
         const data = await fetchUserData(userId);
         dispatch(storeUserData({ ...data }));
         setIsLoading(false);
-      })();
+      }
+      fetchAndStoreData()
     }
   }, []);
 

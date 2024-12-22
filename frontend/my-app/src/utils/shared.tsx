@@ -16,7 +16,10 @@ export const checkAndThrowError = (errors: any, errorFor: string): any => {
 export const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
 export const startTokenCheckInterval = (keepLoggedIn: boolean) => {
-  const interval = setInterval(() => checkTokenExpiration(keepLoggedIn), 5000);
+  const interval = setInterval(
+    () => checkTokenExpiration(keepLoggedIn),
+    300000
+  );
   return interval;
 };
 
@@ -37,20 +40,21 @@ export const checkTokenExpiration = (keepLoggedIn: boolean) => {
       if (keepLoggedIn && refreshToken) {
         const decoded = jwtDecode<any>(refreshToken);
         if (decoded.exp > currentTime) {
-          (async () => {
+          const getNewAccessToken = async () => {
             const data = await getAccessToken();
             localStorage.setItem('token', data.token);
-          })();
+          };
+          getNewAccessToken();
         }
       } else {
         localStorage.removeItem('reset-token');
         localStorage.removeItem('token');
-        localStorage.removeItem('UserId'); 
-        window.location.href = '/'; 
-        return false; 
+        localStorage.removeItem('UserId');
+        window.location.href = '/';
+        return false;
       }
 
-      return true; 
+      return true;
     }
   } catch (error) {
     if (!refreshToken) window.location.href = '/'; // Redirect to login page
@@ -103,3 +107,22 @@ export const CloseButton = ({ setIsOpen }: { setIsOpen: any }) => (
     <CloseIcon />
   </IconButton>
 );
+
+export const fetchDashboardData = (
+  fetchFn: any,
+  data: any,
+  setToken: any,
+  setTokenCheckInterval: any
+) => {
+  const fetchData = async () => await fetchFn();
+  fetchData();
+  setTimeout(() => {
+    if (!data || data.length === 0) {
+      const interval = setInterval(
+        () => setToken(localStorage.getItem('token')),
+        2000
+      );
+      setTokenCheckInterval(interval);
+    }
+  }, 3000);
+};

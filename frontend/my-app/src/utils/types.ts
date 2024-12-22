@@ -17,7 +17,6 @@ export interface InitialState {
   isUserLoggedIn: boolean;
   selectedDashboardTab: string;
   keepLoggedIn: boolean;
-  expenseAllData: any;
   notifications: any;
   userId: string | null;
 }

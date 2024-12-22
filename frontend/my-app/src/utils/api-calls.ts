@@ -153,8 +153,20 @@ export const fetchUserData = async (userId: string | null) => {
     return data;
   }
 };
-export const getAllExpensesForAdmin = async (selectedPage: number) => {
-  const fetchFn = await fetch(`${BASE_URL}/expenses?page=${selectedPage}`, {
+export const getAllExpensesForAdminTable = async (selectedPage: number) => {
+  const fetchFn = await fetch(`${BASE_URL}/all-users-expenses-with-pagination?page=${selectedPage}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${localStorage.getItem('token')}`,
+    },
+  });
+  const response = await fetchFn.json();
+  return response;
+};
+
+export const getAllExpensesForAdminChart = async () => {
+  const fetchFn = await fetch(`${BASE_URL}/all-users-expenses`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
