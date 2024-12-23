@@ -1,5 +1,4 @@
 import {
-  Box,
   Table,
   TableBody,
   TableCell,
@@ -8,15 +7,15 @@ import {
   TableRow,
   Paper,
   Pagination,
-  LinearProgress,
-  Typography,
 } from '@mui/material';
 import styles from './DashboardContent.module.css';
 import { DeleteIcon, EditIcon } from '../../utils/icons';
 import { DataTableProps, InitialState } from '../../utils/types';
 import { useSelector } from 'react-redux';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import DeleteModal from '../modal/DeleteModal';
+import { getTotalExpensesPerMonth } from '../../utils/api-calls';
+import ProgressBar from './ProgressBar';
 
 const DataTable = ({
   useFor,
@@ -32,41 +31,32 @@ const DataTable = ({
   const isAdmin = useSelector((state: InitialState) => state.isAdmin);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
   const [itemToDelete, setItemToDelete] = useState<any>();
+  const [yearTotalExpense, setYearTotalExpense] = useState<any>();
+  const userId = useSelector((state: InitialState) => state.userId);
   const deleteItem = (item: any) => {
     setItemToDelete(item);
     setIsDeleteModalOpen(true);
   };
   const shallShowUsers = isAdmin && useFor === 'Expenses';
   const shallShowRoles = isAdmin && useFor === 'Users';
-  const ProgressBar = ({ expense }: { expense: any }) => {
-    const totalExpenseOfMonth = data
-      .filter(
-        (item: any) =>
-          new Date(item.date).getMonth() + 1 ===
-            new Date(expense.date).getMonth() + 1 &&
-          new Date(item.date).getFullYear() ===
-            new Date(expense.date).getFullYear()
-      )
-      .reduce((sum: number, element: any) => (sum += element.price), 0);
-    const value = (expense.price / totalExpenseOfMonth) * 100;
-    return (
-      <Box sx={{ display: 'flex', alignItems: 'center' }}>
-        <Box sx={{ width: '100%', mr: 1 }}>
-          <LinearProgress
-            sx={{ height: 7, borderRadius: 4 }}
-            variant="determinate"
-            value={value}
-          />
-        </Box>
-        <Box sx={{ minWidth: 35 }}>
-          <Typography
-            variant="body2"
-            sx={{ color: 'text.secondary' }}
-          >{`${Math.round(value)}%`}</Typography>
-        </Box>
-      </Box>
-    );
-  };
+  useEffect(() => {
+    if (useFor === 'Expenses') {
+      const fetchTotalExpenses = async () => {
+        const totalExpense = await getTotalExpensesPerMonth(userId);
+        setYearTotalExpense(totalExpense);
+      };
+      fetchTotalExpenses();
+    }
+  }, []);
+  useEffect(() => {
+    if (useFor === 'Expenses') {
+      const fetchTotalExpenses = async () => {
+        const totalExpenses = await getTotalExpensesPerMonth(userId);
+        setYearTotalExpense(totalExpenses);
+      };
+      fetchTotalExpenses();
+    }
+  }, [data]);
 
   return (
     <>
@@ -91,7 +81,10 @@ const DataTable = ({
                 </TableCell>
                 <TableCell>
                   {useFor === 'Expenses' ? (
-                    <ProgressBar expense={row} />
+                    <ProgressBar
+                      expense={row}
+                      yearTotal={yearTotalExpense}
+                    />
                   ) : (
                     row.lastname
                   )}

@@ -24,8 +24,8 @@ import {
   deleteExpenseById,
   getAllExpensesForAdminTable,
   getExpensesData,
+  getTotalExpensesPerMonth,
 } from '../../utils/api-calls';
-import { filterExpenseData as filterData } from './DashboardContent.service';
 import { InitialState } from '../../utils/types';
 import { fetchDashboardData } from '../../utils/shared';
 
@@ -39,7 +39,7 @@ const ExpenseDashboardContent = () => {
   const [expenseBeingEdit, setExpenseBeingEdit] = useState<any>();
   const [sortFilterValue, setSortFilterValue] = useState<string>('');
   const [dateFilter, setDateFilter] = useState<any>();
-  const [search, setSearch] = useState<string>();
+  const [search, setSearch] = useState<string>('');
   const [expenseMetaData, setExpenseMetaData] = useState<any>();
   const [selectedPage, setSelectedPage] = useState<number>(1);
   const isAdmin = useSelector((state: InitialState) => state.isAdmin);
@@ -51,13 +51,29 @@ const ExpenseDashboardContent = () => {
     title: '',
     description: '',
   });
+
   const [tokenCheckInterval, setTokenCheckInterval] = useState<any>();
 
   const userId = useSelector((state: InitialState) => state.userId);
-  const getExpenses = async () => {
+  const getExpenses = async (filters?: {
+    sort: string;
+    date: string;
+    search: string;
+  }) => {
     const response = isAdmin
-      ? await getAllExpensesForAdminTable(selectedPage)
-      : await getExpensesData(userId, selectedPage);
+      ? await getAllExpensesForAdminTable(
+          selectedPage,
+          filters?.sort,
+          filters?.date,
+          filters?.search
+        )
+      : await getExpensesData(
+          userId,
+          selectedPage,
+          filters?.sort,
+          filters?.date,
+          filters?.search
+        );
     setExpenseMetaData(response);
     const data = response.data;
     setOriginalExpensesData(data);
@@ -98,14 +114,12 @@ const ExpenseDashboardContent = () => {
                 fullWidth
                 value={sortFilterValue}
                 sx={{ height: '40px', width: '150px' }}
-                onChange={(e) => {
+                onChange={async (e) => {
                   setSortFilterValue(e.target.value);
-                  filterData({
-                    data: originalExpensesData,
-                    setData: setFilteredExpensesData,
-                    sortValue: e.target.value,
-                    dateValue: dateFilter,
-                    search: search,
+                  await getExpenses({
+                    sort: e.target.value,
+                    date: dateFilter,
+                    search,
                   });
                 }}
               >
@@ -126,28 +140,28 @@ const ExpenseDashboardContent = () => {
                   className="datePicker"
                   sx={{ height: '40px' }}
                   value={dateFilter}
-                  onChange={(e) => {
+                  onChange={async (e) => {
                     setDateFilter(e);
-                    filterData({
-                      data: originalExpensesData,
-                      setData: setFilteredExpensesData,
-                      sortValue: sortFilterValue,
-                      dateValue: e,
-                      search: search,
+                    await getExpenses({
+                      sort: sortFilterValue,
+                      date: e,
+                      search,
                     });
                   }}
                 />
                 {dateFilter && (
                   <Button
-                    onClick={() => {
+                    onClick={async () => {
                       setDateFilter(null);
-                      filterData({
-                        data: originalExpensesData,
-                        setData: setFilteredExpensesData,
-                        sortValue: sortFilterValue,
-                        dateValue: null,
-                        search: search,
-                      });
+                      setTimeout(
+                        async () =>
+                          await getExpenses({
+                            sort: sortFilterValue,
+                            date: '',
+                            search,
+                          }),
+                        500
+                      );
                     }}
                   >
                     clear
@@ -162,15 +176,17 @@ const ExpenseDashboardContent = () => {
                 sx={{ m: 1, width: '300px' }}
                 className={styles.searchBox}
                 placeholder="Search"
-                onInput={(e: any) => {
+                onInput={async (e: any) => {
                   setSearch(e.target.value);
-                  filterData({
-                    data: originalExpensesData,
-                    setData: setFilteredExpensesData,
-                    sortValue: sortFilterValue,
-                    dateValue: dateFilter,
-                    search: e.target.value,
-                  });
+                  setTimeout(
+                    async () =>
+                      await getExpenses({
+                        sort: sortFilterValue,
+                        date: dateFilter,
+                        search: e.target.value,
+                      }),
+                    500
+                  );
                 }}
                 slotProps={{
                   input: {

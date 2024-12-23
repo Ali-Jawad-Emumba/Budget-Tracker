@@ -12,7 +12,6 @@ import Notifictaion from '../notification/Notification';
 import { useDispatch } from 'react-redux';
 import { updateNotifications } from '../../app/store';
 import { deleteUserById, getAllUsers } from '../../utils/api-calls';
-import { filterUsersData as filterData } from './DashboardContent.service';
 import { fetchDashboardData } from '../../utils/shared';
 
 const UsersDashboardContent = () => {
@@ -25,7 +24,7 @@ const UsersDashboardContent = () => {
   const [expenseBeingEdit, setUserBeingEdit] = useState<any>();
   const [sortFilterValue, setSortFilterValue] = useState<string>('');
 
-  const [search, setSearch] = useState<string>();
+  const [search, setSearch] = useState<string>('');
   const [expenseMetaData, setUserMetaData] = useState<any>();
   const dispatch = useDispatch();
   const [selectedPage, setSelectedPage] = useState<number>(1);
@@ -38,8 +37,12 @@ const UsersDashboardContent = () => {
   const [token, setToken] = useState<string | null>(null);
   const [tokenCheckInterval, setTokenCheckInterval] = useState<any>();
 
-  const getUsers = async () => {
-    const response = await getAllUsers(selectedPage);
+  const getUsers = async (filters?: { sort: string; search: string }) => {
+    const response = await getAllUsers(
+      selectedPage,
+      filters?.sort,
+      filters?.search
+    );
     setUserMetaData(response);
     const data = response.data;
     setOriginalUsersData(data);
@@ -80,13 +83,11 @@ const UsersDashboardContent = () => {
                 fullWidth
                 value={sortFilterValue}
                 sx={{ height: '40px', width: '150px' }}
-                onChange={(e) => {
+                onChange={async (e) => {
                   setSortFilterValue(e.target.value);
-                  filterData({
-                    data: originalUsersData,
-                    setData: setFilteredUsersData,
-                    sortValue: e.target.value,
-                    search: search,
+                  await getUsers({
+                    sort: e.target.value,
+                    search,
                   });
                 }}
               >
@@ -104,12 +105,10 @@ const UsersDashboardContent = () => {
                 sx={{ m: 1, width: '300px' }}
                 className={styles.searchBox}
                 placeholder="Search"
-                onInput={(e: any) => {
+                onInput={async (e: any) => {
                   setSearch(e.target.value);
-                  filterData({
-                    data: originalUsersData,
-                    setData: setFilteredUsersData,
-                    sortValue: sortFilterValue,
+                  await getUsers({
+                    sort: sortFilterValue,
                     search: e.target.value,
                   });
                 }}

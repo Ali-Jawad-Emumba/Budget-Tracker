@@ -1,111 +1,111 @@
-///expense content service functions
+// ///expense content service functions
 
-export const filterExpenseData = ({
-  data,
-  setData,
-  sortValue,
-  dateValue,
-  search,
-}: {
-  data: any;
-  setData: any;
-  sortValue?: string;
-  dateValue?: any | null;
-  search?: string;
-}) => {
-  let result = [...data];
-  if (sortValue) {
-    switch (sortValue) {
-      case 'low to high':
-        result = result.sort((a: any, b: any) =>
-          a.price === b.price ? 0 : a.price < b.price ? -1 : 1
-        );
-        break;
-      case 'high to low':
-        result = result.sort((a: any, b: any) =>
-          a.price === b.price ? 0 : a.price < b.price ? 1 : -1
-        );
-        break;
-      case 'old to new':
-        result = result.sort((a: any, b: any) =>
-          a.date === b.date ? 0 : new Date(a.date) > new Date(b.date) ? 1 : -1
-        );
-        break;
-      case 'new to old':
-        result = result.sort((a: any, b: any) =>
-          a.date === b.date ? 0 : new Date(a.date) > new Date(b.date) ? -1 : 1
-        );
-        break;
-    }
-  }
+// export const filterExpenseData = ({
+//   data,
+//   setData,
+//   sortValue,
+//   dateValue,
+//   search,
+// }: {
+//   data: any;
+//   setData: any;
+//   sortValue?: string;
+//   dateValue?: any | null;
+//   search?: string;
+// }) => {
+//   let result = [...data];
+//   if (sortValue) {
+//     switch (sortValue) {
+//       case 'low to high':
+//         result = result.sort((a: any, b: any) =>
+//           a.price === b.price ? 0 : a.price < b.price ? -1 : 1
+//         );
+//         break;
+//       case 'high to low':
+//         result = result.sort((a: any, b: any) =>
+//           a.price === b.price ? 0 : a.price < b.price ? 1 : -1
+//         );
+//         break;
+//       case 'old to new':
+//         result = result.sort((a: any, b: any) =>
+//           a.date === b.date ? 0 : new Date(a.date) > new Date(b.date) ? 1 : -1
+//         );
+//         break;
+//       case 'new to old':
+//         result = result.sort((a: any, b: any) =>
+//           a.date === b.date ? 0 : new Date(a.date) > new Date(b.date) ? -1 : 1
+//         );
+//         break;
+//     }
+//   }
 
-  if (dateValue) {
-    result = result.filter(
-      (expense: any) =>
-        new Date(expense.date).toLocaleDateString() ===
-        new Date(dateValue).toLocaleDateString()
-    );
-  }
-  if (search) {
-    const searchLower = search.toLowerCase();
-    result = result.filter((expense: any) =>
-      expense.title.toLowerCase().includes(searchLower)
-    );
-  }
+//   if (dateValue) {
+//     result = result.filter(
+//       (expense: any) =>
+//         new Date(expense.date).toLocaleDateString() ===
+//         new Date(dateValue).toLocaleDateString()
+//     );
+//   }
+//   if (search) {
+//     const searchLower = search.toLowerCase();
+//     result = result.filter((expense: any) =>
+//       expense.title.toLowerCase().includes(searchLower)
+//     );
+//   }
 
-  setData(result);
-};
+//   setData(result);
+// };
 
-///user content service functions
-export const filterUsersData = ({
-  data,
-  setData,
-  sortValue,
-  search,
-}: {
-  data: any;
-  setData: any;
-  sortValue?: string;
-  search?: string;
-}) => {
-  let result = [...data];
+// ///user content service functions
+// export const filterUsersData = ({
+//   data,
+//   setData,
+//   sortValue,
+//   search,
+// }: {
+//   data: any;
+//   setData: any;
+//   sortValue?: string;
+//   search?: string;
+// }) => {
+//   let result = [...data];
 
-  if (sortValue) {
-    switch (sortValue) {
-      case 'name':
-        result = result.sort((a: any, b: any) =>
-          a.firstname === b.firstname ? 0 : a.firstname < b.firstname ? -1 : 1
-        );
-        break;
-      case 'email':
-        result = result.sort((a: any, b: any) =>
-          a.email === b.email ? 0 : a.email < b.email ? -1 : 1
-        );
-        break;
-      case 'role':
-        result = [
-          ...result.filter(
-            (user) => user._id === import.meta.env.VITE_ADMIN_ID
-          ),
-          ...result.filter(
-            (user) => user._id !== import.meta.env.VITE_ADMIN_ID
-          ),
-        ];
-        break;
-    }
-  }
+//   if (sortValue) {
+//     switch (sortValue) {
+//       case 'name':
+//         result = result.sort((a: any, b: any) =>
+//           a.firstname === b.firstname ? 0 : a.firstname < b.firstname ? -1 : 1
+//         );
+//         break;
+//       case 'email':
+//         result = result.sort((a: any, b: any) =>
+//           a.email === b.email ? 0 : a.email < b.email ? -1 : 1
+//         );
+//         break;
+//       case 'role':
+//         result = [
+//           ...result.filter(
+//             (user) => user._id === import.meta.env.VITE_ADMIN_ID
+//           ),
+//           ...result.filter(
+//             (user) => user._id !== import.meta.env.VITE_ADMIN_ID
+//           ),
+//         ];
+//         break;
+//     }
+//   }
 
-  if (search) {
-    const searchLower = search.toLowerCase();
-    result = result.filter((user: any) =>
-      [user.firstname, user.lastname, user.email].some((field) =>
-        field.toLowerCase().includes(searchLower)
-      )
-    );
-  }
+//   if (search) {
+//     const searchLower = search.toLowerCase();
+//     result = result.filter((user: any) =>
+//       [user.firstname, user.lastname, user.email].some((field) =>
+//         field.toLowerCase().includes(searchLower)
+//       )
+//     );
+//   }
 
-  setData(result);
-};
+//   setData(result);
+// };
 
 ///analysis content service functions
 const months = [
@@ -128,8 +128,8 @@ const removeDuplication = (data: any) =>
   );
 
 const filterMonths = (expenseData: any, lastMonths: number) => {
-  const today = new Date(); 
-  const monthsAgo = new Date(today); 
+  const today = new Date();
+  const monthsAgo = new Date(today);
   monthsAgo.setMonth(today.getMonth() - lastMonths);
   const month = monthsAgo.getMonth() + 1;
   const year = monthsAgo.getFullYear();
@@ -143,10 +143,22 @@ const filterMonths = (expenseData: any, lastMonths: number) => {
           new Date(expense.date).getMonth() + 1 >= monthsOfLastYear
       )
       .sort((a: any, b: any) =>
+        lastMonths === 1
+          ? new Date(a.date).getDate() > new Date(b.date).getDate()
+            ? 1
+            : -1
+          : new Date(a.date).getMonth() + 1 > new Date(b.date).getMonth() + 1
+          ? 1
+          : -1
+      );
+
+    if (lastMonths === 1) {
+      dataOfLastYear.sort((a: any, b: any) =>
         new Date(a.date).getMonth() + 1 > new Date(b.date).getMonth() + 1
           ? 1
           : -1
       );
+    }
 
     const dataOfNewYear = expenseData
       .filter(
@@ -165,7 +177,13 @@ const filterMonths = (expenseData: any, lastMonths: number) => {
           ? 1
           : -1
       );
-
+    if (lastMonths === 1) {
+      dataOfNewYear.sort((a: any, b: any) =>
+        new Date(a.date).getMonth() + 1 > new Date(b.date).getMonth() + 1
+          ? 1
+          : -1
+      );
+    }
     const result = [...dataOfLastYear, ...dataOfNewYear];
     const uniqueResults = removeDuplication(result);
     return uniqueResults;
@@ -176,12 +194,19 @@ const filterMonths = (expenseData: any, lastMonths: number) => {
       .sort((a: any, b: any) =>
         lastMonths === 1
           ? new Date(a.date).getDate() > new Date(b.date).getDate()
-            ? 1
-            : -1
+            ? -1
+            : 1
           : new Date(a.date).getMonth() + 1 > new Date(b.date).getMonth() + 1
           ? 1
           : -1
       );
+    if (lastMonths === 1) {
+      result.sort((a: any, b: any) =>
+        new Date(a.date).getMonth() + 1 > new Date(b.date).getMonth() + 1
+          ? 1
+          : -1
+      );
+    }
     const uniqueResults = removeDuplication(result);
     return uniqueResults;
   }
@@ -202,21 +227,21 @@ const formatDataForChart = (result: any) => {
 };
 
 export const filterData = (data: any, sortValue: string, setChartData: any) => {
-  const expenseData = [...(data||[])];
- 
+  const expenseData = [...(data || [])];
+
   let monthsFiltered: any[];
   switch (sortValue) {
     case '12 months':
       {
         monthsFiltered = filterMonths(expenseData, 12);
-        const data = formatDataForChart(monthsFiltered);
+        const data = removeDuplication(formatDataForChart(monthsFiltered));
         setChartData(data);
       }
       break;
     case '6 months':
       {
         monthsFiltered = filterMonths(expenseData, 6);
-        const data = formatDataForChart(monthsFiltered);
+        const data = removeDuplication(formatDataForChart(monthsFiltered));
         setChartData(data);
       }
       break;
@@ -224,7 +249,9 @@ export const filterData = (data: any, sortValue: string, setChartData: any) => {
       {
         monthsFiltered = filterMonths(expenseData, 1);
         const results = monthsFiltered.map((expense: any) => ({
-          name: new Date(expense.date).getDate(),
+          name: `${new Date(expense.date).getDate()} ${
+            months[new Date(expense.date).getMonth()]
+          }`,
           value: monthsFiltered
             .filter(
               (item: any) =>

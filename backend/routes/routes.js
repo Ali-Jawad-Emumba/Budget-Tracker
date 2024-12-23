@@ -12,11 +12,12 @@ const JWT_KEY = `${process.env.JWT_KEY}`;
 const JWT_REFRESH_KEY = `${process.env.JWT_REFRESH_KEY}`;
 const EMAIL = `${process.env.EMAIL}`;
 const PASS = `${process.env.APP_PASSWORD}`;
+const ADMIN_ID = `${process.env.ADMIN_ID}`;
 export default router;
 
 router.get("/users", authMiddleware, async (req, res) => {
   try {
-    const { page, limit = 10 } = req.query;
+    const { page, limit = 10, sort, search } = req.query;
 
     const pageNumber = parseInt(page);
     const limitNumber = parseInt(limit);
@@ -25,15 +26,43 @@ router.get("/users", authMiddleware, async (req, res) => {
       .skip((pageNumber - 1) * limitNumber) /// Skip records for previous pages
       .limit(limitNumber) // Limit the number of records
       .exec();
-    const totalDocuments = await User.countDocuments();
+    const totalRecords = await User.countDocuments();
     if (!users) {
       return res.status(404).json({ message: "No expenses found" });
     }
+    let result = [...users];
+
+    if (sort) {
+      switch (sort) {
+        case "name":
+          result = result.sort((a, b) =>
+            a.firstname === b.firstname ? 0 : a.firstname < b.firstname ? -1 : 1
+          );
+          break;
+        case "email":
+          result = result.sort((a, b) =>
+            a.email === b.email ? 0 : a.email < b.email ? -1 : 1
+          );
+          break;
+        case "role":
+          result = result.sort((a, b) => (a._id !== ADMIN_ID ? 1 : -1));
+          break;
+      }
+    }
+
+    if (search) {
+      const searchLower = search.toLowerCase();
+      result = result.filter((user) =>
+        [user.firstname, user.lastname, user.email].some((field) =>
+          field.toLowerCase().includes(searchLower)
+        )
+      );
+    }
     res.json({
-      totalPages: Math.ceil(totalDocuments / limitNumber),
+      totalPages: Math.ceil(totalRecords / limitNumber),
       currentPage: pageNumber,
-      totalRecords: totalDocuments,
-      data: users,
+      totalRecords,
+      data: result,
     });
   } catch (error) {
     res.status(500).json({ message: "Server Error", error: error.message });
@@ -44,7 +73,7 @@ router.get(
   authMiddleware,
   async (req, res) => {
     try {
-      const { page, limit = 10 } = req.query;
+      const { page, limit = 10, sort, date, search } = req.query;
 
       const pageNumber = parseInt(page);
       const limitNumber = parseInt(limit);
@@ -53,15 +82,63 @@ router.get(
         .skip((pageNumber - 1) * limitNumber) // Skip records for previous pages
         .limit(limitNumber) // Limit the number of records
         .exec();
-      const totalDocuments = await User.countDocuments();
+      const totalRecords = await User.countDocuments();
       if (!expenses) {
         return res.status(404).json({ message: "No expenses found" });
       }
+      let result = [...expenses];
+      if (sort) {
+        switch (sort) {
+          case "low to high":
+            result = result.sort((a, b) =>
+              a.price === b.price ? 0 : a.price < b.price ? -1 : 1
+            );
+            break;
+          case "high to low":
+            result = result.sort((a, b) =>
+              a.price === b.price ? 0 : a.price < b.price ? 1 : -1
+            );
+            break;
+          case "old to new":
+            result = result.sort((a, b) =>
+              a.date === b.date
+                ? 0
+                : new Date(a.date) > new Date(b.date)
+                ? 1
+                : -1
+            );
+            break;
+          case "new to old":
+            result = result.sort((a, b) =>
+              a.date === b.date
+                ? 0
+                : new Date(a.date) > new Date(b.date)
+                ? -1
+                : 1
+            );
+            break;
+        }
+      }
+      if (date) {
+        result = result.filter(
+          (expense) =>
+            new Date(expense.date).toLocaleDateString() ===
+            new Date(date).toLocaleDateString()
+        );
+      }
+      if (search) {
+        const searchLower = search.toLowerCase();
+        result = result.filter((user) =>
+          [user.firstname, user.lastname, user.email].some((field) =>
+            field.toLowerCase().includes(searchLower)
+          )
+        );
+      }
       res.json({
-        totalPages: Math.ceil(totalDocuments / limitNumber),
+        totalPages: Math.ceil(totalRecords / limitNumber),
         currentPage: pageNumber,
-        totalRecords: totalDocuments,
-        data: expenses,
+        totalRecords,
+        data: result,
       });
     } catch (error) {
       res.status(500).json({ message: "Server Error", error: error.message });
@@ -144,7 +221,7 @@ router.post("/users/:id/expenses", authMiddleware, async (req, res) => {
 router.get("/users/:id/expenses", authMiddleware, async (req, res) => {
   try {
     const id = req.params.id;
-    const { page, limit = 10 } = req.query;
+    const { page, limit = 10, sort, date, search } = req.query;
 
     const pageNumber = parseInt(page);
     const limitNumber = parseInt(limit);
@@ -153,15 +230,54 @@ router.get("/users/:id/expenses", authMiddleware, async (req, res) => {
       .skip((pageNumber - 1) * limitNumber) // Skip records for previous pages
       .limit(limitNumber) // Limit the number of records
       .exec();
-    const totalDocuments = await Expense.countDocuments();
+    const totalRecords = await Expense.countDocuments();
     if (!expenses) {
       return res.status(404).json({ mssage: "Expenses not found" });
     }
+    let result = [...expenses];
+    if (sort) {
+      switch (sort) {
+        case "low to high":
+          result = result.sort((a, b) =>
+            a.price === b.price ? 0 : a.price < b.price ? -1 : 1
+          );
+          break;
+        case "high to low":
+          result = result.sort((a, b) =>
+            a.price === b.price ? 0 : a.price < b.price ? 1 : -1
+          );
+          break;
+        case "old to new":
+          result = result.sort((a, b) =>
+            a.date === b.date ? 0 : new Date(a.date) > new Date(b.date) ? 1 : -1
+          );
+          break;
+        case "new to old":
+          result = result.sort((a, b) =>
+            a.date === b.date ? 0 : new Date(a.date) > new Date(b.date) ? -1 : 1
+          );
+          break;
+      }
+    }
+    if (date) {
+      result = result.filter(
+        (expense) =>
+          new Date(expense.date).toLocaleDateString() ===
+          new Date(date).toLocaleDateString()
+      );
+    }
+    if (search) {
+      const searchLower = search.toLowerCase();
+      result = result.filter((expense) =>
+        expense.title.toLowerCase().includes(searchLower)
+      );
+    }
+
     res.json({
-      totalPages: Math.ceil(totalDocuments / limitNumber),
+      totalPages: Math.ceil(totalRecords / limitNumber),
       currentPage: pageNumber,
-      totalRecords: totalDocuments,
-      data: expenses,
+      totalRecords,
+      data: result,
     });
   } catch (error) {
     res.status(500).json({ message: "Server Error", error: error.message });
@@ -328,8 +444,30 @@ router.post("/refresh-token", (req, res) => {
     if (err) return res.sendStatus(403);
 
     const newAccessToken = jwt.sign({ id: user.id }, JWT_KEY, {
-      expiresIn: "10s",
+      expiresIn: "1h",
     });
     res.json({ token: newAccessToken, id: user.id });
   });
+});
+router.get("/users/:id/total-year-expense", async (req, res) => {
+  const userId = req.params.id;
+
+  try {
+    const expenses = await Expense.find({ userId });
+
+    if (!expenses) {
+      res.status(404).json({ message: "Expenses Not found" });
+    }
+    const yearFiltered = expenses.filter(
+      (expense) =>
+        new Date(expense.date).getFullYear() === new Date().getFullYear()
+    );
+    const yearExpense = yearFiltered.reduce(
+      (sum, expense) => (sum += expense.price),
+      0
+    );
+    res.json(yearExpense);
+  } catch (error) {
+    res.status(500).json({ message: "Server Error" });
+  }
 });

@@ -1,10 +1,11 @@
+import { resolve } from 'path';
 import { BASE_URL } from './shared';
 export const patchExpense = async (req: any) => {
   return await fetch(`${BASE_URL}/expenses/${req.id}`, {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      Authorization: `Bearer ${localStorage.getItem('token')}`,
     },
     body: req.data,
   });
@@ -15,7 +16,7 @@ export const postExpense = async (req: any) => {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      Authorization: `Bearer ${localStorage.getItem('token')}`,
     },
     body: req.data,
   });
@@ -27,7 +28,7 @@ export const getAllExpenses = async (userId: string | null) => {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
       },
     });
     const response = await fetchFn.json();
@@ -37,16 +38,27 @@ export const getAllExpenses = async (userId: string | null) => {
 
 export const getExpensesData = async (
   userId: string | null,
-  selectedPage: number
+  selectedPage: number,
+  sortValue?: string,
+  dateFilter?: string,
+  search?: string
 ) => {
   if (userId) {
+    const queryParams = new URLSearchParams({
+      page: selectedPage.toString(),
+    });
+    if (sortValue) queryParams.append('sort', sortValue);
+    if (search) queryParams.append('search', search);
+    if (dateFilter) {
+      queryParams.append('date', dateFilter);
+    }
     const fetchFn = await fetch(
-      `${BASE_URL}/users/${userId}/expenses?page=${selectedPage}`,
+      `${BASE_URL}/users/${userId}/expenses?${queryParams.toString()}`,
       {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
       }
     );
@@ -60,17 +72,27 @@ export const deleteExpenseById = async (id: number | undefined) => {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      Authorization: `Bearer ${localStorage.getItem('token')}`,
     },
   });
 };
 
-export const getAllUsers = async (selectedPage: number) => {
-  const fetchFn = await fetch(`${BASE_URL}/users?page=${selectedPage}`, {
+export const getAllUsers = async (
+  selectedPage: number,
+  sortValue?: string,
+  search?: string
+) => {
+  const queryParams = new URLSearchParams({
+    page: selectedPage.toString(),
+  });
+  if (sortValue) queryParams.append('sort', sortValue);
+  if (search) queryParams.append('search', search);
+
+  const fetchFn = await fetch(`${BASE_URL}/users?${queryParams.toString()}`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      Authorization: `Bearer ${localStorage.getItem('token')}`,
     },
   });
   const response = await fetchFn.json();
@@ -82,7 +104,7 @@ export const deleteUserById = async (id: number | undefined) => {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      Authorization: `Bearer ${localStorage.getItem('token')}`,
     },
   });
 };
@@ -93,7 +115,7 @@ export const updateMyProfile = async (userId: string | null, reqBody: any) => {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
       },
       body: JSON.stringify(reqBody),
     });
@@ -118,11 +140,11 @@ export const getAccessToken = async () => {
 
 export const sendPswdResetLink = async (email: any) => {
   if (email) {
-    await fetch(`${BASE_URL}/reset-password`, {
+    return await fetch(`${BASE_URL}/reset-password`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
       },
       body: JSON.stringify({
         email,
@@ -145,7 +167,7 @@ export const fetchUserData = async (userId: string | null) => {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
       },
     });
     const response = await fetchFn.json();
@@ -153,8 +175,36 @@ export const fetchUserData = async (userId: string | null) => {
     return data;
   }
 };
-export const getAllExpensesForAdminTable = async (selectedPage: number) => {
-  const fetchFn = await fetch(`${BASE_URL}/all-users-expenses-with-pagination?page=${selectedPage}`, {
+export const getAllExpensesForAdminTable = async (
+  selectedPage: number,
+  sortValue?: string,
+  dateFilter?: string,
+  search?: string
+) => {
+  const queryParams = new URLSearchParams({
+    page: selectedPage.toString(),
+  });
+  if (sortValue) queryParams.append('sort', sortValue);
+  if (search) queryParams.append('search', search);
+  if (dateFilter) {
+    queryParams.append('date', dateFilter);
+  }
+  const fetchFn = await fetch(
+    `${BASE_URL}/all-users-expenses-with-pagination?${queryParams.toString()}`,
+    {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+    }
+  );
+  const response = await fetchFn.json();
+  return response;
+};
+
+export const getAllExpensesForAdminChart = async () => {
+  const fetchFn = await fetch(`${BASE_URL}/all-users-expenses`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -165,14 +215,12 @@ export const getAllExpensesForAdminTable = async (selectedPage: number) => {
   return response;
 };
 
-export const getAllExpensesForAdminChart = async () => {
-  const fetchFn = await fetch(`${BASE_URL}/all-users-expenses`, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${localStorage.getItem('token')}`,
-    },
-  });
-  const response = await fetchFn.json();
-  return response;
+export const getTotalExpensesPerMonth = async (userId: string | null) => {
+  if (userId) {
+    const fetchFn = await fetch(
+      `${BASE_URL}/users/${userId}/total-year-expense`
+    );
+    const response = await fetchFn.json();
+    return response;
+  }
 };
