@@ -24,7 +24,7 @@ import {
   deleteExpenseById,
   getAllExpensesForAdminTable,
   getExpensesData,
-  getTotalExpensesPerMonth,
+  getYearTotalExpenses,
 } from '../../utils/api-calls';
 import { InitialState } from '../../utils/types';
 import { fetchDashboardData } from '../../utils/shared';

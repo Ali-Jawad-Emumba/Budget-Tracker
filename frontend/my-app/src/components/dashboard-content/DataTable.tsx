@@ -14,7 +14,7 @@ import { DataTableProps, InitialState } from '../../utils/types';
 import { useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import DeleteModal from '../modal/DeleteModal';
-import { getTotalExpensesPerMonth } from '../../utils/api-calls';
+import { getAllUsersYearTotalExpenses, getYearTotalExpenses } from '../../utils/api-calls';
 import ProgressBar from './ProgressBar';
 
 const DataTable = ({
@@ -42,7 +42,9 @@ const DataTable = ({
   useEffect(() => {
     if (useFor === 'Expenses') {
       const fetchTotalExpenses = async () => {
-        const totalExpense = await getTotalExpensesPerMonth(userId);
+        const totalExpense = isAdmin
+          ? await getAllUsersYearTotalExpenses()
+          : await getYearTotalExpenses(userId);
         setYearTotalExpense(totalExpense);
       };
       fetchTotalExpenses();
@@ -51,8 +53,10 @@ const DataTable = ({
   useEffect(() => {
     if (useFor === 'Expenses') {
       const fetchTotalExpenses = async () => {
-        const totalExpenses = await getTotalExpensesPerMonth(userId);
-        setYearTotalExpense(totalExpenses);
+        const totalExpense = isAdmin
+          ? await getAllUsersYearTotalExpenses()
+          : await getYearTotalExpenses(userId);
+        setYearTotalExpense(totalExpense);
       };
       fetchTotalExpenses();
     }
@@ -81,10 +85,7 @@ const DataTable = ({
                 </TableCell>
                 <TableCell>
                   {useFor === 'Expenses' ? (
-                    <ProgressBar
-                      expense={row}
-                      yearTotal={yearTotalExpense}
-                    />
+                    <ProgressBar expense={row} yearTotal={yearTotalExpense} />
                   ) : (
                     row.lastname
                   )}

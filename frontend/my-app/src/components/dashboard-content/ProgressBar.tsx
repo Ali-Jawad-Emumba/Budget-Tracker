@@ -7,7 +7,8 @@ const ProgressBar = ({
   expense: any;
   yearTotal: number;
 }) => {
-  const value = (expense.price / yearTotal) * 100;
+  const value =
+    (expense.price / yearTotal) * 100;
 
   return (
     <Box sx={{ display: 'flex', alignItems: 'center' }}>

@@ -62,7 +62,7 @@ const SignUpForm = ({
   const dispatch = useDispatch();
 
   const onSubmit = async (data: any) => {
-    const urlGetUserByEmail = `${BASE_URL}/users/email/${
+    const urlGetUserByEmail = `${BASE_URL}/user/email/${
       useFor === 'edit modal' ? defaultValues.email : data.email
     }`;
     const fetchFn = await fetch(urlGetUserByEmail);
@@ -73,7 +73,7 @@ const SignUpForm = ({
       let response = await fetch(
         useFor === 'edit modal'
           ? urlGetUserByEmail
-          : `${BASE_URL}/users/`,
+          : `${BASE_URL}/user/`,
         {
           method: useFor === 'edit modal' ? 'PATCH' : 'POST',
           headers:
@@ -182,10 +182,7 @@ const SignUpForm = ({
             <PasswordField
               formRegister={{
                 ...register('password', {
-                  ...passwordValidation,
-                  validate: (value) =>
-                    value === watch('confirmpassword') ||
-                    'Passwords do not match',
+                  ...passwordValidation
                 }),
               }}
               checkAndThrowError={() => checkAndThrowError(errors, 'password')}

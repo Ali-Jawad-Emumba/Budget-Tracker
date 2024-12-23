@@ -75,8 +75,8 @@ const LoginPage: React.FC = () => {
     const passwordInput = data.password;
     const fetchFn = await fetch(
       rememberMe
-        ? `${BASE_URL}/users/email/${emailInput}?RememberMe=${true}`
-        : `${BASE_URL}/users/email/${emailInput}`
+        ? `${BASE_URL}/user/email/${emailInput}?RememberMe=${true}`
+        : `${BASE_URL}/user/email/${emailInput}`
     );
     if (fetchFn.ok) {
       const user = await fetchFn.json();

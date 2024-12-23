@@ -15,137 +15,8 @@ const PASS = `${process.env.APP_PASSWORD}`;
 const ADMIN_ID = `${process.env.ADMIN_ID}`;
 export default router;
 
-router.get("/users", authMiddleware, async (req, res) => {
-  try {
-    const { page, limit = 10, sort, search } = req.query;
-
-    const pageNumber = parseInt(page);
-    const limitNumber = parseInt(limit);
-
-    const users = await User.find()
-      .skip((pageNumber - 1) * limitNumber) /// Skip records for previous pages
-      .limit(limitNumber) // Limit the number of records
-      .exec();
-    const totalRecords = await User.countDocuments();
-    if (!users) {
-      return res.status(404).json({ message: "No expenses found" });
-    }
-    let result = [...users];
-
-    if (sort) {
-      switch (sort) {
-        case "name":
-          result = result.sort((a, b) =>
-            a.firstname === b.firstname ? 0 : a.firstname < b.firstname ? -1 : 1
-          );
-          break;
-        case "email":
-          result = result.sort((a, b) =>
-            a.email === b.email ? 0 : a.email < b.email ? -1 : 1
-          );
-          break;
-        case "role":
-          result = result.sort((a, b) => (a._id !== ADMIN_ID ? 1 : -1));
-          break;
-      }
-    }
-
-    if (search) {
-      const searchLower = search.toLowerCase();
-      result = result.filter((user) =>
-        [user.firstname, user.lastname, user.email].some((field) =>
-          field.toLowerCase().includes(searchLower)
-        )
-      );
-    }
-    res.json({
-      totalPages: Math.ceil(totalRecords / limitNumber),
-      currentPage: pageNumber,
-      totalRecords,
-      data: result,
-    });
-  } catch (error) {
-    res.status(500).json({ message: "Server Error", error: error.message });
-  }
-});
-router.get(
-  "/all-users-expenses-with-pagination",
-  authMiddleware,
-  async (req, res) => {
-    try {
-      const { page, limit = 10, sort, date, search } = req.query;
-
-      const pageNumber = parseInt(page);
-      const limitNumber = parseInt(limit);
-
-      const expenses = await Expense.find()
-        .skip((pageNumber - 1) * limitNumber) // Skip records for previous pages
-        .limit(limitNumber) // Limit the number of records
-        .exec();
-      const totalRecords = await User.countDocuments();
-      if (!expenses) {
-        return res.status(404).json({ message: "No expenses found" });
-      }
-      let result = [...expenses];
-      if (sort) {
-        switch (sort) {
-          case "low to high":
-            result = result.sort((a, b) =>
-              a.price === b.price ? 0 : a.price < b.price ? -1 : 1
-            );
-            break;
-          case "high to low":
-            result = result.sort((a, b) =>
-              a.price === b.price ? 0 : a.price < b.price ? 1 : -1
-            );
-            break;
-          case "old to new":
-            result = result.sort((a, b) =>
-              a.date === b.date
-                ? 0
-                : new Date(a.date) > new Date(b.date)
-                ? 1
-                : -1
-            );
-            break;
-          case "new to old":
-            result = result.sort((a, b) =>
-              a.date === b.date
-                ? 0
-                : new Date(a.date) > new Date(b.date)
-                ? -1
-                : 1
-            );
-            break;
-        }
-      }
-      if (date) {
-        result = result.filter(
-          (expense) =>
-            new Date(expense.date).toLocaleDateString() ===
-            new Date(date).toLocaleDateString()
-        );
-      }
-      if (search) {
-        const searchLower = search.toLowerCase();
-        result = result.filter((user) =>
-          [user.firstname, user.lastname, user.email].some((field) =>
-            field.toLowerCase().includes(searchLower)
-          )
-        );
-      }
-      res.json({
-        totalPages: Math.ceil(totalRecords / limitNumber),
-        currentPage: pageNumber,
-        totalRecords,
-        data: result,
-      });
-    } catch (error) {
-      res.status(500).json({ message: "Server Error", error: error.message });
-    }
-  }
-);
-router.get("/users/email/:email", async (req, res) => {
+///user or admin login
+router.get("/user/email/:email", async (req, res) => {
   try {
     const email = req.params.email;
     const keepLoggedIn = req.query.RememberMe;
@@ -175,7 +46,9 @@ router.get("/users/email/:email", async (req, res) => {
     res.status(500).json({ message: "Server Error", error: error.message });
   }
 });
-router.get("/users/:id", authMiddleware, async (req, res) => {
+
+//get user data for profile 
+router.get("/user/:id", authMiddleware, async (req, res) => {
   try {
     const id = req.params.id;
     const user = await User.findOne({ _id: id });
@@ -188,19 +61,8 @@ router.get("/users/:id", authMiddleware, async (req, res) => {
   }
 });
 
-router.post("/users", authMiddleware, async (req, res) => {
-  try {
-    const newUser = new User({ ...req.body });
-
-    await newUser.save();
-    res.json({ message: "User saved" });
-  } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Error saving user", error: error.message });
-  }
-});
-router.post("/users/:id/expenses", authMiddleware, async (req, res) => {
+//add expense
+router.post("/user/:id/expenses", authMiddleware, async (req, res) => {
   try {
     if (!Object.keys(req.body).every((key) => req.body[key])) {
       return res.status(400).json({ message: "All fields are required" });
@@ -218,96 +80,8 @@ router.post("/users/:id/expenses", authMiddleware, async (req, res) => {
       .json({ message: "Error saving expense", error: error.message });
   }
 });
-router.get("/users/:id/expenses", authMiddleware, async (req, res) => {
-  try {
-    const id = req.params.id;
-    const { page, limit = 10, sort, date, search } = req.query;
 
-    const pageNumber = parseInt(page);
-    const limitNumber = parseInt(limit);
-
-    const expenses = await Expense.find({ userId: id })
-      .skip((pageNumber - 1) * limitNumber) // Skip records for previous pages
-      .limit(limitNumber) // Limit the number of records
-      .exec();
-    const totalRecords = await Expense.countDocuments();
-    if (!expenses) {
-      return res.status(404).json({ mssage: "Expenses not found" });
-    }
-    let result = [...expenses];
-    if (sort) {
-      switch (sort) {
-        case "low to high":
-          result = result.sort((a, b) =>
-            a.price === b.price ? 0 : a.price < b.price ? -1 : 1
-          );
-          break;
-        case "high to low":
-          result = result.sort((a, b) =>
-            a.price === b.price ? 0 : a.price < b.price ? 1 : -1
-          );
-          break;
-        case "old to new":
-          result = result.sort((a, b) =>
-            a.date === b.date ? 0 : new Date(a.date) > new Date(b.date) ? 1 : -1
-          );
-          break;
-        case "new to old":
-          result = result.sort((a, b) =>
-            a.date === b.date ? 0 : new Date(a.date) > new Date(b.date) ? -1 : 1
-          );
-          break;
-      }
-    }
-    if (date) {
-      result = result.filter(
-        (expense) =>
-          new Date(expense.date).toLocaleDateString() ===
-          new Date(date).toLocaleDateString()
-      );
-    }
-    if (search) {
-      const searchLower = search.toLowerCase();
-      result = result.filter((expense) =>
-        expense.title.toLowerCase().includes(searchLower)
-      );
-    }
-
-    res.json({
-      totalPages: Math.ceil(totalRecords / limitNumber),
-      currentPage: pageNumber,
-      totalRecords,
-      data: result,
-    });
-  } catch (error) {
-    res.status(500).json({ message: "Server Error", error: error.message });
-  }
-});
-router.get("/users/:id/all-expenses", authMiddleware, async (req, res) => {
-  try {
-    const id = req.params.id;
-    const expenses = await Expense.find({ userId: id });
-
-    if (!expenses) {
-      return res.status(404).json({ mssage: "Expenses not found" });
-    }
-    res.json(expenses);
-  } catch (error) {
-    res.status(500).json({ message: "Server Error", error: error.message });
-  }
-});
-router.get("/all-users-expenses", authMiddleware, async (req, res) => {
-  try {
-    const expenses = await Expense.find();
-
-    if (!expenses) {
-      return res.status(404).json({ mssage: "Expenses not found" });
-    }
-    res.json(expenses);
-  } catch (error) {
-    res.status(500).json({ message: "Server Error", error: error.message });
-  }
-});
+//edit expense
 router.patch("/expenses/:id", authMiddleware, async (req, res) => {
   try {
     const id = req.params.id;
@@ -324,7 +98,9 @@ router.patch("/expenses/:id", authMiddleware, async (req, res) => {
     res.status(500).send({ message: "Error updating item", error: error });
   }
 });
-router.patch("/users/email/:email", async (req, res) => {
+
+//update user profile
+router.patch("/user/email/:email", async (req, res) => {
   try {
     const email = req.params.email;
     const updatedData = req.body;
@@ -340,6 +116,8 @@ router.patch("/users/email/:email", async (req, res) => {
     res.status(500).send({ message: "Error updating item", error: error });
   }
 });
+
+///delete expense
 router.delete("/expenses/:id", authMiddleware, async (req, res) => {
   try {
     const id = req.params.id;
@@ -359,7 +137,9 @@ router.delete("/expenses/:id", authMiddleware, async (req, res) => {
       .json({ message: "Error deleting expense", error: error.message });
   }
 });
-router.delete("/users/:id", authMiddleware, async (req, res) => {
+
+//delete user
+router.delete("/user/:id", authMiddleware, async (req, res) => {
   try {
     const id = req.params.id;
 
@@ -377,7 +157,9 @@ router.delete("/users/:id", authMiddleware, async (req, res) => {
       .json({ message: "Error deleting user", error: error.message });
   }
 });
-router.patch("/users/:id", authMiddleware, async (req, res) => {
+
+///update user profile patch request
+router.patch("/user/:id", authMiddleware, async (req, res) => {
   try {
     const { id } = req.params;
     const updatedData = req.body;
@@ -396,6 +178,8 @@ router.patch("/users/:id", authMiddleware, async (req, res) => {
   }
 });
 
+
+///reset password
 const transporter = nodemailer.createTransport({
   service: "gmail",
   host: "smtp.gmail.com",
@@ -436,6 +220,8 @@ router.post("/reset-password", async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 });
+
+//refresh token
 router.post("/refresh-token", (req, res) => {
   const { refreshToken } = req.body;
   if (!refreshToken) return res.sendStatus(403); // Forbidden
@@ -449,25 +235,5 @@ router.post("/refresh-token", (req, res) => {
     res.json({ token: newAccessToken, id: user.id });
   });
 });
-router.get("/users/:id/total-year-expense", async (req, res) => {
-  const userId = req.params.id;
 
-  try {
-    const expenses = await Expense.find({ userId });
 
-    if (!expenses) {
-      res.status(404).json({ message: "Expenses Not found" });
-    }
-    const yearFiltered = expenses.filter(
-      (expense) =>
-        new Date(expense.date).getFullYear() === new Date().getFullYear()
-    );
-    const yearExpense = yearFiltered.reduce(
-      (sum, expense) => (sum += expense.price),
-      0
-    );
-    res.json(yearExpense);
-  } catch (error) {
-    res.status(500).json({ message: "Server Error" });
-  }
-});

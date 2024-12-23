@@ -12,7 +12,7 @@ export const patchExpense = async (req: any) => {
 };
 
 export const postExpense = async (req: any) => {
-  return await fetch(`${BASE_URL}/users/${req.id}/expenses`, {
+  return await fetch(`${BASE_URL}/user/${req.id}/expenses`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -24,7 +24,7 @@ export const postExpense = async (req: any) => {
 
 export const getAllExpenses = async (userId: string | null) => {
   if (userId) {
-    const fetchFn = await fetch(`${BASE_URL}/users/${userId}/all-expenses`, {
+    const fetchFn = await fetch(`${BASE_URL}/user/${userId}/all-expenses`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -53,7 +53,7 @@ export const getExpensesData = async (
       queryParams.append('date', dateFilter);
     }
     const fetchFn = await fetch(
-      `${BASE_URL}/users/${userId}/expenses?${queryParams.toString()}`,
+      `${BASE_URL}/user/${userId}/expenses?${queryParams.toString()}`,
       {
         method: 'GET',
         headers: {
@@ -88,7 +88,7 @@ export const getAllUsers = async (
   if (sortValue) queryParams.append('sort', sortValue);
   if (search) queryParams.append('search', search);
 
-  const fetchFn = await fetch(`${BASE_URL}/users?${queryParams.toString()}`, {
+  const fetchFn = await fetch(`${BASE_URL}/admin/users?${queryParams.toString()}`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -100,7 +100,7 @@ export const getAllUsers = async (
 };
 
 export const deleteUserById = async (id: number | undefined) => {
-  return await fetch(`${BASE_URL}/users/${id}`, {
+  return await fetch(`${BASE_URL}/user/${id}`, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',
@@ -111,7 +111,7 @@ export const deleteUserById = async (id: number | undefined) => {
 
 export const updateMyProfile = async (userId: string | null, reqBody: any) => {
   if (userId) {
-    const updateDataFn = await fetch(`${BASE_URL}/users/${userId}`, {
+    const updateDataFn = await fetch(`${BASE_URL}/user/${userId}`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
@@ -154,7 +154,7 @@ export const sendPswdResetLink = async (email: any) => {
 };
 
 export const updateAccountPassword = async (req: any) => {
-  return await fetch(`${BASE_URL}/users/email/${req.email}`, {
+  return await fetch(`${BASE_URL}/user/email/${req.email}`, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(req.data),
@@ -163,7 +163,7 @@ export const updateAccountPassword = async (req: any) => {
 
 export const fetchUserData = async (userId: string | null) => {
   if (userId) {
-    const fetchFn = await fetch(`${BASE_URL}/users/${userId}`, {
+    const fetchFn = await fetch(`${BASE_URL}/user/${userId}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -190,7 +190,7 @@ export const getAllExpensesForAdminTable = async (
     queryParams.append('date', dateFilter);
   }
   const fetchFn = await fetch(
-    `${BASE_URL}/all-users-expenses-with-pagination?${queryParams.toString()}`,
+    `${BASE_URL}/admin/all-users-expenses-with-pagination?${queryParams.toString()}`,
     {
       method: 'GET',
       headers: {
@@ -204,7 +204,7 @@ export const getAllExpensesForAdminTable = async (
 };
 
 export const getAllExpensesForAdminChart = async () => {
-  const fetchFn = await fetch(`${BASE_URL}/all-users-expenses`, {
+  const fetchFn = await fetch(`${BASE_URL}/admin/all-users-expenses`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -215,12 +215,30 @@ export const getAllExpensesForAdminChart = async () => {
   return response;
 };
 
-export const getTotalExpensesPerMonth = async (userId: string | null) => {
+export const getYearTotalExpenses = async (userId?: string | null) => {
   if (userId) {
     const fetchFn = await fetch(
-      `${BASE_URL}/users/${userId}/total-year-expense`
+      `${BASE_URL}/user/${userId}/total-year-expense`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      }
     );
     const response = await fetchFn.json();
     return response;
   }
+};
+export const getAllUsersYearTotalExpenses = async () => {
+  const fetchFn = await fetch(`${BASE_URL}/admin/users/total-year-expense`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${localStorage.getItem('token')}`,
+    },
+  });
+  const response = await fetchFn.json();
+  return response;
 };
