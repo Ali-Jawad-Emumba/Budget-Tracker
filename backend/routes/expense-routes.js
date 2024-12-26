@@ -15,7 +15,6 @@ import {
 dotenv.config();
 
 const router = Router();
-export default router;
 
 //add expense
 router.post("/user/:id/expenses", authMiddleware, async (req, res) => {
@@ -64,3 +63,5 @@ router.get("/user/:id/all-expenses", authMiddleware, async (req, res) => {
 router.get("/user/:id/total-year-expense", authMiddleware, async (req, res) => {
   await getUserTotalYearExpense(req, res)
 });
+
+export default router;

@@ -16,7 +16,6 @@ dotenv.config();
 
 const router = Router();
 
-export default router;
 
 //signup
 router.post("/user", async (req, res) => {
@@ -63,3 +62,5 @@ router.get("/admin/users", authMiddleware, async (req, res) => {
 router.post("/refresh-token", (req, res) => {
   refreshToken(req,res)
 });
+
+export default router;
