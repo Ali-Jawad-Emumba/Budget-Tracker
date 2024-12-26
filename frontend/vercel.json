@@ -1,11 +1,8 @@
 {
   "builds": [
     {
-      "src": "my-app/package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "frontend/my-app/dist/my-app"
-      }
+      "src": "frontend/my-app/package.json",
+      "use": "@vercel/react"
     }
   ],
   "rewrites": [
