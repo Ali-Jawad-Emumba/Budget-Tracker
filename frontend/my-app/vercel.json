@@ -1,0 +1,8 @@
+{
+    "builds": [
+      {
+        "src": "frontend/my-app/package.json",
+        "use": "@vercel/react"
+      }
+    ]
+  }
