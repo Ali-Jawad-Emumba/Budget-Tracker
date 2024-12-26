@@ -1,9 +1,8 @@
 {
-
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "frontend/my-app/index.html"
+      "destination": "my-app/index.html"
     }
   ]
 }
