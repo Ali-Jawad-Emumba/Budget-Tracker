@@ -1,8 +1,17 @@
 {
-    "builds": [
-      {
-        "src": "frontend/my-app/package.json",
-        "use": "@vercel/react"
+  "builds": [
+    {
+      "src": "frontend/my-app/package.json",
+      "use": "@vercel/react",
+      "config": {
+        "distDir": "dist"
       }
-    ]
-  }
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "forntend/my-app/index.html"
+    }
+  ]
+}
