@@ -2,16 +2,16 @@
   "builds": [
     {
       "src": "frontend/my-app/package.json",
-      "use": "@vercel/react",
+      "use": "@vercel/static-build",
       "config": {
-        "distDir": "dist"
+        "distDir": "frontend/my-app/dist"
       }
     }
   ],
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "my-app/index.html"
+      "destination": "/my-app/index.html"
     }
   ]
 }
