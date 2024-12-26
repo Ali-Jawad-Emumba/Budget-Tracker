@@ -1,7 +1,11 @@
-import { Button, Paper } from '@mui/material';
+import { Button } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { clearNotifications } from '../../app/store';
 import styles from './NotificationsList.module.css';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import dayjs from 'dayjs';
+
+dayjs.extend(relativeTime);
 
 const NotifictaionLists = ({
   setShowNotificationsList,
@@ -30,11 +34,10 @@ const NotifictaionLists = ({
   };
   const notifications = useSelector((state: any) => state.notifications);
   const dispatch = useDispatch();
-
   return (
     <div className={styles.menu}>
       <div className={styles.list}>
-        {notifications.map((notification: any, index: number) => (
+        {notifications.length>0 && notifications.map((notification: any, index: number) => (
           <div className={styles.notificationItem} key={index}>
             <div
               className={styles.icon}
@@ -43,7 +46,7 @@ const NotifictaionLists = ({
             <div>
               <h3>{notification.name}</h3>
               <p>{getDescription(notification.action)}</p>
-              <p>5 Min ago</p>
+              <p>{dayjs(new Date(notification.time).getTime()).fromNow()}</p>
             </div>
           </div>
         ))}

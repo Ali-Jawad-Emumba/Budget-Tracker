@@ -1,8 +1,8 @@
 import express, { json } from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
-import routes from "./routes/routes.js";
-import adminRoutes from "./routes/admin-routes.js";
+// import routes from "./routes/routes.js";
+import expenseRoutes from "./routes/expense-routes.js";
 import userRoutes from "./routes/user-routes.js";
 import cors from "cors";
 dotenv.config();
@@ -21,8 +21,8 @@ database.once("connected", () => {
 const app = express();
 app.use(cors());
 app.use(json());
-app.use(routes);
-app.use(adminRoutes);
+// app.use(routes);
+app.use(expenseRoutes);
 app.use(userRoutes);
 app.listen(3000, () => {
   console.log(`Server Started at ${3000}`);

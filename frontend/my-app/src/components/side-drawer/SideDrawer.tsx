@@ -24,12 +24,13 @@ import { Drawer, DrawerHeader } from '../../utils/styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import {
-
+  clearNotifications,
   storeSelectedDashboardTab,
   storeUserData,
   storeUserId,
   updateIsAdmin,
   updateIsUserLoggedIn,
+  updateNotifications,
 } from '../../app/store';
 
 export default function SideDrawer({ open }: { open: boolean }) {
@@ -38,18 +39,18 @@ export default function SideDrawer({ open }: { open: boolean }) {
   const [selectedDashboardTab, setSelectedDashboardTab] =
     useState<string>('Expenses');
   const isAdmin = useSelector((state: any) => state.isAdmin);
-  const logout=()=>{
+  const logout = () => {
     localStorage.removeItem('UserId');
     localStorage.removeItem('token');
     localStorage.removeItem('refresh-token');
-    dispatch(storeUserId(null))
+    dispatch(storeUserId(null));
     dispatch(updateIsAdmin(false));
     dispatch(storeSelectedDashboardTab('Expenses'));
     dispatch(storeUserData(null));
     dispatch(updateIsUserLoggedIn(false));
-  
+    dispatch(clearNotifications());
     navigate('/');
-  }
+  };
 
   const [drawerItems, setDrawerItems] = useState<any>([
     {
@@ -74,7 +75,7 @@ export default function SideDrawer({ open }: { open: boolean }) {
       action: logout,
     },
   ]);
- 
+
   useEffect(() => {
     if (isAdmin && drawerItems.every((item: any) => item.text !== 'Users')) {
       const adminDrawer = [...drawerItems];
