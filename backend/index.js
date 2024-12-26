@@ -7,7 +7,7 @@ import userRoutes from "./routes/user-routes.js";
 import cors from "cors";
 dotenv.config();
 
-const mongoString = process.env.DATABASE_URL;
+const mongoString = process.env.MONGODB_URI;
 mongoose.connect(mongoString);
 const database = mongoose.connection;
 database.on("error", (error) => {
