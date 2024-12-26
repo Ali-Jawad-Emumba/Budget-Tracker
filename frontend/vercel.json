@@ -1,14 +1,9 @@
 {
-  "builds": [
-    {
-      "src": "frontend/my-app/package.json",
-      "use": "@vercel/react"
-    }
-  ],
+
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "/my-app/index.html"
+      "destination": "/"
     }
   ]
 }
