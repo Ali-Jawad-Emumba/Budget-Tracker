@@ -6,9 +6,7 @@ import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import styles from '../../utils/form-styles.module.css';
 import LoginSignupLayout from '../../components/login-signup-layout/LoginSignupLayout';
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
 import { sendPswdResetLink } from '../../utils/api-calls';
-import { Description } from '@mui/icons-material';
 import Notification from '../../components/notification/Notification';
 
 const ForgotPswdPage: React.FC = () => {

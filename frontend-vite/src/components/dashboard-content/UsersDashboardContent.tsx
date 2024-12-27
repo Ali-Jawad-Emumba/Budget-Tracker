@@ -8,10 +8,7 @@ import DataTable from './DataTable';
 import DashboardContentLayout from './DashboardContentLayout';
 import Filter from './Filter';
 import UserModal from '../modal/UsersModal';
-import Notifictaion from '../notification/Notification';
-import { useDispatch } from 'react-redux';
-import { updateNotifications } from '../../app/store';
-import { deleteUserById, getAllUsers } from '../../utils/api-calls';
+import {  getAllUsers } from '../../utils/api-calls';
 import { fetchDashboardData } from '../../utils/shared';
 
 const UsersDashboardContent = () => {
@@ -26,14 +23,7 @@ const UsersDashboardContent = () => {
 
   const [search, setSearch] = useState<string>('');
   const [expenseMetaData, setUserMetaData] = useState<any>();
-  const dispatch = useDispatch();
   const [selectedPage, setSelectedPage] = useState<number>(1);
-  const [snackBar, setSnackBar] = useState<any>({
-    open: false,
-    useFor: '',
-    title: '',
-    description: '',
-  });
   const [token, setToken] = useState<string | null>(null);
   const [tokenCheckInterval, setTokenCheckInterval] = useState<any>();
 
@@ -150,8 +140,6 @@ const UsersDashboardContent = () => {
           reloadData={getUsers}
         />
       </DashboardContentLayout>
-
-      <Notifictaion {...snackBar} />
     </>
   );
 };

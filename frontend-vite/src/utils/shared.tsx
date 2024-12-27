@@ -1,6 +1,5 @@
-import { IconButton, Snackbar } from '@mui/material';
+import { IconButton } from '@mui/material';
 import { jwtDecode } from 'jwt-decode';
-import { useDispatch, useSelector } from 'react-redux';
 import { getAccessToken } from './api-calls';
 import { CloseIcon } from './icons';
 

@@ -5,7 +5,7 @@ import {
   InputBootstrapStyled,
   SignupLoginBtn,
 } from '../../utils/styled-components';
-import { CircularProgress, FormControl, FormGroup, InputAdornment } from '@mui/material';
+import { CircularProgress, FormControl, InputAdornment } from '@mui/material';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import styles from '../../utils/form-styles.module.css';
 import PasswordField from '../../components/PasswordField';
@@ -17,7 +17,6 @@ import {
   emailValidation,
   passwordValidation,
 } from '../../utils/shared';
-import { emailRegex } from '../../utils/shared';
 
 import { useEffect, useState } from 'react';
 import {

@@ -1,4 +1,4 @@
-import { resolve } from 'path';
+
 import { BASE_URL } from './shared';
 export const patchExpense = async (req: any) => {
   return await fetch(`${BASE_URL}/expenses/${req.id}`, {

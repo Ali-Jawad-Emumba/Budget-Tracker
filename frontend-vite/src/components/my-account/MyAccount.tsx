@@ -2,7 +2,6 @@ import { Button, FormControl } from '@mui/material';
 import {
   StyledButton,
   InputBootstrapStyled,
-  SignupLoginBtn,
 } from '../../utils/styled-components';
 import ProfileCard from '../profile-details/ProfileCard';
 import styles from './MyAccount.module.css';
@@ -11,9 +10,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { storeUserData } from '../../app/store';
 import {
   emailValidation,
-  getMaxLengthValidation,
   nameValidation,
-  patternValidation,
   requiredMessage,
 } from '../../utils/shared';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';

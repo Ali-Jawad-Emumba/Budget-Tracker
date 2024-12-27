@@ -1,4 +1,4 @@
-import { CircularProgress, Dialog, DialogContent, DialogTitle, IconButton } from '@mui/material';
+import { CircularProgress, Dialog, DialogContent, DialogTitle } from '@mui/material';
 import { StyledButton, CancelButton } from '../../utils/styled-components';
 
 import { useState } from 'react';
@@ -20,7 +20,6 @@ const DeleteModal = ({
   item,
 }: ModalProps) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const userId = localStorage.getItem('UserId');
   const getUserFields = () => [
     { title: 'First Name', value: item?.firstname },
     { title: 'Last Name', value: item?.lastname },

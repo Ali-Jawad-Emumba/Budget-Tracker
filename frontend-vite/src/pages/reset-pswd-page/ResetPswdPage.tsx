@@ -1,8 +1,6 @@
 import illustration from '../../assets/images/illustration-reset-pswd-page.png';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { InputBootstrapStyled } from '../../utils/styled-components';
-import { Button, FormControl, FormGroup, InputAdornment } from '@mui/material';
-import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Button, FormControl} from '@mui/material';
 import styles from '../../utils/form-styles.module.css';
 import LoginSignupLayout from '../../components/login-signup-layout/LoginSignupLayout';
 import { useEffect, useState } from 'react';

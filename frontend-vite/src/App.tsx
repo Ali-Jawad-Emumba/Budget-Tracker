@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import './App.css';
 import LoginPage from './pages/login-page/LoginPage';
@@ -7,7 +7,7 @@ import ForgotPswdPage from './pages/reset-pswd-page/ForgotPswdPage';
 import Dashboard from './pages/dashboard/Dashboard';
 import ProfilePage from './pages/profile-page/ProfilePage';
 import ProtectedRoute from './components/ProtectedRoute';
-import { checkTokenExpiration, startTokenCheckInterval } from './utils/shared';
+import { startTokenCheckInterval } from './utils/shared';
 import ResetPswdPage from './pages/reset-pswd-page/ResetPswdPage';
 import { useSelector } from 'react-redux';
 

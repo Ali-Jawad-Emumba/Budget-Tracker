@@ -7,7 +7,6 @@ import {
   CircularProgress,
   FormControl,
   InputAdornment,
-  Snackbar,
 } from '@mui/material';
 import {
   InputBootstrapStyled,
@@ -16,14 +15,9 @@ import {
 import {
   BASE_URL,
   checkAndThrowError,
-  emailRegex,
   emailValidation,
-  getCharactersMessage,
-  getMaxLengthValidation,
   nameValidation,
   passwordValidation,
-  patternMessage,
-  patternValidation,
   requiredMessage,
 } from '../utils/shared';
 import PasswordField from './PasswordField';

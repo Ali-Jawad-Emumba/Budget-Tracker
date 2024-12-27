@@ -1,7 +1,5 @@
-import { styled, Theme, CSSObject } from '@mui/material/styles';
 import styles from './SlideDrawer.module.css';
 import {
-  Drawer as MuiDrawer,
   List,
   Divider,
   IconButton,
@@ -30,7 +28,6 @@ import {
   storeUserId,
   updateIsAdmin,
   updateIsUserLoggedIn,
-  updateNotifications,
 } from '../../app/store';
 
 export default function SideDrawer({ open }: { open: boolean }) {

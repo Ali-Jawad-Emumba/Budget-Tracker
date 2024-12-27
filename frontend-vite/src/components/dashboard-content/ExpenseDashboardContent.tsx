@@ -15,16 +15,13 @@ import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 import ExpenseModal from '../modal/ExpenseModal';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import DashboardContentLayout from './DashboardContentLayout';
 import Filter from './Filter';
 import DataTable from './DataTable';
-import Notifictaion from '../notification/Notification';
 import {
-  deleteExpenseById,
   getAllExpensesForAdminTable,
   getExpensesData,
-  getYearTotalExpenses,
 } from '../../utils/api-calls';
 import { InitialState } from '../../utils/types';
 import { fetchDashboardData } from '../../utils/shared';
@@ -43,14 +40,7 @@ const ExpenseDashboardContent = () => {
   const [expenseMetaData, setExpenseMetaData] = useState<any>();
   const [selectedPage, setSelectedPage] = useState<number>(1);
   const isAdmin = useSelector((state: InitialState) => state.isAdmin);
-  const dispatch = useDispatch();
   const [token, setToken] = useState<string | null>();
-  const [snackBar, setSnackBar] = useState<any>({
-    open: false,
-    useFor: '',
-    title: '',
-    description: '',
-  });
 
   const [tokenCheckInterval, setTokenCheckInterval] = useState<any>();
 
@@ -225,7 +215,6 @@ const ExpenseDashboardContent = () => {
           reloadData={getExpenses}
         />
       </DashboardContentLayout>
-      <Notifictaion {...snackBar} />
     </>
   );
 };

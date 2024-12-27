@@ -3,7 +3,6 @@ import SideDrawer from '../../components/side-drawer/SideDrawer';
 import styles from './Dashboard.module.css';
 
 import ExpenseDashboardContent from '../../components/dashboard-content/ExpenseDashboardContent';
-import { useNavigate } from 'react-router-dom';
 import { fetchUserData } from '../../utils/api-calls';
 import { useDispatch, useSelector } from 'react-redux';
 import { storeSelectedDashboardTab, storeUserData } from '../../app/store';
