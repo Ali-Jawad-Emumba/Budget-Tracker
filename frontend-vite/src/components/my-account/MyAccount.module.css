@@ -1,0 +1,28 @@
+.accountDetailDiv {
+  border-bottom: 1px solid lightgray;
+  padding-bottom: 20px;
+}
+.accountField {
+  display: flex;
+  gap: 10px;
+}
+.widthThirtyPercent {
+  width: 30%;
+}
+.widthTwentyFivePercent {
+  width: 24%;
+}
+.widthFiftyPercent {
+  width: 50%;
+}
+.accountDetailDiv h2 {
+  font-family: Roboto;
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+.accountDetailDiv label {
+  font-family: Poppins;
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: #616161;
+}

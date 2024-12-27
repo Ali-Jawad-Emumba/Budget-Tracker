@@ -1,0 +1,60 @@
+.rememberForgetDiv {
+  display: flex;
+  justify-content: space-between;
+}
+.welcomeText h1 {
+  font-size: 2rem;
+  margin: 0;
+}
+.welcomeText h2 {
+  font-size: 1.5rem;
+  color: #878a99;
+  margin-top: 0;
+  margin-bottom: 2px;
+}
+.label {
+  font-family: 'Poppins';
+  font-weight: 400;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+}
+.link {
+  text-decoration: none;
+  color: #7539ff;
+}
+
+.loginBtn {
+  font-family: 'Roboto';
+  font-weight: 600;
+}
+.signupLine {
+  margin: auto !important;
+}
+.gapTen {
+  gap: 10px;
+}
+.gapTwenty {
+  gap: 20px;
+}
+.form {
+  display: flex;
+  flex-direction: column;
+}
+.form p {
+  margin: 0;
+}
+.formField {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.signupFormFieldWrapper {
+  display: flex;
+  gap: 15px;
+}
+.passwords {
+  display: flex;
+  flex-direction: column;
+  gap:10px
+}

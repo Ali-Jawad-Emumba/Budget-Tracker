@@ -1,0 +1,28 @@
+.bar {
+  background-color: white;
+  height: 65px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px 0 20px;
+  position: sticky;
+  top: 0;
+  z-index: 999;
+}
+.bellIconAndProfile {
+  display: flex;
+  gap: 30px;
+  align-items: center;
+}
+.appBarBtn:hover {
+  cursor: pointer;
+}
+.bellIconAndProfile img:hover {
+  cursor: pointer;
+}
+.logoDiv:hover {
+  cursor: pointer;
+}
+.bellIcon:hover {
+  cursor: pointer;
+}

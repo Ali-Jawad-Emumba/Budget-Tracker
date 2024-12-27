@@ -1,0 +1,34 @@
+/* .drawerItem:not(:nth-of-type(2)):hover .drawerItemIcon svg path {
+  fill: #ffffff;
+} */
+/* .drawerItem:nth-of-type(2):hover .drawerItemIcon svg path {
+  stroke: #ffffff;
+} */
+/* .drawerItem:hover .drawerItemText {
+  color: white;
+} */
+/* .drawerItem:hover {
+  background-color: #7539ff;
+} */
+.drawerItemsList {
+  padding-left: 10px !important;
+  padding-right: 10px !important;
+}
+.drawerItem {
+  border-radius: 10px;
+  height: 32%;
+}
+.selectedDrawerItem {
+  border-radius: 10px;
+  height: 32%;
+  background-color: #7539ff;
+}
+.selectedDrawerItem .drawerItemText {
+  color: white;
+}
+.selectedDrawerItem:not(:nth-of-type(2)) .drawerItemIcon svg path {
+  fill: #ffffff;
+}
+.selectedDrawerItem:nth-of-type(2) .drawerItemIcon svg path {
+  stroke: #ffffff;
+}

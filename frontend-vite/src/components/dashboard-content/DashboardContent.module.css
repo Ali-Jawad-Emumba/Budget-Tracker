@@ -1,0 +1,84 @@
+.dataTableHeader {
+  width: 100%;
+  padding: 10px 0;
+  border-bottom: 1px solid lightgray;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+.dataTableHeader h1 {
+  font-size: 2rem;
+  margin: 0;
+}
+.dashboardContent {
+  padding: 20px 30px;
+}
+.paginationDiv {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 10px 15px;
+  box-sizing: border-box;
+  font-size: 0.625rem;
+}
+.searchBox div {
+  height: 40px;
+}
+.dateFilter {
+  background-color: transparent;
+  border: 1px solid lightgray;
+  border-radius: 0 4px 4px 0;
+  height: 39px;
+  width: 140px;
+  background-color: transparent;
+  border: 1px solid lightgray;
+  border-radius: 0 3px 3px 0;
+}
+.tableHeader {
+  background-color: #f7f7f7;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 0 15px;
+  border: 1px solid #dde4f0;
+  border-radius: 7px 7px 0 0;
+}
+.filtersSection{
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+.filters {
+  display: flex;
+  align-items: center;
+  justify-self: flex-end;
+  gap: 10px;
+}
+.filter {
+  background-color: #e1e8f2;
+  align-items: center;
+  height: 40px;
+  width: 70px;
+  display: flex;
+  justify-content: center;
+  border-radius: 4px 0 0 4px;
+}
+.filterDiv {
+  display: flex;
+  grid-column: 2;
+}
+.filterLabel {
+  color: #667085;
+  font-size: 0.75rem;
+  margin:0;
+}
+.analysisChart{
+  width:100%;
+  height:400px
+}
+.tableBody{
+  background-color: white;
+  border-radius: 0 0 5px 5px;
+}

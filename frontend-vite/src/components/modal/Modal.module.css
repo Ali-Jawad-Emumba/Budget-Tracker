@@ -1,0 +1,45 @@
+.formWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.rowFlex {
+  display: flex;
+  gap: 20px;
+}
+.formWrapper label,
+.deleteModalContent label {
+  font-family: 'Poppins';
+  font-weight: 500;
+  font-size: 0.875rem;
+  margin-bottom: 2px;
+}
+.modal {
+  padding: 10px 5px;
+}
+.deleteExpense div:first-of-type {
+  width: 100%;
+}
+.deleteUser div:nth-of-type(3) {
+  width: 100%;
+}
+.deleteModalContent {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 15px;
+  gap: 15px;
+  justify-content: space-between;
+
+}
+.deleteExpense div {
+  width: 50%;
+}
+.deleteModalContent p {
+  font-family: 'Poppins';
+  font-weight: 400;
+  font-size: 0.875rem;
+  color: #9e9e9e;
+}
+.deleteModalContent div {
+  width:110px
+}
