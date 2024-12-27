@@ -15,7 +15,6 @@ import {
 import {
   BASE_URL,
   checkAndThrowError,
-  checkResponseValidity,
   emailValidation,
   nameValidation,
   passwordValidation,
