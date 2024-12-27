@@ -12,7 +12,7 @@ import {
   InputAdornment,
 } from '@mui/material';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
-import styles from '../../utils/form-styles.module.css';
+import styles from '../utils/form-styles.module.css';
 import PasswordField from '../components/password-field';
 import { useForm } from 'react-hook-form';
 
