@@ -28,7 +28,7 @@ import {
 } from '../../utils/api-calls';
 import { InitialState } from '../../utils/types';
 import { fetchDashboardData } from '../../utils/shared';
-import Filter from './Filter';
+import Filter from './filter';
 
 const ExpenseDashboardContent = () => {
   const [isAddExpenseModalOpen, setIsAddExpenseModalOpen] =

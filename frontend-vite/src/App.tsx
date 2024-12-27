@@ -4,7 +4,7 @@ import "./App.css";
 import LoginPage from "./pages/login-page";
 import SignupPage from "./pages/signup-page";
 import ForgotPswdPage from "./pages/forgot-pswd-page";
-import Dashboard from "./pages/dashboard/Dashboard";
+import Dashboard from "./pages/dashboard/dashboard";
 import ProfilePage from "./pages/profile-page/profile-page";
 import ProtectedRoute from "./components/protected-route";
 import { startTokenCheckInterval } from "./utils/shared";

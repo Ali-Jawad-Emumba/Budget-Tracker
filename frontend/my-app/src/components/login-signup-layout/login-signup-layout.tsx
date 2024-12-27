@@ -1,5 +1,5 @@
 import { LoginSignupLayoutProp } from '../../utils/types';
-import Logo from '../logo/Logo';
+import Logo from '../logo/logo';
 import styles from './login-signup-layout.module.css';
 
 const LoginSignupLayout: React.FC<LoginSignupLayoutProp> = ({

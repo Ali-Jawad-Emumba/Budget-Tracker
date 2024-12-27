@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 
 import DataTable from './data-table';
 import DashboardContentLayout from './dashboard-content-layout';
-import Filter from './Filter';
+import Filter from './filter';
 import UserModal from '../modal/users-modal';
 import Notifictaion from '../notification/Notification';
 import { useDispatch } from 'react-redux';
