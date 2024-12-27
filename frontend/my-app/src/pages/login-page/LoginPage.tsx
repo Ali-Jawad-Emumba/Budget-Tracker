@@ -5,7 +5,7 @@ import {
   InputBootstrapStyled,
   SignupLoginBtn,
 } from '../../utils/styled-components';
-import { FormControl, FormGroup, InputAdornment } from '@mui/material';
+import { CircularProgress, FormControl, FormGroup, InputAdornment } from '@mui/material';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import styles from '../../utils/form-styles.module.css';
 import PasswordField from '../../components/PasswordField';
@@ -43,21 +43,23 @@ const LoginPage: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [rememberMe, setRememberMe] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    const resetAccessToken=async () => {
+    const resetAccessToken = async () => {
       const refreshToken = localStorage.getItem('refresh-token');
 
       if (refreshToken) {
         const decoded = jwtDecode<any>(refreshToken);
         const currentTime = Date.now() / 1000; // current time in seconds
-        if (decoded.exp > currentTime) { //token still valiod as decoded.exp-currentTime>0
+        if (decoded.exp > currentTime) {
+          //token still valiod as decoded.exp-currentTime>0
           const data = await getAccessToken();
           login(data, data.id);
         }
       }
     };
-    resetAccessToken()
+    resetAccessToken();
   }, []);
   const login = (user: any, userId: string) => {
     localStorage.setItem('UserId', userId);
@@ -73,12 +75,14 @@ const LoginPage: React.FC = () => {
   const onSubmit = async (data: any) => {
     const emailInput = data.email;
     const passwordInput = data.password;
+    setIsLoading(true);
     const fetchFn = await fetch(
       rememberMe
         ? `${BASE_URL}/user/email/${emailInput}?RememberMe=${true}`
         : `${BASE_URL}/user/email/${emailInput}`
     );
     if (fetchFn.ok) {
+      setIsLoading(false);
       const user = await fetchFn.json();
       const userData = user.userData;
       if (!user.userExists) {
@@ -171,7 +175,11 @@ const LoginPage: React.FC = () => {
           variant="contained"
           type="submit"
         >
-          Log In
+          {isLoading ? (
+            <CircularProgress size={'30px'} color="inherit" />
+          ) : (
+            'Log In'
+          )}
         </SignupLoginBtn>
         <p className={`${styles.signupLine} poppins-regular`}>
           Dont have an account?{' '}

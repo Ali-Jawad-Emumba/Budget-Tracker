@@ -2,12 +2,30 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 import styles from '../utils/form-styles.module.css';
-import { Button, FormControl, InputAdornment, Snackbar } from '@mui/material';
+import {
+  Button,
+  CircularProgress,
+  FormControl,
+  InputAdornment,
+  Snackbar,
+} from '@mui/material';
 import {
   InputBootstrapStyled,
   SignupLoginBtn,
 } from '../utils/styled-components';
-import { BASE_URL, checkAndThrowError, emailRegex, emailValidation, getCharactersMessage, getMaxLengthValidation, nameValidation, passwordValidation, patternMessage, patternValidation, requiredMessage } from '../utils/shared';
+import {
+  BASE_URL,
+  checkAndThrowError,
+  emailRegex,
+  emailValidation,
+  getCharactersMessage,
+  getMaxLengthValidation,
+  nameValidation,
+  passwordValidation,
+  patternMessage,
+  patternValidation,
+  requiredMessage,
+} from '../utils/shared';
 import PasswordField from './PasswordField';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import Notifictaion from './notification/Notification';
@@ -35,6 +53,7 @@ const SignUpForm = ({
     title: '',
     description: '',
   });
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const isModal = useFor.includes('modal');
   const navigate = useNavigate();
   const getSignupDataBody = (data: any) => {
@@ -65,70 +84,72 @@ const SignUpForm = ({
     const urlGetUserByEmail = `${BASE_URL}/user/email/${
       useFor === 'edit modal' ? defaultValues.email : data.email
     }`;
+    setIsLoading(true);
     const fetchFn = await fetch(urlGetUserByEmail);
-    const { userExists } = await fetchFn.json();
-    if (userExists && useFor !== 'edit modal') {
-      setShowUserExistsError(true);
-    } else {
-      let response = await fetch(
-        useFor === 'edit modal'
-          ? urlGetUserByEmail
-          : `${BASE_URL}/user/`,
-        {
-          method: useFor === 'edit modal' ? 'PATCH' : 'POST',
-          headers:
-            useFor === 'edit modal'
-              ? {
-                  'Cotent-Type': 'application/json',
-                }
-              : {
-                  'Content-Type': 'application/json',
-                  Authorization: `Bearer ${localStorage.getItem('token')}`,
-                },
-          body: isModal ? JSON.stringify(data) : getSignupDataBody(data),
+    if (fetchFn.ok) {
+      setIsLoading(false);
+      const { userExists } = await fetchFn.json();
+      if (userExists && useFor !== 'edit modal') {
+        setShowUserExistsError(true);
+      } else {
+        let response = await fetch(
+          useFor === 'edit modal' ? urlGetUserByEmail : `${BASE_URL}/user/`,
+          {
+            method: useFor === 'edit modal' ? 'PATCH' : 'POST',
+            headers:
+              useFor === 'edit modal'
+                ? {
+                    'Cotent-Type': 'application/json',
+                  }
+                : {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${localStorage.getItem('token')}`,
+                  },
+            body: isModal ? JSON.stringify(data) : getSignupDataBody(data),
+          }
+        );
+
+        if (useFor === 'signup page' && response.ok) {
+          navigate('/');
         }
-      );
+        if (isModal) {
+          setModalOpen(false);
+          reloadData();
+        }
+        if (isModal && useFor === 'edit modal') {
+          setSnackBar({
+            open: true,
+            useFor: 'add',
+            title: 'User Updated',
+            description: 'User edited successfully',
+          });
 
-      if (useFor === 'signup page' && response.ok) {
-        navigate('/');
-      }
-      if (isModal) {
-        setModalOpen(false);
-        reloadData();
-      }
-      if (isModal && useFor === 'edit modal') {
-        setSnackBar({
-          open: true,
-          useFor: 'add',
-          title: 'User Updated',
-          description: 'User edited successfully',
-        });
+          setTimeout(() => setSnackBar(null), 5000);
+          dispatch(
+            updateNotifications({
+              name: `${data.firstname} ${data.lastname}`,
+              action: 'edit',
+              time: `${new Date()}`,
+            })
+          );
+        }
+        if (isModal && useFor === 'add modal') {
+          setSnackBar({
+            open: true,
+            useFor: 'add',
+            title: 'User Added',
+            description: 'User added successfully',
+          });
 
-        setTimeout(() => setSnackBar(null), 5000);
-        dispatch(
-          updateNotifications({
-            name: `${data.firstname} ${data.lastname}`,
-            action: 'edit',
-            time: `${new Date()}`,
-          })
-        );
-      }
-      if (isModal && useFor === 'add modal') {
-        setSnackBar({
-          open: true,
-          useFor: 'add',
-          title: 'User Added',
-          description: 'User added successfully',
-        });
-
-        setTimeout(() => setSnackBar(null), 5000);
-        dispatch(
-          updateNotifications({
-            name: `${data.firstname} ${data.lastname}`,
-            action: 'add',
-            time: `${new Date()}`,
-          })
-        );
+          setTimeout(() => setSnackBar(null), 5000);
+          dispatch(
+            updateNotifications({
+              name: `${data.firstname} ${data.lastname}`,
+              action: 'add',
+              time: `${new Date()}`,
+            })
+          );
+        }
       }
     }
   };
@@ -162,8 +183,7 @@ const SignUpForm = ({
           <p className={styles.label}>Email</p>
           <InputBootstrapStyled
             fullWidth
-            {...register('email', emailValidation)
-            }
+            {...register('email', emailValidation)}
             onChange={() =>
               showUserExisitsError ? setShowUserExistsError(false) : null
             }
@@ -176,13 +196,15 @@ const SignUpForm = ({
           />
           {checkAndThrowError(errors, 'email')}
         </FormControl>
-        <div className={isModal ? styles.signupFormFieldWrapper : styles.passwords}>
+        <div
+          className={isModal ? styles.signupFormFieldWrapper : styles.passwords}
+        >
           <FormControl sx={conditionalSize}>
             <p className={styles.label}>Password</p>
             <PasswordField
               formRegister={{
                 ...register('password', {
-                  ...passwordValidation
+                  ...passwordValidation,
                 }),
               }}
               checkAndThrowError={() => checkAndThrowError(errors, 'password')}
@@ -209,7 +231,10 @@ const SignUpForm = ({
             <p className={styles.label}>Budget Limit</p>
             <InputBootstrapStyled
               fullWidth
-              {...register('budgetlimit', { required: requiredMessage, max: 99999999 })}
+              {...register('budgetlimit', {
+                required: requiredMessage,
+                max: 99999999,
+              })}
               placeholder="Enter Amount"
               type="number"
             />
@@ -243,7 +268,11 @@ const SignUpForm = ({
               type="submit"
               variant="contained"
             >
-              Sign Up
+              {isLoading ? (
+                <CircularProgress size={'30px'} color="inherit" />
+              ) : (
+                'Sign Up'
+              )}
             </SignupLoginBtn>
             <p className={`${styles.signupLine} poppins-regular`}>
               Already have an account?{' '}

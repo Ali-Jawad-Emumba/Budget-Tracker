@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, DialogTitle, IconButton } from '@mui/material';
+import { CircularProgress, Dialog, DialogContent, DialogTitle, IconButton } from '@mui/material';
 import { StyledButton, CancelButton } from '../../utils/styled-components';
 
 import { useState } from 'react';
@@ -19,6 +19,7 @@ const DeleteModal = ({
   reloadData,
   item,
 }: ModalProps) => {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const userId = localStorage.getItem('UserId');
   const getUserFields = () => [
     { title: 'First Name', value: item?.firstname },
@@ -44,11 +45,13 @@ const DeleteModal = ({
     description: '',
   });
   const deleteData = async () => {
+    setIsLoading(true);
     const response =
       useFor === 'Expense'
         ? await deleteExpenseById(item._id)
         : await deleteUserById(item._id);
     if (response.ok) {
+      setIsLoading(false);
       const deleted = await response.json();
       setSnackBar({
         open: true,
@@ -109,7 +112,11 @@ const DeleteModal = ({
                 variant="contained"
                 onClick={() => deleteData()}
               >
-                Delete
+                {isLoading ? (
+                  <CircularProgress size={'30px'} color="inherit" />
+                ) : (
+                  'Delete'
+                )}
               </StyledButton>
             </div>
           </DialogContent>
