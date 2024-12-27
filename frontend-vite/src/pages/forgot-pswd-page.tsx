@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { InputBootstrapStyled } from "../utils/styled-components";
 import { Button, FormControl, FormGroup, InputAdornment } from "@mui/material";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
-import styles from "../../utils/form-styles.module.css";
+import styles from "../utils/form-styles.module.css";
 import LoginSignupLayout from "../components/login-signup-layout/login-signup-layout";
 import { useState } from "react";
 import { sendPswdResetLink } from "../utils/api-calls";

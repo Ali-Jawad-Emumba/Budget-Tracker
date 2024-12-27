@@ -3,7 +3,7 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { InputBootstrapStyled } from '../utils/styled-components';
 import { Button, FormControl, FormGroup, InputAdornment } from '@mui/material';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
-import styles from '../../utils/form-styles.module.css';
+import styles from '../utils/form-styles.module.css';
 import LoginSignupLayout from '../components/login-signup-layout/login-signup-layout';
 import { useEffect, useState } from 'react';
 import { checkAndThrowError, checkResponseValidity } from '../utils/shared';

@@ -1,5 +1,5 @@
 import LoginSignupLayout from '../components/login-signup-layout/login-signup-layout';
-import illustration from '../../assets/images/Illustration-login-page.png';
+import illustration from '../assets/images/Illustration-login-page.png';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   InputBootstrapStyled,

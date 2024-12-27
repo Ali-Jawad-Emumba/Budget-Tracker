@@ -1,7 +1,7 @@
 import illustration from "../assets/images/illustration-reset-pswd-page.png";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Button, FormControl } from "@mui/material";
-import styles from "../../utils/form-styles.module.css";
+import styles from "../utils/form-styles.module.css";
 import LoginSignupLayout from "../components/login-signup-layout/login-signup-layout";
 import { useEffect, useState } from "react";
 import { checkAndThrowError, checkResponseValidity } from "../utils/shared";

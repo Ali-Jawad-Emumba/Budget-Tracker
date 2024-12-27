@@ -1,5 +1,5 @@
-import illustration from "../../assets/images/illustration-signup-page.png";
-import styles from "../../utils/form-styles.module.css";
+import illustration from "../assets/images/illustration-signup-page.png";
+import styles from "../utils/form-styles.module.css";
 import LoginSignupLayout from "../components/login-signup-layout/login-signup-layout";
 import SignUpForm from "../components/signup-form";
 

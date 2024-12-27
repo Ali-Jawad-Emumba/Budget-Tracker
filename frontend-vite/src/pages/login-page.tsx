@@ -1,5 +1,5 @@
 import LoginSignupLayout from "../components/login-signup-layout/login-signup-layout";
-import illustration from "../../assets/images/Illustration-login-page.png";
+import illustration from "../assets/images/Illustration-login-page.png";
 import { Link, useNavigate } from "react-router-dom";
 import {
   InputBootstrapStyled,
@@ -7,7 +7,7 @@ import {
 } from "../utils/styled-components";
 import { CircularProgress, FormControl, InputAdornment } from "@mui/material";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
-import styles from "../../utils/form-styles.module.css";
+import styles from "../utils/form-styles.module.css";
 import PasswordField from "../components/password-field";
 import { useForm } from "react-hook-form";
 
