@@ -1,38 +1,31 @@
-
 import { BASE_URL } from './shared';
+import axios from 'axios';
+
+axios.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers['Authorization'] = `Bearer ${token}`;
+    }
+    config.headers['Content-Type'] = 'application/json';
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
 export const patchExpense = async (req: any) => {
-  return await fetch(`${BASE_URL}/expenses/${req.id}`, {
-    method: 'PATCH',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${localStorage.getItem('token')}`,
-    },
-    body: req.data,
-  });
+  return await axios.patch(`${BASE_URL}/expenses/${req.id}`, req.data);
 };
 
 export const postExpense = async (req: any) => {
-  return await fetch(`${BASE_URL}/user/${req.id}/expenses`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${localStorage.getItem('token')}`,
-    },
-    body: req.data,
-  });
+  return await axios.post(`${BASE_URL}/user/${req.id}/expenses`, req.data);
 };
 
 export const getAllExpenses = async (userId: string | null) => {
   if (userId) {
-    const fetchFn = await fetch(`${BASE_URL}/user/${userId}/all-expenses`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
-      },
-    });
-    const response = await fetchFn.json();
-    return response;
+    return await axios.get(`${BASE_URL}/user/${userId}/all-expenses`);
   }
 };
 
@@ -52,29 +45,14 @@ export const getExpensesData = async (
     if (dateFilter) {
       queryParams.append('date', dateFilter);
     }
-    const fetchFn = await fetch(
-      `${BASE_URL}/user/${userId}/expenses?${queryParams.toString()}`,
-      {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      }
+    return await axios.get(
+      `${BASE_URL}/user/${userId}/expenses?${queryParams.toString()}`
     );
-    const response = await fetchFn.json();
-    return response;
   }
 };
 
 export const deleteExpenseById = async (id: number | undefined) => {
-  return await fetch(`${BASE_URL}/expenses/${id}`, {
-    method: 'DELETE',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${localStorage.getItem('token')}`,
-    },
-  });
+  return await axios.delete(`${BASE_URL}/expenses/${id}`);
 };
 
 export const getAllUsers = async (
@@ -88,91 +66,48 @@ export const getAllUsers = async (
   if (sortValue) queryParams.append('sort', sortValue);
   if (search) queryParams.append('search', search);
 
-  const fetchFn = await fetch(`${BASE_URL}/admin/users?${queryParams.toString()}`, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${localStorage.getItem('token')}`,
-    },
-  });
-  const response = await fetchFn.json();
-  return response;
+  return await axios.get(`${BASE_URL}/admin/users?${queryParams.toString()}`);
 };
 
 export const deleteUserById = async (id: number | undefined) => {
-  return await fetch(`${BASE_URL}/user/${id}`, {
-    method: 'DELETE',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${localStorage.getItem('token')}`,
-    },
-  });
+  return await axios.delete(`${BASE_URL}/user/${id}`);
 };
 
 export const updateMyProfile = async (userId: string | null, reqBody: any) => {
   if (userId) {
-    const updateDataFn = await fetch(`${BASE_URL}/user/${userId}`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
-      },
-      body: JSON.stringify(reqBody),
-    });
-    const response = await updateDataFn.json();
-    return response;
+    return await axios.patch(
+      `${BASE_URL}/user/${userId}`,
+      JSON.stringify(reqBody)
+    );
   }
 };
 
 export const getAccessToken = async () => {
-  const response = await fetch(`${BASE_URL}/refresh-token`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
+  return await axios.post(`${BASE_URL}/refresh-token`,JSON.stringify({
       refreshToken: localStorage.getItem('refresh-token'),
-    }),
-  });
-  const data = await response.json();
-  return data;
-};
+    }))
+  }
+
 
 export const sendPswdResetLink = async (email: any) => {
   if (email) {
-    return await fetch(`${BASE_URL}/reset-password`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
-      },
-      body: JSON.stringify({
-        email,
-      }),
+    const data = JSON.stringify({
+      email,
     });
+    return await axios.post(`${BASE_URL}/reset-password`, data);
   }
 };
 
 export const updateAccountPassword = async (req: any) => {
-  return await fetch(`${BASE_URL}/user/email/${req.email}`, {
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(req.data),
-  });
+  return await axios.patch(
+    `${BASE_URL}/user/email/${req.email}`,
+    JSON.stringify(req.data)
+  );
 };
 
 export const fetchUserData = async (userId: string | null) => {
   if (userId) {
-    const fetchFn = await fetch(`${BASE_URL}/user/${userId}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
-      },
-    });
-    const response = await fetchFn.json();
-    const data = response;
-    return data;
+    return await axios.get(`${BASE_URL}/user/${userId}`);
   }
 };
 export const getAllExpensesForAdminTable = async (
@@ -189,56 +124,20 @@ export const getAllExpensesForAdminTable = async (
   if (dateFilter) {
     queryParams.append('date', dateFilter);
   }
-  const fetchFn = await fetch(
-    `${BASE_URL}/admin/all-users-expenses-with-pagination?${queryParams.toString()}`,
-    {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
-      },
-    }
+  return await axios.get(
+    `${BASE_URL}/admin/all-users-expenses-with-pagination?${queryParams.toString()}`
   );
-  const response = await fetchFn.json();
-  return response;
 };
 
 export const getAllExpensesForAdminChart = async () => {
-  const fetchFn = await fetch(`${BASE_URL}/admin/all-users-expenses`, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${localStorage.getItem('token')}`,
-    },
-  });
-  const response = await fetchFn.json();
-  return response;
+  return await axios.get(`${BASE_URL}/admin/all-users-expenses`);
 };
 
 export const getYearTotalExpenses = async (userId?: string | null) => {
   if (userId) {
-    const fetchFn = await fetch(
-      `${BASE_URL}/user/${userId}/total-year-expense`,
-      {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      }
-    );
-    const response = await fetchFn.json();
-    return response;
+    return await axios.get(`${BASE_URL}/user/${userId}/total-year-expense`);
   }
 };
 export const getAllUsersYearTotalExpenses = async () => {
-  const fetchFn = await fetch(`${BASE_URL}/admin/users/total-year-expense`, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${localStorage.getItem('token')}`,
-    },
-  });
-  const response = await fetchFn.json();
-  return response;
+  return await axios.get(`${BASE_URL}/admin/users/total-year-expense`);
 };

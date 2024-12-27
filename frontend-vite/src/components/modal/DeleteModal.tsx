@@ -1,16 +1,21 @@
-import { CircularProgress, Dialog, DialogContent, DialogTitle } from '@mui/material';
-import { StyledButton, CancelButton } from '../../utils/styled-components';
+import {
+  CircularProgress,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+} from "@mui/material";
+import { StyledButton, CancelButton } from "../../utils/styled-components";
 
-import { useState } from 'react';
-import styles from './Modal.module.css';
-import Notifictaion from '../notification/Notification';
+import { useState } from "react";
+import styles from "./Modal.module.css";
+import Notifictaion from "../notification/Notification";
 
-import { useDispatch } from 'react-redux';
+import { useDispatch } from "react-redux";
 
-import { ModalProps } from '../../utils/types';
-import { updateNotifications } from '../../app/store';
-import { deleteExpenseById, deleteUserById } from '../../utils/api-calls';
-import { CloseButton } from '../../utils/shared';
+import { ModalProps } from "../../utils/types";
+import { updateNotifications } from "../../app/store";
+import { deleteExpenseById, deleteUserById } from "../../utils/api-calls";
+import { checkResponseValidity, CloseButton } from "../../utils/shared";
 
 const DeleteModal = ({
   isOpen,
@@ -21,40 +26,40 @@ const DeleteModal = ({
 }: ModalProps) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const getUserFields = () => [
-    { title: 'First Name', value: item?.firstname },
-    { title: 'Last Name', value: item?.lastname },
-    { title: 'Email', value: item?.email },
-    { title: 'Phone Number', value: item?.phone },
-    { title: 'Budget Limit', value: item?.budgetlimit },
+    { title: "First Name", value: item?.firstname },
+    { title: "Last Name", value: item?.lastname },
+    { title: "Email", value: item?.email },
+    { title: "Phone Number", value: item?.phone },
+    { title: "Budget Limit", value: item?.budgetlimit },
   ];
   const getExpenseFields = () => [
-    { title: 'Title', value: item?.title },
-    { title: 'Price', value: item?.price },
+    { title: "Title", value: item?.title },
+    { title: "Price", value: item?.price },
     {
-      title: 'Date',
+      title: "Date",
       value: item?.date ? new Date(item?.date).toLocaleDateString() : null,
     },
   ];
-  const fields = useFor === 'Expense' ? getExpenseFields() : getUserFields();
+  const fields = useFor === "Expense" ? getExpenseFields() : getUserFields();
   const dispatch = useDispatch();
   const [snackBar, setSnackBar] = useState<any>({
     open: false,
-    useFor: '',
-    title: '',
-    description: '',
+    useFor: "",
+    title: "",
+    description: "",
   });
   const deleteData = async () => {
     setIsLoading(true);
     const response =
-      useFor === 'Expense'
+      useFor === "Expense"
         ? await deleteExpenseById(item._id)
         : await deleteUserById(item._id);
-    if (response.ok) {
+    if (checkResponseValidity(response)) {
       setIsLoading(false);
-      const deleted = await response.json();
+      const deleted = response.data;
       setSnackBar({
         open: true,
-        useFor: 'delete',
+        useFor: "delete",
         title: `${useFor} Deleted`,
         description: `${useFor} deleted successfully`,
       });
@@ -63,7 +68,7 @@ const DeleteModal = ({
       dispatch(
         updateNotifications({
           name: deleted.title,
-          action: 'delete',
+          action: "delete",
           time: `${new Date()}`,
         })
       );
@@ -75,7 +80,7 @@ const DeleteModal = ({
   return (
     <>
       <Dialog onClose={() => setIsOpen(false)} open={isOpen}>
-        <div className={styles.modal} style={{ width: '400px' }}>
+        <div className={styles.modal} style={{ width: "400px" }}>
           <DialogTitle>
             Delete {useFor}
             <CloseButton setIsOpen={setIsOpen} />
@@ -83,7 +88,7 @@ const DeleteModal = ({
           <DialogContent>
             <div
               className={`${styles.deleteModalContent} ${
-                useFor === 'Expense' ? styles.deleteExpense : styles.deleteUser
+                useFor === "Expense" ? styles.deleteExpense : styles.deleteUser
               }`}
             >
               {fields.map((field, index) => (
@@ -95,7 +100,7 @@ const DeleteModal = ({
             </div>
             <div className={styles.rowFlex}>
               <CancelButton
-                sx={{ width: '45%', padding: '10px 0' }}
+                sx={{ width: "45%", padding: "10px 0" }}
                 variant="outlined"
                 onClick={() => setIsOpen(false)}
               >
@@ -103,18 +108,18 @@ const DeleteModal = ({
               </CancelButton>
               <StyledButton
                 sx={{
-                  width: '50%',
-                  borderRadius: '8px',
-                  padding: '10px 0',
-                  backgroundColor: '#EF4435',
+                  width: "50%",
+                  borderRadius: "8px",
+                  padding: "10px 0",
+                  backgroundColor: "#EF4435",
                 }}
                 variant="contained"
                 onClick={() => deleteData()}
               >
                 {isLoading ? (
-                  <CircularProgress size={'30px'} color="inherit" />
+                  <CircularProgress size={"30px"} color="inherit" />
                 ) : (
-                  'Delete'
+                  "Delete"
                 )}
               </StyledButton>
             </div>

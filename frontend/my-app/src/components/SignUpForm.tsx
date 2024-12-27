@@ -16,6 +16,7 @@ import {
 import {
   BASE_URL,
   checkAndThrowError,
+  checkResponseValidity,
   emailRegex,
   emailValidation,
   getCharactersMessage,

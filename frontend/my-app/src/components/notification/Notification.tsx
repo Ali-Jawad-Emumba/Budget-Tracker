@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import styles from './Notification.module.css';
-import { NotificationProps } from 'src/utils/types';
+import { NotificationProps } from '../../utils/types';
 import { tickIcon } from '../../utils/icons';
 
 const Notification = ({

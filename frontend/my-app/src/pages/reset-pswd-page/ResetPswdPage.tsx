@@ -6,7 +6,7 @@ import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import styles from '../../utils/form-styles.module.css';
 import LoginSignupLayout from '../../components/login-signup-layout/LoginSignupLayout';
 import { useEffect, useState } from 'react';
-import { checkAndThrowError } from '../../utils/shared';
+import { checkAndThrowError, checkResponseValidity } from '../../utils/shared';
 import PasswordField from '../../components/PasswordField';
 import { useForm } from 'react-hook-form';
 import { jwtDecode } from 'jwt-decode';
@@ -28,7 +28,7 @@ const ResetPswdPage: React.FC = () => {
   );
   const onSubmit = async (data: any) => {
     const response = await updateAccountPassword({ email, data });
-    if (response.ok) {
+    if (checkResponseValidity(response)) {
       navigate('/');
     }
   };

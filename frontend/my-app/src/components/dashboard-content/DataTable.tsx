@@ -45,7 +45,7 @@ const DataTable = ({
         const totalExpense = isAdmin
           ? await getAllUsersYearTotalExpenses()
           : await getYearTotalExpenses(userId);
-        setYearTotalExpense(totalExpense);
+        setYearTotalExpense(totalExpense?.data);
       };
       fetchTotalExpenses();
     }
@@ -56,7 +56,7 @@ const DataTable = ({
         const totalExpense = isAdmin
           ? await getAllUsersYearTotalExpenses()
           : await getYearTotalExpenses(userId);
-        setYearTotalExpense(totalExpense);
+        setYearTotalExpense(totalExpense?.data);
       };
       fetchTotalExpenses();
     }

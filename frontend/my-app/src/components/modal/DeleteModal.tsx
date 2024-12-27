@@ -1,4 +1,10 @@
-import { CircularProgress, Dialog, DialogContent, DialogTitle, IconButton } from '@mui/material';
+import {
+  CircularProgress,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  IconButton,
+} from '@mui/material';
 import { StyledButton, CancelButton } from '../../utils/styled-components';
 
 import { useState } from 'react';
@@ -10,7 +16,7 @@ import { useDispatch } from 'react-redux';
 import { ModalProps } from '../../utils/types';
 import { updateNotifications } from '../../app/store';
 import { deleteExpenseById, deleteUserById } from '../../utils/api-calls';
-import { CloseButton } from '../../utils/shared';
+import { checkResponseValidity, CloseButton } from '../../utils/shared';
 
 const DeleteModal = ({
   isOpen,
@@ -50,9 +56,9 @@ const DeleteModal = ({
       useFor === 'Expense'
         ? await deleteExpenseById(item._id)
         : await deleteUserById(item._id);
-    if (response.ok) {
+    if (checkResponseValidity(response)) {
       setIsLoading(false);
-      const deleted = await response.json();
+      const deleted = response.data;
       setSnackBar({
         open: true,
         useFor: 'delete',

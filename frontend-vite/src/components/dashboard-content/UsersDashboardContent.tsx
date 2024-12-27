@@ -33,8 +33,8 @@ const UsersDashboardContent = () => {
       filters?.sort,
       filters?.search
     );
-    setUserMetaData(response);
-    const data = response.data;
+    setUserMetaData(response?.data);
+    const data = response?.data.data;
     setOriginalUsersData(data);
     setFilteredUsersData(data);
   };

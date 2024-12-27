@@ -53,8 +53,8 @@ const LoginPage: React.FC = () => {
         const currentTime = Date.now() / 1000; // current time in seconds
         if (decoded.exp > currentTime) {
           //token still valiod as decoded.exp-currentTime>0
-          const data = await getAccessToken();
-          login(data, data.id);
+          const response = await getAccessToken();
+          login(response.data, response.data.id);
         }
       }
     };

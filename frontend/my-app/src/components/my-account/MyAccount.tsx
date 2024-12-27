@@ -1,4 +1,4 @@
-import { Button, FormControl } from '@mui/material';
+import { Button, CircularProgress, FormControl } from '@mui/material';
 import {
   StyledButton,
   InputBootstrapStyled,
@@ -21,7 +21,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
 import { useState } from 'react';
 import { updateMyProfile } from '../../utils/api-calls';
-import { InitialState } from 'src/utils/types';
+import { InitialState } from '../../utils/types';
 
 const MyAccount = () => {
   const userData = useSelector((state: InitialState) => state.userData);
@@ -29,10 +29,15 @@ const MyAccount = () => {
   const [DOB, setDOB] = useState<string>('');
   const dispatch = useDispatch();
   const userId = useSelector((state: InitialState) => state.userId);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const onSubmit = async (data: any) => {
+    setIsLoading(true);
     const updatedData = await updateMyProfile(userId, { ...data, dob: DOB });
-    dispatch(storeUserData(updatedData));
+    if (updatedData) {
+      setIsLoading(false);
+      dispatch(storeUserData(updatedData?.data));
+    }
   };
   return (
     <div style={{ marginBottom: '20px' }}>
@@ -167,7 +172,13 @@ const MyAccount = () => {
             </div>
 
             <div>
-              <StyledButton type="submit">Update</StyledButton>
+              <StyledButton type="submit">
+                {isLoading ? (
+                  <CircularProgress size={'30px'} color="inherit" />
+                ) : (
+                  'Update'
+                )}
+              </StyledButton>
               <Button
                 variant="text"
                 sx={{ width: '100px', fontSize: '0.75rem', color: 'black' }}

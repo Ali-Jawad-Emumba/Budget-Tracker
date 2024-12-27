@@ -1,40 +1,45 @@
-import { Button, FormControl } from '@mui/material';
+import { Button, CircularProgress, FormControl } from "@mui/material";
 import {
   StyledButton,
   InputBootstrapStyled,
-} from '../../utils/styled-components';
-import ProfileCard from '../profile-details/ProfileCard';
-import styles from './MyAccount.module.css';
-import { useForm } from 'react-hook-form';
-import { useDispatch, useSelector } from 'react-redux';
-import { storeUserData } from '../../app/store';
+} from "../../utils/styled-components";
+import ProfileCard from "../profile-details/ProfileCard";
+import styles from "./MyAccount.module.css";
+import { useForm } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
+import { storeUserData } from "../../app/store";
 import {
   emailValidation,
   nameValidation,
   requiredMessage,
-} from '../../utils/shared';
-import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import dayjs from 'dayjs';
-import { useState } from 'react';
-import { updateMyProfile } from '../../utils/api-calls';
-import { InitialState } from '../../utils/types';
+} from "../../utils/shared";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs from "dayjs";
+import { useState } from "react";
+import { updateMyProfile } from "../../utils/api-calls";
+import { InitialState } from "../../utils/types";
 
 const MyAccount = () => {
   const userData = useSelector((state: InitialState) => state.userData);
   const { register, handleSubmit } = useForm({ defaultValues: userData });
-  const [DOB, setDOB] = useState<string>('');
+  const [DOB, setDOB] = useState<string>("");
   const dispatch = useDispatch();
   const userId = useSelector((state: InitialState) => state.userId);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const onSubmit = async (data: any) => {
+    setIsLoading(true);
     const updatedData = await updateMyProfile(userId, { ...data, dob: DOB });
-    dispatch(storeUserData(updatedData));
+    if (updatedData?.data) {
+      setIsLoading(false);
+      dispatch(storeUserData(updatedData?.data));
+    }
   };
   return (
-    <div style={{ marginBottom: '20px' }}>
+    <div style={{ marginBottom: "20px" }}>
       <ProfileCard heading="My Account">
-        <div style={{ padding: '20px 40px' }}>
+        <div style={{ padding: "20px 40px" }}>
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className={styles.accountDetailDiv}>
               <h2>Name & Job</h2>
@@ -42,18 +47,18 @@ const MyAccount = () => {
                 <FormControl className={styles.widthThirtyPercent}>
                   <label>First Name</label>
                   <InputBootstrapStyled
-                    {...register('firstname', nameValidation)}
+                    {...register("firstname", nameValidation)}
                   />
                 </FormControl>
                 <FormControl className={styles.widthThirtyPercent}>
                   <label>Last Name</label>
                   <InputBootstrapStyled
-                    {...register('lastname', nameValidation)}
+                    {...register("lastname", nameValidation)}
                   />
                 </FormControl>
                 <FormControl className={styles.widthThirtyPercent}>
                   <label>Job Title</label>
-                  <InputBootstrapStyled {...register('jobtitle')} />
+                  <InputBootstrapStyled {...register("jobtitle")} />
                 </FormControl>
               </div>
             </div>
@@ -61,37 +66,37 @@ const MyAccount = () => {
               <h2>About Me</h2>
               <div className={styles.accountField}>
                 <FormControl fullWidth>
-                  <InputBootstrapStyled {...register('aboutme')} />
+                  <InputBootstrapStyled {...register("aboutme")} />
                 </FormControl>
               </div>
             </div>
 
             <div className={styles.accountDetailDiv}>
               <h2>Address</h2>
-              <div className={styles.accountField} style={{ flexWrap: 'wrap' }}>
+              <div className={styles.accountField} style={{ flexWrap: "wrap" }}>
                 <FormControl className={styles.widthTwentyFivePercent}>
                   <label>Street Address</label>
-                  <InputBootstrapStyled {...register('street')} />
+                  <InputBootstrapStyled {...register("street")} />
                 </FormControl>
                 <FormControl className={styles.widthTwentyFivePercent}>
                   <label>City</label>
-                  <InputBootstrapStyled {...register('city')} />
+                  <InputBootstrapStyled {...register("city")} />
                 </FormControl>
                 <FormControl className={styles.widthTwentyFivePercent}>
                   <label>State</label>
-                  <InputBootstrapStyled {...register('state')} />
+                  <InputBootstrapStyled {...register("state")} />
                 </FormControl>
 
                 <FormControl className={styles.widthTwentyFivePercent}>
                   <label>Zip Code</label>
                   <InputBootstrapStyled
-                    {...register('zipcode')}
+                    {...register("zipcode")}
                     type="number"
                   />
                 </FormControl>
-                <FormControl style={{ width: '100%' }}>
+                <FormControl style={{ width: "100%" }}>
                   <label>Complete Address</label>
-                  <InputBootstrapStyled {...register('address')} />
+                  <InputBootstrapStyled {...register("address")} />
                 </FormControl>
               </div>
             </div>
@@ -101,17 +106,17 @@ const MyAccount = () => {
               <div className={styles.accountField}>
                 <FormControl className={styles.widthThirtyPercent}>
                   <label>Phone Number</label>
-                  <InputBootstrapStyled {...register('phone')} type="number" />
+                  <InputBootstrapStyled {...register("phone")} type="number" />
                 </FormControl>
                 <FormControl className={styles.widthThirtyPercent}>
                   <label>Email</label>
                   <InputBootstrapStyled
-                    {...register('email', emailValidation)}
+                    {...register("email", emailValidation)}
                   />
                 </FormControl>
                 <FormControl className={styles.widthThirtyPercent}>
                   <label>Website URL</label>
-                  <InputBootstrapStyled {...register('url')} />
+                  <InputBootstrapStyled {...register("url")} />
                 </FormControl>
               </div>
             </div>
@@ -125,7 +130,7 @@ const MyAccount = () => {
                       className="datePicker"
                       disableFuture={true}
                       sx={{
-                        backgroundColor: '#f0ecec',
+                        backgroundColor: "#f0ecec",
                       }}
                       value={dayjs(DOB)}
                       onChange={(event: any) =>
@@ -136,11 +141,11 @@ const MyAccount = () => {
                 </FormControl>
                 <FormControl className={styles.widthThirtyPercent}>
                   <label>Eductaion</label>
-                  <InputBootstrapStyled {...register('education')} />
+                  <InputBootstrapStyled {...register("education")} />
                 </FormControl>
                 <FormControl className={styles.widthThirtyPercent}>
                   <label>Gender</label>
-                  <InputBootstrapStyled {...register('gender')} />
+                  <InputBootstrapStyled {...register("gender")} />
                 </FormControl>
               </div>
             </div>
@@ -153,7 +158,7 @@ const MyAccount = () => {
                 <FormControl className={styles.widthThirtyPercent}>
                   <label>Budget</label>
                   <InputBootstrapStyled
-                    {...register('budgetlimit', {
+                    {...register("budgetlimit", {
                       required: requiredMessage,
                       max: 99999999,
                     })}
@@ -164,10 +169,16 @@ const MyAccount = () => {
             </div>
 
             <div>
-              <StyledButton type="submit">Update</StyledButton>
+              <StyledButton type="submit">
+                {isLoading ? (
+                  <CircularProgress size={"30px"} color="inherit" />
+                ) : (
+                  "Update"
+                )}
+              </StyledButton>
               <Button
                 variant="text"
-                sx={{ width: '100px', fontSize: '0.75rem', color: 'black' }}
+                sx={{ width: "100px", fontSize: "0.75rem", color: "black" }}
               >
                 Cancel
               </Button>

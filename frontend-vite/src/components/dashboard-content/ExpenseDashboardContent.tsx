@@ -64,8 +64,8 @@ const ExpenseDashboardContent = () => {
           filters?.date,
           filters?.search
         );
-    setExpenseMetaData(response);
-    const data = response.data;
+    setExpenseMetaData(response?.data);
+    const data = response?.data.data;
     setOriginalExpensesData(data);
     setFilteredExpensesData(data);
   };

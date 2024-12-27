@@ -44,8 +44,8 @@ const ProfilePage = () => {
   useEffect(() => {
     if (!userData || Object.keys(userData).every((field) => !userData[field])) {
       const fetchAndStoreData=async () => {
-        const data = await fetchUserData(userId);
-        dispatch(storeUserData({ ...data }));
+        const response = await fetchUserData(userId);
+        dispatch(storeUserData({ ...response?.data }));
         setIsLoading(false);
       }
       fetchAndStoreData()
@@ -77,7 +77,7 @@ const ProfilePage = () => {
     const updatedUserData = await updateMyProfile(userId, {
       profilepic: base64ProfilePic,
     });
-    dispatch(storeUserData(updatedUserData));
+    dispatch(storeUserData(updatedUserData?.data));
     setBase64ProfilePic(null);
     setIsProfilePicModalOpen(false);
   };

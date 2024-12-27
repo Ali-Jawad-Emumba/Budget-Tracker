@@ -33,15 +33,20 @@ const AnalysisDashboardContent = () => {
   const [tokenCheckInterval, setTokenCheckInterval] = useState<any>();
 
   const getExpenses = async () => {
-    const data = isAdmin
+    const response = isAdmin
       ? await getAllExpensesForAdminChart()
       : await getAllExpenses(userId);
-    setOriginalExpensesData(data);
-    filterData(data, '12 months', setChartData);
+    setOriginalExpensesData(response?.data);
+    filterData(response?.data, '12 months', setChartData);
   };
 
   useEffect(() => {
-    fetchDashboardData(getExpenses, originalExpensesData, setToken, setTokenCheckInterval)
+    fetchDashboardData(
+      getExpenses,
+      originalExpensesData,
+      setToken,
+      setTokenCheckInterval
+    );
   }, []);
   useEffect(() => {
     const fetchData = async () => await getExpenses();

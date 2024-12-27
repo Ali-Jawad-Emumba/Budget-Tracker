@@ -41,8 +41,8 @@ export const checkTokenExpiration = (keepLoggedIn: boolean) => {
         const decoded = jwtDecode<any>(refreshToken);
         if (decoded.exp > currentTime) {
           const getNewAccessToken = async () => {
-            const data = await getAccessToken();
-            localStorage.setItem('token', data.token);
+            const response = await getAccessToken();
+            localStorage.setItem('token', response.data.token);
           };
           getNewAccessToken();
         }
@@ -127,4 +127,8 @@ export const fetchDashboardData = (
   }, 3000);
 };
 
-
+export const checkResponseValidity = (response: any) => {
+  if (response && response.status >= 200 && response.status < 300) {
+    return true;
+  } else return false;
+};

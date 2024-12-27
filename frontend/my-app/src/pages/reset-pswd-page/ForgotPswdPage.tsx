@@ -10,6 +10,7 @@ import { useSelector } from 'react-redux';
 import { sendPswdResetLink } from '../../utils/api-calls';
 import { Description } from '@mui/icons-material';
 import Notification from '../../components/notification/Notification';
+import { checkResponseValidity } from '../../utils/shared';
 
 const ForgotPswdPage: React.FC = () => {
   const [email, setEmail] = useState<string>();
@@ -23,7 +24,7 @@ const ForgotPswdPage: React.FC = () => {
   const passwordResetHandler = async () => {
     if (email) {
       const response = await sendPswdResetLink(email);
-      if (response?.ok) {
+      if (checkResponseValidity(response)) {
         setSnackBar({
           open: true,
           useFor: 'add',

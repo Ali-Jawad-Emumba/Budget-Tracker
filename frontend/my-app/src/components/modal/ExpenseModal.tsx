@@ -24,6 +24,7 @@ import Notifictaion from '../notification/Notification';
 import { useDispatch } from 'react-redux';
 import { updateNotifications } from '../../app/store';
 import {
+  checkResponseValidity,
   CloseButton,
   getCharactersMessage,
   requiredMessage,
@@ -67,7 +68,7 @@ const ExpenseModal = ({
       id: beingEdit._id,
       data: getExpenseBody(data),
     });
-    if (response.ok) {
+    if (checkResponseValidity(response)) {
       setIsLoading(false);
       setIsOpen(false);
       setSnackBar({
@@ -95,7 +96,7 @@ const ExpenseModal = ({
       id: userId,
       data: getExpenseBody(data),
     });
-    if (response.ok) {
+    if (checkResponseValidity(response)) {
       setIsLoading(false);
       setIsOpen(false);
       setSnackBar({

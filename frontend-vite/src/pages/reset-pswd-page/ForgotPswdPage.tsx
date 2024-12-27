@@ -8,6 +8,7 @@ import LoginSignupLayout from '../../components/login-signup-layout/LoginSignupL
 import { useState } from 'react';
 import { sendPswdResetLink } from '../../utils/api-calls';
 import Notification from '../../components/notification/Notification';
+import { checkResponseValidity } from '../../utils/shared';
 
 const ForgotPswdPage: React.FC = () => {
   const [email, setEmail] = useState<string>();
@@ -21,7 +22,7 @@ const ForgotPswdPage: React.FC = () => {
   const passwordResetHandler = async () => {
     if (email) {
       const response = await sendPswdResetLink(email);
-      if (response?.ok) {
+      if (checkResponseValidity(response)) {
         setSnackBar({
           open: true,
           useFor: 'add',

@@ -2,8 +2,7 @@
   "name": "@emumba-plugin/source",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {
-  },
+  "scripts": {},
   "private": true,
   "dependencies": {
     "@nx/devkit": "16.7.4",

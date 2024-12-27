@@ -26,8 +26,8 @@ const Dashboard = () => {
   useEffect(() => {
     if (!userData || Object.keys(userData).every((field) => !userData[field])) {
       const fetchAndStoreData = async () => {
-        const data = await fetchUserData(userId);
-        dispatch(storeUserData({ ...data }));
+        const response = await fetchUserData(userId);
+        dispatch(storeUserData({ ...response?.data }));
       };
       fetchAndStoreData();
     }
