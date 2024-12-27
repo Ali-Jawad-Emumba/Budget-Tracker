@@ -1,22 +1,5 @@
 {
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
-  "tasksRunnerOptions": {
-    "default": {
-      "runner": "@vercel/remote-nx",
-      "options": {
-        "useDaemonProcess":false,
-        "cacheDirectory": "/tmp/nx-cache",
-        "cacheableOperations": [
-          "build",
-          "lint",
-          "test",
-          "e2e"
-        ],
-        "accessToken": "MWVkMDJmYWMtYWQxNy00NWZjLTg5ZDMtOTJkM2M2ODkwZTI0fHJlYWQtd3JpdGU=",
-        "token":"CHa7nthlagwBn6P5PPISW5px"
-      }
-    }
-  },
   "defaultBase": "master",
   "namedInputs": {
     "default": ["{projectRoot}/**/*", "sharedGlobals"],
