@@ -1,15 +1,15 @@
 import { useEffect, useState } from 'react';
-import SideDrawer from '../../components/side-drawer/SideDrawer';
+import SideDrawer from '../../components/side-drawer/side-drawer';
 import styles from './Dashboard.module.css';
 
-import ExpenseDashboardContent from '../../components/dashboard-content/ExpenseDashboardContent';
+import ExpenseDashboardContent from '../../components/dashboard-content/expense-dashboard-content';
 import { useNavigate } from 'react-router-dom';
 import { fetchUserData } from '../../utils/api-calls';
 import { useDispatch, useSelector } from 'react-redux';
 import { storeSelectedDashboardTab, storeUserData } from '../../app/store';
-import UsersDashboardContent from '../../components/dashboard-content/UsersDashboardContent';
-import AnalysisDashboardContent from '../../components/dashboard-content/AnalysisDashboardContent';
-import AppBar from '../../components/app-bar/AppBar';
+import UsersDashboardContent from '../../components/dashboard-content/users-dashboard-content';
+import AnalysisDashboardContent from '../../components/dashboard-content/analysis-dashboard-content';
+import AppBar from '../../components/app-bar/app-bar';
 import { InitialState } from '../../utils/types';
 
 const Dashboard = () => {

@@ -1,18 +1,18 @@
 import React, { useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import './App.css';
-import LoginPage from '../pages/login-page/LoginPage';
-import SignupPage from '../pages/signup-page/SignupPage';
-import ForgotPswdPage from '../pages/reset-pswd-page/ForgotPswdPage';
+import LoginPage from '../pages/login-page';
+import SignupPage from '../pages/signup-page';
+import ForgotPswdPage from '../pages/forgot-pswd-page';
 import Dashboard from '../pages/dashboard/Dashboard';
-import ProfilePage from '../pages/profile-page/ProfilePage';
-import ProtectedRoute from '../components/ProtectedRoute';
+import ProfilePage from '../pages/profile-page/profile-page';
+import ProtectedRoute from '../components/protected-route';
 import { checkTokenExpiration, startTokenCheckInterval } from '../utils/shared';
-import ResetPswdPage from '../pages/reset-pswd-page/ResetPswdPage';
+import ResetPswdPage from '../pages/reset-pswd-page';
 import { useSelector } from 'react-redux';
 
 export const App = () => {
-  const keepMeLoggedIn=useSelector((state:any)=>state.keepLoggedIn)
+  const keepMeLoggedIn = useSelector((state: any) => state.keepLoggedIn);
   useEffect(() => {
     const interval = startTokenCheckInterval(keepMeLoggedIn);
     return () => clearInterval(interval);

@@ -1,5 +1,5 @@
 import { FilterProps } from '../../utils/types';
-import styles from './DashboardContent.module.css';
+import styles from './dashboard-content.module.css';
 
 
 
