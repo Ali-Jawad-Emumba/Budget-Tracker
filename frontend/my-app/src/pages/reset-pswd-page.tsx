@@ -1,4 +1,4 @@
-import illustration from '../../assets/images/illustration-reset-pswd-page.png';
+import illustration from '../assets/images/illustration-reset-pswd-page.png';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { InputBootstrapStyled } from '../utils/styled-components';
 import { Button, FormControl, FormGroup, InputAdornment } from '@mui/material';
