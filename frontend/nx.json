@@ -4,6 +4,7 @@
     "default": {
       "runner": "@vercel/remote-nx",
       "options": {
+        "useDaemonProcess":false,
         "cacheDirectory": "/tmp/nx-cache",
         "cacheableOperations": [
           "build",
