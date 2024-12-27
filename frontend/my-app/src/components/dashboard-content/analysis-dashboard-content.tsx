@@ -13,7 +13,7 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import DashboardContentLayout from './dashboard-content-layout';
-import Filter from './aFilter';
+import Filter from './Filter';
 import {
   getAllExpenses,
   getAllExpensesForAdminChart,

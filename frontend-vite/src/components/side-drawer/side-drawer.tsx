@@ -9,7 +9,7 @@ import {
   ListItemText,
 } from "@mui/material";
 
-import Logo from "../logo/aLogo";
+import Logo from "../logo/logo";
 import logo from "../../assets/images/logo.png";
 import {
   AnalysisIcon,

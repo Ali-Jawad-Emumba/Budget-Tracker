@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import styles from './Notification.module.css';
+import styles from './notification.module.css';
 import { NotificationProps } from '../../utils/types';
 import { tickIcon } from '../../utils/icons';
 

@@ -11,7 +11,7 @@ import {
   ListItemText,
 } from '@mui/material';
 
-import Logo from '../logo/aLogo';
+import Logo from '../logo/Logo';
 import logo from '../../assets/images/logo.png';
 import {
   AnalysisIcon,

@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 
 import DataTable from "./data-table";
 import DashboardContentLayout from "./dashboard-content-layout";
-import Filter from "./aFilter";
+import Filter from "./Filter";
 import UserModal from "../modal/users-modal";
 import { getAllUsers } from "../../utils/api-calls";
 import { fetchDashboardData } from "../../utils/shared";

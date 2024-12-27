@@ -8,8 +8,8 @@ import {
 import { StyledButton, CancelButton } from '../../utils/styled-components';
 
 import { useState } from 'react';
-import styles from './Modal.module.css';
-import Notifictaion from '../notification/aNotification';
+import styles from './modal.module.css';
+import Notifictaion from '../notification/Notification';
 
 import { useDispatch } from 'react-redux';
 

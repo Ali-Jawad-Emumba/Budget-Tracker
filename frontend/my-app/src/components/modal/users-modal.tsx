@@ -1,7 +1,7 @@
 import { Dialog, DialogContent, DialogTitle, IconButton } from '@mui/material';
 import SignUpForm from '../signup-form';
 import { ModalProps } from '../../utils/types';
-import styles from './Modal.module.css';
+import styles from './modal.module.css';
 import { CloseButton } from '../../utils/shared';
 
 const UserModal = ({

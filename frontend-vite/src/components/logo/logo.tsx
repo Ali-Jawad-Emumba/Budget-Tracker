@@ -1,4 +1,4 @@
-import styles from './Logo.module.css';
+import styles from './logo.module.css';
 import logo from '../../assets/images/logo.png';
 import { LogoProps } from '../../utils/types';
 

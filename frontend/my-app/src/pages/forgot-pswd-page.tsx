@@ -9,7 +9,7 @@ import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { sendPswdResetLink } from '../utils/api-calls';
 import { Description } from '@mui/icons-material';
-import Notification from '../components/notification/aNotification';
+import Notification from '../components/notification/Notification';
 import { checkResponseValidity } from '../utils/shared';
 
 const ForgotPswdPage: React.FC = () => {

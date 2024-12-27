@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import SideDrawer from "../../components/side-drawer/side-drawer";
-import styles from "./Dashboard.module.css";
+import styles from "./dashboard.module.css";
 
 import ExpenseDashboardContent from "../../components/dashboard-content/expense-dashboard-content";
 import { fetchUserData } from "../../utils/api-calls";

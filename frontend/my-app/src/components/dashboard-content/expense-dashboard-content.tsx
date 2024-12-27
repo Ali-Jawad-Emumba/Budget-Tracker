@@ -17,9 +17,9 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import ExpenseModal from '../modal/expense-modal';
 import { useDispatch, useSelector } from 'react-redux';
 import DashboardContentLayout from './dashboard-content-layout';
-import Filter from './aFilter';
+
 import DataTable from './data-table';
-import Notifictaion from '../notification/aNotification';
+import Notifictaion from '../notification/Notification';
 import {
   deleteExpenseById,
   getAllExpensesForAdminTable,
@@ -28,6 +28,7 @@ import {
 } from '../../utils/api-calls';
 import { InitialState } from '../../utils/types';
 import { fetchDashboardData } from '../../utils/shared';
+import Filter from './Filter';
 
 const ExpenseDashboardContent = () => {
   const [isAddExpenseModalOpen, setIsAddExpenseModalOpen] =

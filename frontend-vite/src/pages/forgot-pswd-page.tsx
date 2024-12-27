@@ -7,7 +7,7 @@ import styles from "../../utils/form-styles.module.css";
 import LoginSignupLayout from "../components/login-signup-layout/login-signup-layout";
 import { useState } from "react";
 import { sendPswdResetLink } from "../utils/api-calls";
-import Notification from "../components/notification/aNotification";
+import Notification from "../components/notification/notification";
 import { checkResponseValidity } from "../utils/shared";
 
 const ForgotPswdPage: React.FC = () => {
