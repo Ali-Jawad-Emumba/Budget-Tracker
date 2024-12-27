@@ -17,7 +17,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import ExpenseModal from "../modal/expense-modal";
 import { useSelector } from "react-redux";
 import DashboardContentLayout from "./dashboard-content-layout";
-import Filter from "./Filter";
+import Filter from "./aFilter";
 import DataTable from "./data-table";
 import {
   getAllExpensesForAdminTable,

@@ -1,7 +1,7 @@
-import { LoginSignupLayoutProp } from '../../utils/types';
-import styles from './login-signup-layout.module.css';
+import { LoginSignupLayoutProp } from "../../utils/types";
+import styles from "./login-signup-layout.module.css";
 
-import Logo from '../logo/Logo';
+import Logo from "../logo/aLogo";
 
 const LoginSignupLayout: React.FC<LoginSignupLayoutProp> = ({
   image,
@@ -13,7 +13,7 @@ const LoginSignupLayout: React.FC<LoginSignupLayoutProp> = ({
         <Logo useFor="Login Signup" />
         <div className={styles.formAndImage}>
           <div className={styles.formLoginLayout}>{children}</div>
-          <hr className={styles.verticalLine}/>
+          <hr className={styles.verticalLine} />
           <div className={styles.illustration}>
             <img src={image} />
           </div>

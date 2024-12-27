@@ -3,7 +3,7 @@ import styles from './app-bar.module.css';
 import profilePic from '../../assets/images/person profile.png';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import Logo from '../logo/Logo';
+import Logo from '../logo/aLogo';
 import { useState } from 'react';
 import NotifictaionLists from '../notification-list/notifications-list';
 import { AppBarProps, InitialState } from '../../utils/types';

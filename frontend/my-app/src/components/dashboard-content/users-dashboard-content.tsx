@@ -6,9 +6,9 @@ import { useEffect, useState } from 'react';
 
 import DataTable from './data-table';
 import DashboardContentLayout from './dashboard-content-layout';
-import Filter from './Filter';
+import Filter from './aFilter';
 import UserModal from '../modal/users-modal';
-import Notifictaion from '../notification/Notification';
+import Notifictaion from '../notification/aNotification';
 import { useDispatch } from 'react-redux';
 import { updateNotifications } from '../../app/store';
 import { deleteUserById, getAllUsers } from '../../utils/api-calls';

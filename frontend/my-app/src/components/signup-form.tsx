@@ -29,7 +29,7 @@ import {
 } from '../utils/shared';
 import PasswordField from './password-field';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
-import Notifictaion from './notification/Notification';
+import Notifictaion from './notification/aNotification';
 import { updateNotifications } from '../app/store';
 import { useDispatch } from 'react-redux';
 import { SignupFormProps } from '../utils/types';

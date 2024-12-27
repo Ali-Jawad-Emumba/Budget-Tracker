@@ -1,4 +1,4 @@
-import styles from './side-drawer.module.css';
+import styles from "./side-drawer.module.css";
 import {
   List,
   Divider,
@@ -7,20 +7,20 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
-} from '@mui/material';
+} from "@mui/material";
 
-import Logo from '../logo/Logo';
-import logo from '../../assets/images/logo.png';
+import Logo from "../logo/aLogo";
+import logo from "../../assets/images/logo.png";
 import {
   AnalysisIcon,
   ExpensesIcon,
   LogoutIcon,
   UsersIcon,
-} from '../../utils/icons';
-import { useNavigate } from 'react-router-dom';
-import { Drawer, DrawerHeader } from '../../utils/styled-components';
-import { useDispatch, useSelector } from 'react-redux';
-import { useEffect, useState } from 'react';
+} from "../../utils/icons";
+import { useNavigate } from "react-router-dom";
+import { Drawer, DrawerHeader } from "../../utils/styled-components";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect, useState } from "react";
 import {
   clearNotifications,
   storeSelectedDashboardTab,
@@ -28,60 +28,60 @@ import {
   storeUserId,
   updateIsAdmin,
   updateIsUserLoggedIn,
-} from '../../app/store';
+} from "../../app/store";
 
 export default function SideDrawer({ open }: { open: boolean }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [selectedDashboardTab, setSelectedDashboardTab] =
-    useState<string>('Expenses');
+    useState<string>("Expenses");
   const isAdmin = useSelector((state: any) => state.isAdmin);
   const logout = () => {
-    localStorage.removeItem('UserId');
-    localStorage.removeItem('token');
-    localStorage.removeItem('refresh-token');
+    localStorage.removeItem("UserId");
+    localStorage.removeItem("token");
+    localStorage.removeItem("refresh-token");
     dispatch(storeUserId(null));
     dispatch(updateIsAdmin(false));
-    dispatch(storeSelectedDashboardTab('Expenses'));
+    dispatch(storeSelectedDashboardTab("Expenses"));
     dispatch(storeUserData(null));
     dispatch(updateIsUserLoggedIn(false));
     dispatch(clearNotifications());
-    navigate('/');
+    navigate("/");
   };
 
   const [drawerItems, setDrawerItems] = useState<any>([
     {
-      text: 'Analysis',
+      text: "Analysis",
       icon: <AnalysisIcon />,
       action: () => {
-        dispatch(storeSelectedDashboardTab('Analysis'));
-        setSelectedDashboardTab('Analysis');
+        dispatch(storeSelectedDashboardTab("Analysis"));
+        setSelectedDashboardTab("Analysis");
       },
     },
     {
-      text: 'Expenses',
+      text: "Expenses",
       icon: <ExpensesIcon />,
       action: () => {
-        dispatch(storeSelectedDashboardTab('Expenses'));
-        setSelectedDashboardTab('Expenses');
+        dispatch(storeSelectedDashboardTab("Expenses"));
+        setSelectedDashboardTab("Expenses");
       },
     },
     {
-      text: 'Logout',
+      text: "Logout",
       icon: <LogoutIcon />,
       action: logout,
     },
   ]);
 
   useEffect(() => {
-    if (isAdmin && drawerItems.every((item: any) => item.text !== 'Users')) {
+    if (isAdmin && drawerItems.every((item: any) => item.text !== "Users")) {
       const adminDrawer = [...drawerItems];
       adminDrawer.splice(2, 0, {
-        text: 'Users',
+        text: "Users",
         icon: <UsersIcon />,
         action: () => {
-          dispatch(storeSelectedDashboardTab('Users'));
-          setSelectedDashboardTab('Users');
+          dispatch(storeSelectedDashboardTab("Users"));
+          setSelectedDashboardTab("Users");
         },
       });
       setDrawerItems(adminDrawer);
@@ -95,7 +95,7 @@ export default function SideDrawer({ open }: { open: boolean }) {
           {open ? (
             <Logo useFor="dashboard" />
           ) : (
-            <img src={logo} style={{ marginLeft: 'auto', width: '60%' }} />
+            <img src={logo} style={{ marginLeft: "auto", width: "60%" }} />
           )}
         </IconButton>
       </DrawerHeader>
@@ -105,7 +105,7 @@ export default function SideDrawer({ open }: { open: boolean }) {
           <ListItem
             key={item.text}
             disablePadding
-            sx={{ display: 'block' }}
+            sx={{ display: "block" }}
             onClick={item.action}
             className={
               selectedDashboardTab === item.text
@@ -121,10 +121,10 @@ export default function SideDrawer({ open }: { open: boolean }) {
                 },
                 open
                   ? {
-                      justifyContent: 'initial',
+                      justifyContent: "initial",
                     }
                   : {
-                      justifyContent: 'center',
+                      justifyContent: "center",
                     },
               ]}
             >
@@ -132,14 +132,14 @@ export default function SideDrawer({ open }: { open: boolean }) {
                 sx={[
                   {
                     minWidth: 0,
-                    justifyContent: 'center',
+                    justifyContent: "center",
                   },
                   open
                     ? {
                         mr: 3,
                       }
                     : {
-                        mr: 'auto',
+                        mr: "auto",
                       },
                 ]}
                 className={styles.drawerItemIcon}

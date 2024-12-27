@@ -9,7 +9,7 @@ import { StyledButton, CancelButton } from '../../utils/styled-components';
 
 import { useState } from 'react';
 import styles from './Modal.module.css';
-import Notifictaion from '../notification/Notification';
+import Notifictaion from '../notification/aNotification';
 
 import { useDispatch } from 'react-redux';
 
