@@ -1,6 +1,6 @@
 
-import User from '../models/User.js';
-import Expense from '../models/Expenses.js'
+import User from '../models/user.js';
+import Expense from '../models/expenses.js'
 import dotenv from "dotenv";
 dotenv.config();
 
