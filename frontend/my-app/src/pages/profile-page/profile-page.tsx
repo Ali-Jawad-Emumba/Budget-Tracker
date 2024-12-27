@@ -29,6 +29,7 @@ import { fetchUserData } from '../../utils/api-calls';
 import AppBar from '../../components/app-bar/app-bar';
 import { updateMyProfile } from '../../utils/api-calls';
 import { InitialState } from '../../utils/types';
+import { CloseButton } from '../../utils/shared';
 
 const ProfilePage = () => {
   const [selectedProfileTab, setSelectedProfileTab] =
@@ -172,7 +173,10 @@ const ProfilePage = () => {
         onClose={() => setIsProfilePicModalOpen(false)}
         open={isProfilePicModalOpen}
       >
-        <DialogTitle>Change Profile Pic</DialogTitle>
+        <DialogTitle>
+          Change Profile Pic
+          <CloseButton setIsOpen={setIsProfilePicModalOpen} />
+        </DialogTitle>
         <DialogContent>
           <label>Select Profile Pic</label>
           {

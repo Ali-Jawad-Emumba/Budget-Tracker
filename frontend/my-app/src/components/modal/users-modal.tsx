@@ -14,8 +14,10 @@ const UserModal = ({
   return (
     <Dialog onClose={() => setIsOpen(false)} open={isOpen}>
       <div className={styles.modal}>
-        <DialogTitle>User</DialogTitle>
-        <CloseButton setIsOpen={setIsOpen} />
+        <DialogTitle>
+          User
+          <CloseButton setIsOpen={setIsOpen} />
+        </DialogTitle>
         <DialogContent
           sx={{ display: 'flex', flexDirection: 'column', gap: '10px' }}
         >
