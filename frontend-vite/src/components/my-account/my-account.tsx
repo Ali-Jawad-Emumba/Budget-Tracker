@@ -129,9 +129,6 @@ const MyAccount = () => {
                     <DatePicker
                       className="datePicker"
                       disableFuture={true}
-                      sx={{
-                        backgroundColor: "#f0ecec",
-                      }}
                       value={dayjs(DOB)}
                       onChange={(event: any) =>
                         setDOB(event.$d.toLocaleDateString())
