@@ -124,7 +124,7 @@
   font-weight: 600;
   font-size: 1rem;
 }
-.datePicker .css-193any7-MuiInputBase-root-MuiOutlinedInput-root {
+.datePicker .MuiInputBase-root {
   height: 40px !important;
 }
 .datePicker .css-1dune0f-MuiInputBase-input-MuiOutlinedInput-input {
